@@ -1,0 +1,1068 @@
+// THE OPEN WORLD — Comprehensive Job Database
+// Real jobs based on actual employers in each city
+
+import type { JobTier } from '../shared/types.js';
+
+export interface JobListing {
+  id: string;
+  title: string;
+  employer: string;
+  tier: JobTier;
+  hourlyPay: number;
+  skill: 'charisma' | 'tech' | 'fitness' | 'driving' | 'cooking' | 'craftsmanship' | 'finance';
+  required: number;
+  city: string;
+  district?: string;
+  description: string;
+  category: 'entry' | 'skilled' | 'career' | 'elite' | 'government' | 'emergency' | 'federal' | 'political';
+  requirements?: string[];
+  benefits?: string[];
+}
+
+// ============================================
+// MEMPHIS, TN JOBS (30+ jobs)
+// ============================================
+export const MEMPHIS_JOBS: JobListing[] = [
+  // === ENTRY LEVEL ===
+  {
+    id: 'mem_warehouse_fedex',
+    title: 'Package Handler',
+    employer: 'FedEx Hub',
+    tier: 'entry',
+    hourlyPay: 17.50,
+    skill: 'fitness',
+    required: 20,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Load and unload packages at the world\'s largest cargo hub. Physical work, steady hours.',
+    category: 'entry',
+    requirements: ['Must lift 50lbs', 'High school diploma or GED'],
+    benefits: ['Health insurance', 'Flight benefits', '401k match']
+  },
+  {
+    id: 'mem_retail_kroger',
+    title: 'Cashier',
+    employer: 'Kroger',
+    tier: 'entry',
+    hourlyPay: 14.00,
+    skill: 'charisma',
+    required: 15,
+    city: 'memphis',
+    district: 'midtown',
+    description: 'Scan groceries, handle cash, provide customer service at the region\'s largest grocer.',
+    category: 'entry',
+    benefits: ['Employee discount', 'Flexible hours']
+  },
+  {
+    id: 'mem_service_mcdonalds',
+    title: 'Crew Member',
+    employer: 'McDonald\'s',
+    tier: 'entry',
+    hourlyPay: 12.50,
+    skill: 'charisma',
+    required: 10,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Fast-paced food service. Take orders, prepare food, keep the restaurant clean.',
+    category: 'entry',
+    benefits: ['Free meals', 'Flexible scheduling']
+  },
+  {
+    id: 'mem_warehouse_nike',
+    title: 'Warehouse Associate',
+    employer: 'Nike Distribution Center',
+    tier: 'entry',
+    hourlyPay: 18.00,
+    skill: 'fitness',
+    required: 25,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Work at Nike\'s massive distribution facility. Sort, pack, and ship athletic gear worldwide.',
+    category: 'entry',
+    requirements: ['Steel-toe boots required'],
+    benefits: ['Nike employee store access', '40% discount']
+  },
+  {
+    id: 'mem_stock_autozone',
+    title: 'Parts Stocker',
+    employer: 'AutoZone HQ',
+    tier: 'entry',
+    hourlyPay: 15.00,
+    skill: 'craftsmanship',
+    required: 15,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Stock auto parts at AutoZone\'s headquarters warehouse. Learn about cars on the job.',
+    category: 'entry',
+    benefits: ['Parts discount', 'Promotion opportunities']
+  },
+  // === SKILLED TRADES ===
+  {
+    id: 'mem_tech_vantiva',
+    title: 'Assembly Technician',
+    employer: 'Vantiva',
+    tier: 'skilled',
+    hourlyPay: 22.00,
+    skill: 'tech',
+    required: 35,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Assemble media and gaming equipment. Technical work with steady advancement.',
+    category: 'skilled',
+    requirements: ['Technical aptitude', 'Attention to detail'],
+    benefits: ['Skills training', 'Overtime pay']
+  },
+  {
+    id: 'mem_medical_smithnephew',
+    title: 'Medical Device Assembler',
+    employer: 'Smith & Nephew',
+    tier: 'skilled',
+    hourlyPay: 24.00,
+    skill: 'craftsmanship',
+    required: 40,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Build medical devices that help people heal. Precision work in clean environment.',
+    category: 'skilled',
+    requirements: ['Clean room certification preferred'],
+    benefits: ['Full benefits', 'Annual bonus']
+  },
+  {
+    id: 'mem_driver_fedex',
+    title: 'Delivery Driver',
+    employer: 'FedEx Ground',
+    tier: 'skilled',
+    hourlyPay: 21.00,
+    skill: 'driving',
+    required: 40,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Drive a delivery route through Memphis neighborhoods. Independent work with steady pay.',
+    category: 'skilled',
+    requirements: ['Clean driving record', 'CDL preferred'],
+    benefits: ['Company vehicle', 'Route stability']
+  },
+  {
+    id: 'mem_mechanic_dealer',
+    title: 'Auto Technician',
+    employer: 'Memphis Auto Mall',
+    tier: 'skilled',
+    hourlyPay: 25.00,
+    skill: 'craftsmanship',
+    required: 45,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Diagnose and repair vehicles. Turn wrenches at one of the region\'s largest dealerships.',
+    category: 'skilled',
+    requirements: ['ASE certification preferred'],
+    benefits: ['Tool allowance', 'Training programs']
+  },
+  {
+    id: 'mem_cook_hueys',
+    title: 'Line Cook',
+    employer: 'Huey\'s Restaurant',
+    tier: 'skilled',
+    hourlyPay: 18.00,
+    skill: 'cooking',
+    required: 35,
+    city: 'memphis',
+    district: 'midtown',
+    description: 'Flip burgers at Memphis\' famous burger joint on the blues strip. High-energy kitchen work.',
+    category: 'skilled',
+    benefits: ['Tips shared', 'Free meals']
+  },
+  // === CAREER PROFESSIONAL ===
+  {
+    id: 'mem_nurse_methodist',
+    title: 'Registered Nurse',
+    employer: 'Methodist Le Bonheur',
+    tier: 'career',
+    hourlyPay: 38.00,
+    skill: 'charisma',
+    required: 60,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Care for patients at Memphis\' largest healthcare system. Meaningful work with growth.',
+    category: 'career',
+    requirements: ['RN license required', 'BSN preferred'],
+    benefits: ['Full benefits', 'Tuition reimbursement', 'Pension']
+  },
+  {
+    id: 'mem_nurse_baptist',
+    title: 'Nurse Practitioner',
+    employer: 'Baptist Memorial',
+    tier: 'career',
+    hourlyPay: 52.00,
+    skill: 'charisma',
+    required: 70,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Advanced practice nursing. Diagnose and treat patients with more independence.',
+    category: 'career',
+    requirements: ['NP certification required'],
+    benefits: ['Full benefits', 'Malpractice coverage']
+  },
+  {
+    id: 'mem_bank_firsthorizon',
+    title: 'Branch Manager',
+    employer: 'First Horizon Bank',
+    tier: 'career',
+    hourlyPay: 42.00,
+    skill: 'finance',
+    required: 55,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Manage a branch of Memphis\' hometown bank. Lead a team and serve the community.',
+    category: 'career',
+    requirements: ['5+ years banking experience'],
+    benefits: ['Stock options', 'Bonus potential']
+  },
+  {
+    id: 'mem_it_internationalpaper',
+    title: 'Systems Analyst',
+    employer: 'International Paper',
+    tier: 'career',
+    hourlyPay: 45.00,
+    skill: 'tech',
+    required: 60,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Support IT systems for a Fortune 500 company headquartered in Memphis.',
+    category: 'career',
+    requirements: ['Degree in IT or related field'],
+    benefits: ['Full benefits', 'Remote options']
+  },
+  {
+    id: 'mem_hr_autozone',
+    title: 'HR Specialist',
+    employer: 'AutoZone HQ',
+    tier: 'career',
+    hourlyPay: 35.00,
+    skill: 'charisma',
+    required: 50,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Handle recruiting and employee relations at AutoZone\'s corporate headquarters.',
+    category: 'career',
+    requirements: ['HR certification preferred'],
+    benefits: ['Stock purchase plan', '401k match']
+  },
+  // === EMERGENCY SERVICES ===
+  {
+    id: 'mem_police_officer',
+    title: 'Police Officer',
+    employer: 'Memphis Police Department',
+    tier: 'career',
+    hourlyPay: 32.00,
+    skill: 'fitness',
+    required: 50,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Serve and protect the citizens of Memphis. High-stakes work with community impact.',
+    category: 'emergency',
+    requirements: ['Police academy', 'Clean background', '21+ years old'],
+    benefits: ['Pension', 'Health insurance', 'Take-home vehicle']
+  },
+  {
+    id: 'mem_police_detective',
+    title: 'Police Detective',
+    employer: 'Memphis Police Department',
+    tier: 'elite',
+    hourlyPay: 42.00,
+    skill: 'charisma',
+    required: 65,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Investigate serious crimes. Work cases from homicide to organized crime.',
+    category: 'emergency',
+    requirements: ['5+ years patrol experience', 'Detective exam'],
+    benefits: ['Detective pay bonus', 'Flexible schedule']
+  },
+  {
+    id: 'mem_firefighter',
+    title: 'Firefighter',
+    employer: 'Memphis Fire Department',
+    tier: 'career',
+    hourlyPay: 28.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Fight fires, save lives, serve the community. 24-hour shifts with brotherhood.',
+    category: 'emergency',
+    requirements: ['Fire academy', 'EMT certification preferred'],
+    benefits: ['Pension', 'Full benefits', 'Early retirement']
+  },
+  {
+    id: 'mem_paramedic',
+    title: 'Firefighter/Paramedic',
+    employer: 'Memphis Fire Department',
+    tier: 'elite',
+    hourlyPay: 38.00,
+    skill: 'charisma',
+    required: 55,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Advanced life support on the front lines. Medical care in emergency situations.',
+    category: 'emergency',
+    requirements: ['Paramedic license', 'Fire certification'],
+    benefits: ['Premium pay', 'Pension', 'Full benefits']
+  },
+  {
+    id: 'mem_911_dispatcher',
+    title: '911 Dispatcher',
+    employer: 'Memphis Fire Department',
+    tier: 'skilled',
+    hourlyPay: 24.00,
+    skill: 'charisma',
+    required: 40,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Answer emergency calls and dispatch help. Critical work behind the scenes.',
+    category: 'emergency',
+    requirements: ['Calm under pressure', 'Multi-tasking'],
+    benefits: ['City pension', 'Benefits']
+  },
+  // === FEDERAL JOBS ===
+  {
+    id: 'mem_fbi_agent',
+    title: 'FBI Special Agent',
+    employer: 'Federal Bureau of Investigation',
+    tier: 'elite',
+    hourlyPay: 52.00,
+    skill: 'charisma',
+    required: 75,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Investigate federal crimes. Counter-terrorism, organized crime, and public corruption.',
+    category: 'federal',
+    requirements: ['Bachelor\'s degree', '3+ years professional experience', 'Top secret clearance'],
+    benefits: ['Federal pension', 'LEO retirement', 'Full benefits']
+  },
+  {
+    id: 'mem_dea_agent',
+    title: 'DEA Special Agent',
+    employer: 'Drug Enforcement Administration',
+    tier: 'elite',
+    hourlyPay: 50.00,
+    skill: 'fitness',
+    required: 70,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Combat drug trafficking and organized crime. High-risk, high-reward career.',
+    category: 'federal',
+    requirements: ['Bachelor\'s degree', 'Physical fitness', 'Background check'],
+    benefits: ['Federal pension', 'LEO retirement']
+  },
+  {
+    id: 'mem_atf_agent',
+    title: 'ATF Special Agent',
+    employer: 'Bureau of ATF',
+    tier: 'elite',
+    hourlyPay: 48.00,
+    skill: 'craftsmanship',
+    required: 68,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Enforce federal firearms and explosives laws. Investigate gun crimes and arson.',
+    category: 'federal',
+    requirements: ['Bachelor\'s degree', 'Clean record'],
+    benefits: ['Federal pension', 'LEO retirement']
+  },
+  {
+    id: 'mem_us_marshal',
+    title: 'Deputy U.S. Marshal',
+    employer: 'U.S. Marshals Service',
+    tier: 'elite',
+    hourlyPay: 46.00,
+    skill: 'fitness',
+    required: 65,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Apprehend federal fugitives, protect federal courts. Oldest federal law enforcement.',
+    category: 'federal',
+    requirements: ['Bachelor\'s degree', 'Law enforcement experience preferred'],
+    benefits: ['Federal pension', 'LEO retirement']
+  },
+  {
+    id: 'mem_postal_carrier',
+    title: 'Postal Carrier',
+    employer: 'U.S. Postal Service',
+    tier: 'skilled',
+    hourlyPay: 23.00,
+    skill: 'driving',
+    required: 35,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Deliver mail to Memphis neighborhoods. Federal job with steady benefits.',
+    category: 'federal',
+    requirements: ['Clean driving record', 'Physical ability'],
+    benefits: ['Federal pension', 'Health insurance']
+  },
+  // === POLITICAL / GOVERNMENT ===
+  {
+    id: 'mem_city_council_staff',
+    title: 'Council Staff Assistant',
+    employer: 'Memphis City Council',
+    tier: 'career',
+    hourlyPay: 28.00,
+    skill: 'charisma',
+    required: 50,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Support city council members with constituent services and policy research.',
+    category: 'political',
+    requirements: ['Political science degree preferred'],
+    benefits: ['City pension', 'Benefits']
+  },
+  {
+    id: 'mem_mayor_office',
+    title: 'Mayoral Aide',
+    employer: 'Office of the Mayor',
+    tier: 'elite',
+    hourlyPay: 45.00,
+    skill: 'charisma',
+    required: 70,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Support the Mayor with communications, policy, and community relations.',
+    category: 'political',
+    requirements: ['Strong political connections', 'Communication skills'],
+    benefits: ['City pension', 'High visibility']
+  },
+  {
+    id: 'mem_state_leg_staff',
+    title: 'Legislative Assistant',
+    employer: 'Tennessee State Legislature',
+    tier: 'career',
+    hourlyPay: 32.00,
+    skill: 'charisma',
+    required: 55,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Draft legislation and handle constituent concerns for state representatives.',
+    category: 'political',
+    benefits: ['State pension', 'Benefits']
+  },
+  // === ELITE / HIGH PAYING ===
+  {
+    id: 'mem_surgeon_methodist',
+    title: 'Surgeon',
+    employer: 'Methodist Le Bonheur',
+    tier: 'elite',
+    hourlyPay: 180.00,
+    skill: 'craftsmanship',
+    required: 90,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Perform life-saving surgeries at a top regional hospital.',
+    category: 'elite',
+    requirements: ['MD degree', 'Board certification', 'Years of residency'],
+    benefits: ['High compensation', 'Malpractice coverage']
+  },
+  {
+    id: 'mem_lawyer_big',
+    title: 'Corporate Attorney',
+    employer: 'Baker Donelson',
+    tier: 'elite',
+    hourlyPay: 95.00,
+    skill: 'charisma',
+    required: 80,
+    city: 'memphis',
+    district: 'downtown',
+    description: 'Handle corporate law for regional and national clients at a top Memphis firm.',
+    category: 'elite',
+    requirements: ['Law degree', 'Bar admission', 'Corporate experience'],
+    benefits: ['Partnership track', 'Bonus structure']
+  },
+  {
+    id: 'mem_exec_fedex',
+    title: 'Operations Manager',
+    employer: 'FedEx Corporation',
+    tier: 'elite',
+    hourlyPay: 75.00,
+    skill: 'charisma',
+    required: 75,
+    city: 'memphis',
+    district: 'east_memphis',
+    description: 'Manage logistics operations for the world\'s largest express transportation company.',
+    category: 'elite',
+    requirements: ['MBA preferred', '10+ years logistics'],
+    benefits: ['Stock options', 'Executive benefits']
+  },
+];
+
+// ============================================
+// LITTLE ROCK, AR JOBS (25+ jobs)
+// ============================================
+export const LITTLE_ROCK_JOBS: JobListing[] = [
+  // === ENTRY ===
+  {
+    id: 'lr_retail_target',
+    title: 'Sales Associate',
+    employer: 'Target',
+    tier: 'entry',
+    hourlyPay: 15.00,
+    skill: 'charisma',
+    required: 15,
+    city: 'littlerock',
+    district: 'west_lr',
+    description: 'Help customers and stock shelves at the largest retailer in west Little Rock.',
+    category: 'entry',
+    benefits: ['Employee discount', 'Flexible hours']
+  },
+  {
+    id: 'lr_warehouse_walmart',
+    title: 'Warehouse Worker',
+    employer: 'Walmart Distribution',
+    tier: 'entry',
+    hourlyPay: 18.00,
+    skill: 'fitness',
+    required: 25,
+    city: 'littlerock',
+    district: 'southwest_lr',
+    description: 'Work at the world\'s largest retailer\'s regional distribution center.',
+    category: 'entry',
+    benefits: ['Health insurance', '401k']
+  },
+  {
+    id: 'lr_food_chilis',
+    title: 'Server',
+    employer: 'Chili\'s Grill & Bar',
+    tier: 'entry',
+    hourlyPay: 12.00,
+    skill: 'charisma',
+    required: 15,
+    city: 'littlerock',
+    district: 'river_market',
+    description: 'Serve food and drinks at a popular chain restaurant in the River Market.',
+    category: 'entry',
+    benefits: ['Tips', 'Flexible hours', 'Free meals']
+  },
+  // === SKILLED ===
+  {
+    id: 'lr_tech_ingenology',
+    title: 'Lab Technician',
+    employer: 'IngeNology Labs',
+    tier: 'skilled',
+    hourlyPay: 26.00,
+    skill: 'tech',
+    required: 45,
+    city: 'littlerock',
+    district: 'west_lr',
+    description: 'Process samples and run tests at a growing biotech company.',
+    category: 'skilled',
+    requirements: ['Science degree preferred'],
+    benefits: ['Health insurance', 'Training']
+  },
+  {
+    id: 'lr_driver_ups',
+    title: 'Delivery Driver',
+    employer: 'UPS',
+    tier: 'skilled',
+    hourlyPay: 22.00,
+    skill: 'driving',
+    required: 40,
+    city: 'littlerock',
+    district: 'southwest_lr',
+    description: 'Deliver packages through Little Rock neighborhoods. Union job with pension.',
+    category: 'skilled',
+    requirements: ['CDL preferred', 'Clean record'],
+    benefits: ['Union pension', 'Full benefits']
+  },
+  {
+    id: 'lr_bank_ozk',
+    title: 'Loan Officer',
+    employer: 'Bank OZK',
+    tier: 'skilled',
+    hourlyPay: 28.00,
+    skill: 'finance',
+    required: 45,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Process loans at Arkansas\' largest bank headquartered in Little Rock.',
+    category: 'skilled',
+    requirements: ['Finance background'],
+    benefits: ['Bank benefits', 'Commission']
+  },
+  // === CAREER ===
+  {
+    id: 'lr_nurse_uams',
+    title: 'Registered Nurse',
+    employer: 'UAMS Medical Center',
+    tier: 'career',
+    hourlyPay: 40.00,
+    skill: 'charisma',
+    required: 60,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Nursing at Arkansas\' only academic medical center. Teaching hospital.',
+    category: 'career',
+    requirements: ['RN license'],
+    benefits: ['State pension', 'Full benefits', 'Tuition assistance']
+  },
+  {
+    id: 'lr_teach_lrssd',
+    title: 'High School Teacher',
+    employer: 'Little Rock School District',
+    tier: 'career',
+    hourlyPay: 32.00,
+    skill: 'charisma',
+    required: 55,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Teach in Little Rock\'s historic school district. Shape young minds.',
+    category: 'career',
+    requirements: ['Teaching certificate'],
+    benefits: ['State pension', 'Summers off']
+  },
+  {
+    id: 'lr_engineer_ar_dot',
+    title: 'Civil Engineer',
+    employer: 'Arkansas DOT',
+    tier: 'career',
+    hourlyPay: 42.00,
+    skill: 'tech',
+    required: 60,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Design roads and bridges for Arkansas. State government engineering.',
+    category: 'career',
+    requirements: ['Engineering degree', 'PE license'],
+    benefits: ['State pension', 'Full benefits']
+  },
+  // === EMERGENCY ===
+  {
+    id: 'lr_police_officer',
+    title: 'Police Officer',
+    employer: 'Little Rock Police Department',
+    tier: 'career',
+    hourlyPay: 28.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Patrol Little Rock neighborhoods. Serve Arkansas\' largest city.',
+    category: 'emergency',
+    requirements: ['Police academy', '21+ years old'],
+    benefits: ['City pension', 'Full benefits']
+  },
+  {
+    id: 'lr_firefighter',
+    title: 'Firefighter',
+    employer: 'Little Rock Fire Department',
+    tier: 'career',
+    hourlyPay: 26.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Protect Little Rock from fires and emergencies. 24-hour shifts.',
+    category: 'emergency',
+    requirements: ['Fire academy', 'EMT preferred'],
+    benefits: ['City pension', 'Full benefits']
+  },
+  {
+    id: 'lr_paramedic_mem',
+    title: 'Paramedic',
+    employer: 'MEMS Ambulance',
+    tier: 'skilled',
+    hourlyPay: 26.00,
+    skill: 'charisma',
+    required: 45,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Provide advanced life support in ambulances serving central Arkansas.',
+    category: 'emergency',
+    requirements: ['Paramedic license'],
+    benefits: ['Health insurance', 'Retirement']
+  },
+  // === GOVERNMENT ===
+  {
+    id: 'lr_state_analyst',
+    title: 'Policy Analyst',
+    employer: 'Arkansas State Government',
+    tier: 'career',
+    hourlyPay: 35.00,
+    skill: 'charisma',
+    required: 55,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Analyze legislation and policy for state agencies. Capitol complex work.',
+    category: 'government',
+    requirements: ['Degree in public policy'],
+    benefits: ['State pension', 'Benefits']
+  },
+  {
+    id: 'lr_dhs_case',
+    title: 'Social Worker',
+    employer: 'Arkansas DHS',
+    tier: 'career',
+    hourlyPay: 28.00,
+    skill: 'charisma',
+    required: 50,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Help families access services. Child welfare and family support.',
+    category: 'government',
+    requirements: ['Social work degree'],
+    benefits: ['State pension', 'Benefits']
+  },
+  // === FEDERAL ===
+  {
+    id: 'lr_va_nurse',
+    title: 'VA Nurse',
+    employer: 'VA Medical Center Little Rock',
+    tier: 'career',
+    hourlyPay: 42.00,
+    skill: 'charisma',
+    required: 60,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Care for veterans at the Little Rock VA. Federal nursing position.',
+    category: 'federal',
+    requirements: ['RN license'],
+    benefits: ['Federal pension', 'Full benefits']
+  },
+  {
+    id: 'lr_federal_atf',
+    title: 'ATF Agent',
+    employer: 'Bureau of ATF',
+    tier: 'elite',
+    hourlyPay: 48.00,
+    skill: 'craftsmanship',
+    required: 68,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Enforce federal firearms laws. Regional investigations.',
+    category: 'federal',
+    requirements: ['Bachelor\'s degree', 'Clean background'],
+    benefits: ['Federal pension', 'LEO retirement']
+  },
+  // === POLITICAL ===
+  {
+    id: 'lr_legislator_aid',
+    title: 'Legislative Aide',
+    employer: 'Arkansas State Legislature',
+    tier: 'career',
+    hourlyPay: 25.00,
+    skill: 'charisma',
+    required: 45,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Support state legislators during sessions. Policy and constituent work.',
+    category: 'political',
+    benefits: ['State pension', 'Networking']
+  },
+  {
+    id: 'lr_governor_staff',
+    title: 'Governor\'s Office Staff',
+    employer: 'Office of the Governor',
+    tier: 'elite',
+    hourlyPay: 45.00,
+    skill: 'charisma',
+    required: 70,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Work directly for the Governor of Arkansas. Policy and communications.',
+    category: 'political',
+    requirements: ['Political experience', 'State connections'],
+    benefits: ['State pension', 'High profile']
+  },
+  // === ELITE ===
+  {
+    id: 'lr_lawyer_wright',
+    title: 'Attorney',
+    employer: 'Wright Lindsey Jennings',
+    tier: 'elite',
+    hourlyPay: 85.00,
+    skill: 'charisma',
+    required: 75,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Practice law at Arkansas\' largest law firm. Corporate and litigation.',
+    category: 'elite',
+    requirements: ['Law degree', 'Bar admission'],
+    benefits: ['Partnership track', 'Bonus']
+  },
+  {
+    id: 'lr_doctor_uams',
+    title: 'Physician',
+    employer: 'UAMS Medical Center',
+    tier: 'elite',
+    hourlyPay: 125.00,
+    skill: 'charisma',
+    required: 85,
+    city: 'littlerock',
+    district: 'downtown',
+    description: 'Practice medicine at Arkansas\' premier academic medical center.',
+    category: 'elite',
+    requirements: ['MD degree', 'Board certification'],
+    benefits: ['High compensation', 'Academic opportunities']
+  },
+];
+
+// ============================================
+// SOUTHAVEN, MS JOBS (20+ jobs)
+// ============================================
+export const SOUTHAVEN_JOBS: JobListing[] = [
+  // === ENTRY ===
+  {
+    id: 'south_retail_walmart',
+    title: 'Cashier',
+    employer: 'Walmart Supercenter',
+    tier: 'entry',
+    hourlyPay: 14.00,
+    skill: 'charisma',
+    required: 10,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Work at the world\'s largest retailer. Customer service in a busy store.',
+    category: 'entry',
+    benefits: ['Employee discount', '401k']
+  },
+  {
+    id: 'south_fast_chickfila',
+    title: 'Team Member',
+    employer: 'Chick-fil-A',
+    tier: 'entry',
+    hourlyPay: 13.00,
+    skill: 'charisma',
+    required: 10,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Serve customers at one of the most popular fast food chains. Sundays off.',
+    category: 'entry',
+    benefits: ['Free meals', 'Sunday off', 'Scholarship program']
+  },
+  {
+    id: 'south_warehouse_home',
+    title: 'Warehouse Associate',
+    employer: 'Home Depot Distribution',
+    tier: 'entry',
+    hourlyPay: 17.00,
+    skill: 'fitness',
+    required: 20,
+    city: 'southaven',
+    district: 'church_road',
+    description: 'Work in Home Depot\'s regional distribution center. Heavy lifting.',
+    category: 'entry',
+    benefits: ['Benefits after 90 days']
+  },
+  // === SKILLED ===
+  {
+    id: 'south_repair_auto',
+    title: 'Auto Technician',
+    employer: 'AutoZone',
+    tier: 'skilled',
+    hourlyPay: 22.00,
+    skill: 'craftsmanship',
+    required: 40,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Work on cars at the region\'s largest auto parts retailer.',
+    category: 'skilled',
+    requirements: ['ASE certification preferred'],
+    benefits: ['Parts discount', 'Training']
+  },
+  {
+    id: 'south_teach_desoto',
+    title: 'Elementary Teacher',
+    employer: 'DeSoto County Schools',
+    tier: 'career',
+    hourlyPay: 28.00,
+    skill: 'charisma',
+    required: 50,
+    city: 'southaven',
+    district: 'snowden',
+    description: 'Teach in Mississippi\'s largest school district. Growing suburban schools.',
+    category: 'career',
+    requirements: ['Teaching certificate'],
+    benefits: ['State pension', 'Summers off']
+  },
+  {
+    id: 'south_nurse_baptist',
+    title: 'Registered Nurse',
+    employer: 'Baptist Memorial DeSoto',
+    tier: 'career',
+    hourlyPay: 36.00,
+    skill: 'charisma',
+    required: 55,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Nursing at DeSoto County\'s main hospital. Suburban healthcare.',
+    category: 'career',
+    requirements: ['RN license'],
+    benefits: ['Full benefits', 'Retirement']
+  },
+  // === EMERGENCY ===
+  {
+    id: 'south_police_officer',
+    title: 'Police Officer',
+    employer: 'Southaven Police Department',
+    tier: 'career',
+    hourlyPay: 26.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Patrol Southaven\'s neighborhoods. Growing suburban community policing.',
+    category: 'emergency',
+    requirements: ['Police academy', '21+ years old'],
+    benefits: ['City pension', 'Take-home vehicle']
+  },
+  {
+    id: 'south_firefighter',
+    title: 'Firefighter',
+    employer: 'Southaven Fire Department',
+    tier: 'career',
+    hourlyPay: 24.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Protect Southaven from fires. Small city with good equipment.',
+    category: 'emergency',
+    requirements: ['Fire academy', 'EMT preferred'],
+    benefits: ['City pension', 'Benefits']
+  },
+  {
+    id: 'south_ems_paramedic',
+    title: 'Paramedic',
+    employer: 'American Medical Response',
+    tier: 'skilled',
+    hourlyPay: 24.00,
+    skill: 'charisma',
+    required: 45,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Paramedic for private ambulance service covering DeSoto County.',
+    category: 'emergency',
+    requirements: ['Paramedic license'],
+    benefits: ['Health insurance']
+  },
+  // === GOVERNMENT ===
+  {
+    id: 'south_city_clerk',
+    title: 'City Clerk Assistant',
+    employer: 'City of Southaven',
+    tier: 'skilled',
+    hourlyPay: 20.00,
+    skill: 'charisma',
+    required: 35,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Handle permits and records for Southaven city government.',
+    category: 'government',
+    benefits: ['City pension', 'Benefits']
+  },
+  {
+    id: 'south_county_deputy',
+    title: 'Deputy Sheriff',
+    employer: 'DeSoto County Sheriff',
+    tier: 'career',
+    hourlyPay: 25.00,
+    skill: 'fitness',
+    required: 45,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Patrol DeSoto County. County law enforcement.',
+    category: 'emergency',
+    requirements: ['Law enforcement certification'],
+    benefits: ['County pension', 'Benefits']
+  },
+  // === FEDERAL ===
+  {
+    id: 'south_postal_carrier',
+    title: 'Mail Carrier',
+    employer: 'U.S. Postal Service',
+    tier: 'skilled',
+    hourlyPay: 22.00,
+    skill: 'driving',
+    required: 35,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Deliver mail in Southaven neighborhoods. Federal job.',
+    category: 'federal',
+    requirements: ['Clean driving record'],
+    benefits: ['Federal pension', 'Benefits']
+  },
+  // === POLITICAL ===
+  {
+    id: 'south_alderman_staff',
+    title: 'Ward Aide',
+    employer: 'Southaven Board of Aldermen',
+    tier: 'skilled',
+    hourlyPay: 18.00,
+    skill: 'charisma',
+    required: 35,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Help aldermen serve constituents. Local politics.',
+    category: 'political',
+    benefits: ['City pension']
+  },
+  {
+    id: 'south_state_rep_staff',
+    title: 'Legislative Assistant',
+    employer: 'Mississippi Legislature',
+    tier: 'career',
+    hourlyPay: 25.00,
+    skill: 'charisma',
+    required: 45,
+    city: 'southaven',
+    district: 'downtown',
+    description: 'Support state representative for DeSoto County. Jackson travel.',
+    category: 'political',
+    benefits: ['State pension', 'Networking']
+  },
+  // === ELITE ===
+  {
+    id: 'south_doctor_baptist',
+    title: 'Family Physician',
+    employer: 'Baptist Memorial DeSoto',
+    tier: 'elite',
+    hourlyPay: 95.00,
+    skill: 'charisma',
+    required: 80,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Practice family medicine in growing suburban community.',
+    category: 'elite',
+    requirements: ['MD degree', 'Board certification'],
+    benefits: ['High compensation', 'Work-life balance']
+  },
+  {
+    id: 'south_pharmacist',
+    title: 'Pharmacist',
+    employer: 'Walgreens',
+    tier: 'elite',
+    hourlyPay: 60.00,
+    skill: 'tech',
+    required: 75,
+    city: 'southaven',
+    district: 'goodman_road',
+    description: 'Dispense medications at a busy retail pharmacy.',
+    category: 'elite',
+    requirements: ['PharmD degree', 'Pharmacy license'],
+    benefits: ['Full benefits', 'Bonus']
+  },
+];
+
+// Combined job listings
+export const ALL_JOBS: JobListing[] = [...MEMPHIS_JOBS, ...LITTLE_ROCK_JOBS, ...SOUTHAVEN_JOBS];
+
+// Get jobs by city
+export function getJobsByCity(city: string): JobListing[] {
+  return ALL_JOBS.filter(job => job.city === city);
+}
+
+// Get jobs by category
+export function getJobsByCategory(category: string): JobListing[] {
+  return ALL_JOBS.filter(job => job.category === category);
+}
+
+// Get jobs by tier
+export function getJobsByTier(tier: JobTier): JobListing[] {
+  return ALL_JOBS.filter(job => job.tier === tier);
+}

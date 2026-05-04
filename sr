@@ -1,0 +1,246 @@
+// THE OPEN WORLD — Save System
+// Handles saving, loading, and deleting game saves
+
+import type { PlayerState } from './game-engine.js';
+
+export interface SaveSlot {
+  slot: number;
+  playerName: string;
+  city: string;
+  level: number;
+  money: number;
+  job: string;
+  createdAt: number;
+  lastPlayedAt: number;
+  saveData: string; // Base64 encoded game state
+}
+
+const SAVE_KEY_PREFIX = 'theopenworld_save_';
+const METADATA_KEY = 'theopenworld_saves_metadata';
+
+// Get storage (Devvit kvstore)
+function getStorage() {
+  try {
+    const { useStorage } = require('@devvit/web/server');
+    return useStorage();
+  } catch {
+    return null;
+  }
+}
+
+// Encode game state to base64
+export function encodeGameState(state: PlayerState): string {
+  return Buffer.from(JSON.stringify(state)).toString('base64');
+}
+
+// Decode game state from base64
+export function decodeGameState(encoded: string): PlayerState | null {
+  try {
+    return JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+  } catch {
+    return null;
+  }
+}
+
+// Save game to slot
+export async function saveGame(slot: number, playerName: string, gameState: PlayerState): Promise<boolean> {
+  const storage = getStorage();
+  if (!storage) {
+    console.log('[save] Storage not available, using localStorage fallback');
+    return saveToLocalStorage(slot, playerName, gameState);
+  }
+  
+  try {
+    const metadata = await storage.get<string>(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    
+    const saveData = encodeGameState(gameState);
+    const now = Date.now();
+    
+    const newSlot: SaveSlot = {
+      slot,
+      playerName,
+      city: gameState.city,
+      level: calculateLevel(gameState),
+      money: gameState.money,
+      job: gameState.job?.title || 'Unemployed',
+      createdAt: gameState.createdAt,
+      lastPlayedAt: now,
+      saveData,
+    };
+    
+    // Remove existing slot if any
+    const existingIndex = saves.findIndex(s => s.slot === slot);
+    if (existingIndex >= 0) {
+      saves[existingIndex] = newSlot;
+    } else {
+      saves.push(newSlot);
+    }
+    
+    await storage.set(METADATA_KEY, JSON.stringify(saves));
+    console.log(`[save] Game saved to slot ${slot}`);
+    return true;
+  } catch (err) {
+    console.error('[save] Error saving game:', err);
+    return false;
+  }
+}
+
+// Load game from slot
+export async function loadGame(slot: number): Promise<PlayerState | null> {
+  const storage = getStorage();
+  if (!storage) {
+    return loadFromLocalStorage(slot);
+  }
+  
+  try {
+    const metadata = await storage.get<string>(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    const save = saves.find(s => s.slot === slot);
+    
+    if (!save) {
+      console.log(`[save] No save found in slot ${slot}`);
+      return null;
+    }
+    
+    const state = decodeGameState(save.saveData);
+    console.log(`[save] Game loaded from slot ${slot}`);
+    return state;
+  } catch (err) {
+    console.error('[save] Error loading game:', err);
+    return null;
+  }
+}
+
+// Delete save from slot
+export async function deleteSave(slot: number): Promise<boolean> {
+  const storage = getStorage();
+  if (!storage) {
+    return deleteFromLocalStorage(slot);
+  }
+  
+  try {
+    const metadata = await storage.get<string>(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    const filtered = saves.filter(s => s.slot !== slot);
+    
+    await storage.set(METADATA_KEY, JSON.stringify(filtered));
+    console.log(`[save] Save deleted from slot ${slot}`);
+    return true;
+  } catch (err) {
+    console.error('[save] Error deleting save:', err);
+    return false;
+  }
+}
+
+// Get all saves
+export async function getAllSaves(): Promise<SaveSlot[]> {
+  const storage = getStorage();
+  if (!storage) {
+    return getAllFromLocalStorage();
+  }
+  
+  try {
+    const metadata = await storage.get<string>(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    return saves.sort((a, b) => b.lastPlayedAt - a.lastPlayedAt);
+  } catch (err) {
+    console.error('[save] Error getting saves:', err);
+    return [];
+  }
+}
+
+// Calculate player level based on stats
+function calculateLevel(state: PlayerState): number {
+  const totalStats = state.intelligence + state.fitness + state.charisma + 
+                     (state.reputation.professional * 2);
+  return Math.floor(totalStats / 100) + 1;
+}
+
+// ========== LOCAL STORAGE FALLBACK ==========
+
+function getLocalStorageKey(slot: number): string {
+  return `${SAVE_KEY_PREFIX}${slot}`;
+}
+
+function saveToLocalStorage(slot: number, playerName: string, gameState: PlayerState): boolean {
+  try {
+    const saveData = encodeGameState(gameState);
+    const now = Date.now();
+    
+    const slotData: SaveSlot = {
+      slot,
+      playerName,
+      city: gameState.city,
+      level: calculateLevel(gameState),
+      money: gameState.money,
+      job: gameState.job?.title || 'Unemployed',
+      createdAt: gameState.createdAt,
+      lastPlayedAt: now,
+      saveData,
+    };
+    
+    localStorage.setItem(getLocalStorageKey(slot), JSON.stringify(slotData));
+    
+    // Update metadata
+    const metadata = localStorage.getItem(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    const existing = saves.findIndex(s => s.slot === slot);
+    if (existing >= 0) saves[existing] = slotData;
+    else saves.push(slotData);
+    localStorage.setItem(METADATA_KEY, JSON.stringify(saves));
+    
+    console.log(`[save] Game saved to localStorage slot ${slot}`);
+    return true;
+  } catch (err) {
+    console.error('[save] Error saving to localStorage:', err);
+    return false;
+  }
+}
+
+function loadFromLocalStorage(slot: number): PlayerState | null {
+  try {
+    const data = localStorage.getItem(getLocalStorageKey(slot));
+    if (!data) return null;
+    
+    const save: SaveSlot = JSON.parse(data);
+    return decodeGameState(save.saveData);
+  } catch {
+    return null;
+  }
+}
+
+function deleteFromLocalStorage(slot: number): boolean {
+  try {
+    localStorage.removeItem(getLocalStorageKey(slot));
+    
+    // Update metadata
+    const metadata = localStorage.getItem(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    const filtered = saves.filter(s => s.slot !== slot);
+    localStorage.setItem(METADATA_KEY, JSON.stringify(filtered));
+    
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getAllFromLocalStorage(): SaveSlot[] {
+  try {
+    const metadata = localStorage.getItem(METADATA_KEY);
+    const saves: SaveSlot[] = metadata ? JSON.parse(metadata) : [];
+    return saves.sort((a, b) => b.lastPlayedAt - a.lastPlayedAt);
+  } catch {
+    return [];
+  }
+}
+
+// Format save for display
+export function formatSaveInfo(save: SaveSlot): string {
+  const date = new Date(save.lastPlayedAt);
+  const dateStr = date.toLocaleDateString();
+  const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  return `Slot ${save.slot}: ${save.playerName} | ${save.city} | Lvl ${save.level} | $${save.money.toFixed(0)} | ${save.job} | ${dateStr} ${timeStr}`;
+}

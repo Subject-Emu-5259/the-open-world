@@ -1,8 +1,8 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.31.4
-**Last Updated**: April 16, 2026
+**Version**: 0.98.0
+**Last Updated**: August 21, 2026
 
 ---
 
@@ -39,12 +39,12 @@
 
 | Category | Commands |
 |----------|----------|
-| **Core** | work, apply, apply [job], status, help, sleep, study, gym |
+| **Core** | work, apply, apply [job], status, help, sleep, study, enroll, study hours, gym |
 | **Travel** | travel [city], explore, goto [district] |
-| **Social** | talk [name], greet [name], people, assist [name] |
+| **Social** | talk [name], greet [name], people, assist [name], factions, chat [id] |
 | **Property** | real-estate, buy property [name], sell property [name], properties |
 | **Invest** | invest, invest [name] [amount], investments |
-| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name] |
+| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name], inspect [name], service [name] [oil|tires|brakes|tuneup|wash], maintain [name], repair vehicle [name] |
 | **Events** | event, event choice [id] |
 
 ---
@@ -61,7 +61,10 @@
 - [x] Create r/theopenworld Subreddit ✅
 - [x] Install Game on Subreddit ✅
 - [x] Post Launch Announcement ✅
-- [ ] Upload Community Icon & Banner (manual)
-- [ ] Add more NPC interactions
-- [ ] Implement phone/email system
-- [ ] Add achievement tracking
+- [x] Implement phone/email system ✅
+- [x] Add achievement tracking ✅
+- [x] Professional Schools & Careers ✅
+- [x] Faction Group Chats ✅
+- [ ] Implement Faction Wars & Political Influence
+- [ ] Add more international mission strings
+- [ ] Expand vehicle racing system

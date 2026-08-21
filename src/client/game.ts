@@ -1,4 +1,5 @@
 import {} from "@devvit/web/client";
+import { GAME_VERSION } from '../shared/version.js';
 
 // ============================================
 // THE OPEN WORLD - Client Application
@@ -44,8 +45,9 @@ type GameScreen = 'landing' | 'main-menu' | 'game' | 'settings' | 'load' | 'upda
 
 const SAVE_KEY = 'the_open_world_saves';
 
-function clientSave(slot: number, player: PlayerState): boolean {
+async function clientSave(slot: number, player: PlayerState): Promise<boolean> {
   try {
+    // 1. Local Save
     const saves = clientLoadAll();
     saves[slot] = {
       ...player,
@@ -53,6 +55,14 @@ function clientSave(slot: number, player: PlayerState): boolean {
       playTime: (saves[slot]?.playTime || 0) + 0.1
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+    
+    // 2. Server Save (Background sync)
+    fetch("/api/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slot, player }),
+    }).catch(e => console.warn("[save] Server sync failed:", e));
+
     console.log(`[save] Saved to slot ${slot}: ${player.name}`);
     return true;
   } catch (e) {
@@ -61,12 +71,39 @@ function clientSave(slot: number, player: PlayerState): boolean {
   }
 }
 
-function clientLoad(slot: number): PlayerState | null {
+async function clientLoad(slot: number): Promise<PlayerState | null> {
   try {
+    // 1. Try Server Load first
+    const res = await fetch(`/api/load?slot=${slot}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.player) {
+        console.log(`[load] Loaded ${data.player.name} from server`);
+        // Sync back to local
+        const saves = clientLoadAll();
+        saves[slot] = data.player;
+        localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+        return data.player;
+      }
+    }
+
+    // 2. Fallback to Local Storage
     const saves = clientLoadAll();
-    return saves[slot] || null;
+    const player = saves[slot];
+    if (player) {
+      console.log(`[load] Loaded ${player.name} from local storage. Migrating to server...`);
+      // Migrate to server
+      fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slot, player }),
+      }).catch(e => console.warn("[load] Migration failed:", e));
+      return player;
+    }
+    
+    return null;
   } catch (e) {
-    console.error('[save] Failed to load:', e);
+    console.error('[load] Failed to load:', e);
     return null;
   }
 }
@@ -197,7 +234,7 @@ function renderLandingScreen() {
         <h1 class="landing-title">THE OPEN WORLD</h1>
         <p class="landing-tagline">A Life Simulation</p>
         <div class="landing-subtitle">
-          Build your story in the Mid-South and beyond
+          Build your story across the globe
         </div>
         <div class="loading-container">
           <div class="loading-bar">
@@ -281,7 +318,7 @@ function renderMainMenu() {
         </div>
         
         <div class="menu-footer">
-          <p class="menu-credits">Built on Reddit Devvit</p>
+          <p class="menu-credits">v${GAME_VERSION} | Built on Reddit Devvit</p>
         </div>
       </div>
     </div>
@@ -389,7 +426,7 @@ async function renderLoadScreen() {
       if ((e.target as HTMLElement).classList.contains('delete-btn')) return;
       
       const slotId = parseInt(el.getAttribute('data-slot-id') || '0', 10);
-      const loadedPlayer = clientLoad(slotId);
+      const loadedPlayer = await clientLoad(slotId);
       
       if (loadedPlayer) {
         state.player = loadedPlayer;
@@ -538,14 +575,297 @@ function renderUpdatesScreen() {
         <div style="width: 60px"></div>
       </div>
       
-      <div class="updates-list">
-        <div class="update-card">
-          <div class="update-header">
-            <span class="update-version">v0.15.0</span>
-            <span class="update-date">April 15, 2026</span>
+              <div class="updates-container">
+                <div class="update-item">
+          <span class="update-version">v0.98.0</span>
+          <span class="update-date">August 21, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet sushi apprentices, jazz archivists, macaron bakers, and more.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Sandstorm Shortcut, Rooftop Yoga Class, Underground Comedy Night, Book Club on the Train, and Midnight Dog Walker Meetup.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.98.0.</li>
+          </ul>
+        </div>
+              <div class="update-item">
+          <span class="update-version">v0.97.0</span>
+          <span class="update-date">August 17, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet spice merchants, bonsai masters, perfume blenders, and opera house ushers.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Riverboat Jazz Invitation, Neighborhood Power Outage, Foreign Film Pop-Up, Street Cart Free Sample, and Lost Tourist Needs Directions.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.97.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.96.0</span>
+          <span class="update-date">August 14, 2026</span>
+          <ul>
+            <li>🌍 <strong>More International NPCs</strong> - Added 10 new characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet street poets, retro game shop owners, art collectors, and harbour tour guides.</li>
+            <li>🎲 <strong>More Random Events</strong> - Five fresh city-life moments: Rooftop Garden Invitation, City-Wide Scavenger Hunt, Street Magician Disappearing Act, Vintage Polaroid Swap, and Midnight Ramen Queue.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.96.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.95.0</span>
+          <span class="update-date">August 13, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - Added 10 new characters in Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet jazz club managers, pub landlords, fragrance designers, yacht brokers, surf instructors, and more.</li>
+            <li>🎲 <strong>New City-Life Events</strong> - Five fresh random events: Airport Upgrade Offer, Train Seat Swap, Local Sports Rivalry, Famous Food Queue, and Street Photographer.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.95.0.</li>
+          </ul>
+        </div>
+                              <div class="update-item">
+          <span class="update-version">v0.93.0</span>
+          <span class="update-date">August 11, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - Added 10 new characters across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet bonsai artists, opera singers, parfumeurs, street-fashion designers, and more.</li>
+            <li>🎲 <strong>Global City Events</strong> - Five fresh random events: night markets, transit serenades, lost tourists, historic building tours, and free street haircuts.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.93.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.92.0</span>
+          <span class="update-date">August 10, 2026</span>
+          <ul>
+            <li>🏎️ <strong>Vehicle Racing</strong> - New "race" and "race [track]" commands let you enter street, drag, and circuit competitions. Vehicle type, condition, driving skill, and a little luck decide the podium.</li>
+            <li>🏁 <strong>City Tracks</strong> - Race locations in Los Angeles, Miami, Memphis, Atlanta, Detroit, and Tokyo with licensed and underground events.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.92.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.92.0</span>
+          <span class="update-date">August 9, 2026</span>
+          <ul>
+            <li>🏘️ <strong>Expanded Property Market</strong> - Real estate listings now span Nashville, Atlanta, Chicago, New York, Los Angeles, Miami, Houston, Dallas, and Phoenix. Build a cross-country empire.</li>
+            <li>🌅 <strong>Dynamic Arrivals</strong> - Travel descriptions now reflect the time of day for more immersive city entries.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.92.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.91.0</span>
+          <span class="update-date">August 8, 2026</span>
+          <ul>
+            <li>🎯 <strong>New Achievements</strong> - Peak Fitness, Renaissance Person, and Trophy Hunter medals now reward stat mastery and completionists.</li>
+            <li>🎲 <strong>New Random Events</strong> - Impromptu block parties, sudden rainstorms, street chess, hidden bookstore sales, and rooftop movie nights add fresh city flavor.</li>
+            <li>🐛 <strong>Travel Fix</strong> - Removed duplicate police checkpoint encounter when arriving in a city with high heat.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.91.0.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.90.0</span>
+          <span class="update-date">August 7, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> - 10 new global NPCs in Berlin, Paris, Tokyo, Dubai, Mexico City, Toronto, and Sydney, including ballet instructors, yacht brokers, and comedy bookers.</li>
+            <li>🎲 <strong>New Random Events</strong> - Sunrise yoga, bookstore readings, vintage car parades, community cleanups, and late-night food trucks add more everyday city flavor.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.90.0.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.89.1</span>
+          <span class="update-date">August 6, 2026</span>
+          <ul>
+            <li>🛠️ <strong>Devvit Review Fix</strong> - Inline webview now opens in Expanded Mode, eliminating the inline scroll trap. Menu post creation uses idempotency keys to prevent duplicate game posts.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.89.1.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.89.0</span>
+          <span class="update-date">August 6, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - 10 new global NPCs in Dubai, Tokyo, Paris, Berlin, Mexico City, London, Toronto, and Sydney, from spice merchants to grime DJs.</li>
+            <li>🚗 <strong>Travel Atmosphere</strong> - First-time arrival descriptions now cover 13 missing domestic cities, giving every destination a unique welcome.</li>
+            <li>🎲 <strong>New Random Events</strong> - Street buskers, lost tourists, community gardens, free samples, and rooftop invites bring more city-life moments.</li>
+            <li>🏆 <strong>New Travel Achievements</strong> - Global Citizen and Passport Collector medals now track your international city visits automatically.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.89.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.82.0</span>
+          <span class="update-date">July 27, 2026</span>
+          <ul>
+            <li>💬 <strong>Dialogue Depth</strong> - Added apology & rumor intents, NPC awareness of player job/certs/health/stress/record, and conversation continuity.</li>
+            <li>🏆 <strong>New Achievements</strong> - Scholar, Master Worker, Veteran, and Continental medals added.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.82.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.81.0</span>
+          <span class="update-date">July 26, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> - Added 8 new characters across Toronto, Sydney, Mexico City, Berlin, Dubai, and Paris.</li>
+            <li>🎬 <strong>City Event Expansion</strong> - Added new random events in New York, Atlanta, and Nashville.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.81.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.80.0</span>
+          <ul>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.80.0 project-wide.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.76.0</span>
+          <span class="update-date">June 5, 2026</span>
+          <ul>
+            <li>🎓 <strong>Career & Specialization Overhaul</strong> - Added new international schools (London, Tokyo, Paris, Sydney) and high-tier career paths requiring specialized certifications.</li>
+            <li>🌍 <strong>Global Expansion</strong> - Expanded the job market with elite international positions in tech, finance, and culinary arts.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.76.0 project-wide.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.73.0</span>
+          <span class="update-date">May 27, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global Expansion</strong> - Added 6 new NPCs across Berlin, Mexico City, and Dubai.</li>
+            <li>🛡️ <strong>New Factions</strong> - Introduced <strong>Berlin Underground</strong> and <strong>Dubai Elite</strong>.</li>
+            <li>💬 <strong>Dialogue Depth</strong> - NPCs now have city-specific greetings and relationship-based responses.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.67.0 project-wide.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.65.0</span>
+          <ul class="update-list">
+            <li>🔫 <strong>Crime Expansion</strong> - Added new crime types: <em>Scam</em> (Cybercrime) and <em>Grand Theft Auto</em>.</li>
+            <li>🚨 <strong>Criminal Records</strong> - Arrests are now tracked and displayed in your status profile.</li>
+            <li>📈 <strong>Dynamic Odds</strong> - Crime success rates now scale with Intelligence and Driving skills.</li>
+            <li>🛠️ <strong>Stability</strong> - Version synchronization across all systems.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.64.0</span>
+          <ul class="update-list">
+            <li>📱 <strong>Phone OS v2.0</strong> - Comprehensive communication overhaul with contact lists, search, and drafts.</li>
+            <li>👥 <strong>Auto-Contacts</strong> - Talking to NPCs now automatically saves them to your phone.</li>
+            <li>🎬 <strong>Life Moments</strong> - Expanded dynamic event system with 8+ new location-specific random events.</li>
+            <li>🌍 <strong>Global Flavor</strong> - Unique events added for Manhattan, Shibuya, London, Berlin, Dubai, and more.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.61.0</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added 5 new international NPCs in London, Tokyo, Paris, Toronto, and Sydney.</li>
+            <li>👥 <strong>Social Depth</strong> - Expanded NPC roster to 125 unique characters.</li>
+            <li>🛠️ <strong>Maintenance</strong> - Routine stability checks and version synchronization.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.60.0</span>
+          <ul class="update-list">
+            <li>🛡️ <strong>Critical Stability</strong> - Fixed server-side crashes in Achievement Engine.</li>
+            <li>📊 <strong>Data Integrity</strong> - Defensive type-casting for player stats.</li>
+            <li>💬 <strong>Chat Sync</strong> - Fixed NPC identity and formatting issues.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.58.16</span>
+          <ul class="update-list">
+            <li>📊 <strong>Data Integrity</strong> - Defensive type-casting for player stats.</li>
+            <li>💬 <strong>Chat Sync</strong> - Fixed NPC identity and formatting issues.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.57.1</span>
+          <ul class="update-list">
+            <li>💬 <strong>Chat Stability</strong> - Resolved "blank bubble" bug in conversations.</li>
+            <li>🏷️ <strong>Sender Identity</strong> - NPCs now correctly display their names in chat.</li>
+            <li>📈 <strong>Skill Logic</strong> - Fixed job-to-skill mapping for accurate progression.</li>
+            <li>📝 <strong>Formatting</strong> - Fixed broken newline escapes in system messages.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.57.0</span>
+          <ul class="update-list">
+            <li>📈 <strong>Skill Overhaul</strong> - New granular skill progression system.</li>
+            <li>📊 <strong>Skill Tracking</strong> - Track levels and XP for specialized abilities.</li>
+            <li>🏦 <strong>Bank Fixes</strong> - Resolved critical issues with the new banking system.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.56.0</span>
+          <div class="update-card">
+            <h3>🏦 BANKING SYSTEM</h3>
+            <ul>
+              <li>💰 <strong>Cash & Savings</strong> - Keep your money safe in the bank.</li>
+              <li>📥 <strong>Deposit & Withdraw</strong> - New commands to manage your liquid assets.</li>
+              <li>🏦 <strong>Bank Command</strong> - Check your balances and net worth at any time.</li>
+            </ul>
           </div>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.55.0</span>
+          <div class="update-card">
+            <h3>🛠️ VEHICLE MAINTENANCE & PARTS</h3>
+            <ul>
+              <li>🔧 <strong>Condition & Mileage</strong> - Vehicles now track wear and tear.</li>
+              <li>🛢️ <strong>Maintenance</strong> - New "maintain" and "repair vehicle" commands.</li>
+              <li>🚗 <strong>Wear & Tear</strong> - Long distance travel affects vehicle performance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.54.0</span>
+          <div class="update-card">
+            <h3>📱 PHONE & EMAIL OVERHAUL</h3>
+            <ul>
+              <li>📧 <strong>New Email System</strong> - Fully functional inbox and compose features.</li>
+              <li>💬 <strong>Dynamic Messaging</strong> - NPCs now send more relevant texts and job offers.</li>
+              <li>📢 <strong>Notifications</strong> - Improved phone notification system.</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="update-item">
+          <span class="update-version">v0.53.0</span>
+          <span class="update-date">May 21, 2026</span>
+          <ul class="update-list">
+            <li>🏆 <strong>Achievements</strong> - Full achievement system with 36 milestones.</li>
+            <li>👥 <strong>New NPCs</strong> - Added 5 new international characters to meet.</li>
+            <li>🛠️ <strong>Optimization</strong> - Improved engine performance and bug fixes.</li>
+          </ul>
+        </div>
+        
+        <div class="update-item">
+          <span class="update-version">v0.52.0</span>
+          <span class="update-date">April 15, 2026</span>
+          <ul class="update-list">
+            <li>🔫 <strong>Crime System</strong> - New crimes: pickpocket, shoplift, robbery, and heist.</li>
+            <li>🚨 <strong>Consequences</strong> - Risk of arrest and prison time based on crime type and location.</li>
+            <li>👮 <strong>Reputation</strong> - Criminal activities now affect your social and criminal standing.</li>
+            <li>🔄 <strong>Version Sync</strong> - Project-wide update to v0.52.0.</li>
+          </ul>
+        </div>
+        
+        <div class="update-item">
+          <span class="update-version">v0.51.0</span>
+          <span class="update-date">April 15, 2026</span>
+        </div>
+        
+        <div class="update-item">
+          <span class="update-version">v0.50.0</span>
+          <span class="update-date">April 15, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>16 New International NPCs</strong> across London, Tokyo, Paris, Berlin, Dubai, and more.</li>
+            <li>👔 <strong>Finance Moguls & Tech Founders</strong> in global business hubs.</li>
+            <li>🎨 <strong>Cultural Icons</strong> - Artists, chefs, and DJs added to international cities.</li>
+            <li>📈 <strong>Stable Version</strong> - Critical bug fixes and type stability.</li>
+          </ul>
+        </div>
+        
+        <div class="update-item">
+          <span class="update-version">v0.15.0</span>
+          <span class="update-date">April 15, 2026</span>
           <h3 class="update-title">World Expansion & Natural Language</h3>
-          <ul class="update-features">
+          <ul class="update-list">
             <li>🌍 <strong>28 Cities</strong> across 7 regions worldwide</li>
             <li>🗣️ <strong>Natural Language</strong> - Speak naturally, game understands</li>
             <li>📱 <strong>Phone System</strong> - Check emails, messages, voicemails</li>
@@ -555,13 +875,11 @@ function renderUpdatesScreen() {
           </ul>
         </div>
         
-        <div class="update-card">
-          <div class="update-header">
-            <span class="update-version">v0.2.0</span>
-            <span class="update-date">April 14, 2026</span>
-          </div>
+        <div class="update-item">
+          <span class="update-version">v0.2.0</span>
+          <span class="update-date">April 14, 2026</span>
           <h3 class="update-title">Property & Storyline Systems</h3>
-          <ul class="update-features">
+          <ul class="update-list">
             <li>🏠 <strong>Real Estate</strong> - Buy properties with mortgages</li>
             <li>📈 <strong>Investments</strong> - Stocks, bonds, crypto, business</li>
             <li>📖 <strong>Storyline Events</strong> - Job interviews, life events</li>
@@ -570,17 +888,60 @@ function renderUpdatesScreen() {
           </ul>
         </div>
         
-        <div class="update-card">
-          <div class="update-header">
-            <span class="update-version">v0.1.0</span>
-            <span class="update-date">April 12, 2026</span>
-          </div>
+        <div class="update-item">
+          <span class="update-version">v0.1.0</span>
+          <span class="update-date">April 12, 2026</span>
           <h3 class="update-title">Initial Release</h3>
-          <ul class="update-features">
+          <ul class="update-list">
             <li>🎮 <strong>Core Engine</strong> - Time, economy, social systems</li>
             <li>👥 <strong>42 NPCs</strong> - Schedules, personalities, relationships</li>
             <li>💼 <strong>Jobs</strong> - Work, get paid, build career</li>
             <li>📚 <strong>Skills</strong> - Study to improve abilities</li>
+          </ul>
+        </div>
+        <div class="update-card">
+          <span class="update-version">v0.68.0</span>
+          <span class="update-date">May 30, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added new random events for London, Tokyo, and Dubai.</li>
+            <li>🏡 <strong>Luxury Real Estate</strong> - Added premium property listings in international hubs.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.68.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-card">
+          <span class="update-version">v0.70.0</span>
+          <span class="update-date">June 1, 2026</span>
+          <ul class="update-list">
+            <li>⚔️ <strong>Faction Wars</strong> - Added Influence, Support, and Sabotage mechanics.</li>
+            <li>📊 <strong>Political Influence</strong> - Factions now compete for dominance in their HQ cities.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.70.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-card">
+          <span class="update-version">v0.69.0</span>
+          <span class="update-date">May 31, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added new random events for Toronto, Berlin, Mexico City, and Sydney.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.69.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-card">
+          <span class="update-version">v0.71.0</span>
+          <span class="update-date">June 2, 2026</span>
+          <ul class="update-list">
+            <li>🎭 <strong>NPC Expansion</strong> - Added new city-specific greetings and dialogue variety.</li>
+            <li>🌍 <strong>Mid-South Events</strong> - New random life moments for Memphis and West Memphis.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.71.0 project-wide.</li>
+          </ul>
+        </div>
+        <div class="update-card">
+          <span class="update-version">v0.72.0</span>
+          <span class="update-date">June 3, 2026</span>
+          <ul class="update-list">
+            <li>👑 <strong>Faction Achievements</strong> - Added new milestones for faction leadership and sabotage.</li>
+            <li>🏰 <strong>Real Estate Tycoon</strong> - New achievement for owning properties in 5+ cities.</li>
+            <li>🎭 <strong>Dynamic Faction Events</strong> - Rival confrontations and mysterious bribes added to the world.</li>
+            <li>🔄 <strong>Version Sync</strong> - Project-wide update to v0.72.0.</li>
           </ul>
         </div>
       </div>
@@ -735,7 +1096,7 @@ function bindGameEvents() {
 
 }
 
-function handleGameMenuAction(action: string) {
+async function handleGameMenuAction(action: string) {
   const gameMenu = document.getElementById('game-menu');
   const convEl = document.getElementById('conversation');
   
@@ -746,7 +1107,7 @@ function handleGameMenuAction(action: string) {
     case 'save':
       // Save to slot 1 by default
       if (state.player) {
-        const success = clientSave(1, state.player);
+        const success = await clientSave(1, state.player);
         if (success && convEl) {
           addMessage(convEl, 'system', '💾 Game saved to slot 1!');
         } else if (convEl) {
@@ -762,7 +1123,7 @@ function handleGameMenuAction(action: string) {
     case 'quit':
       // Auto-save before quitting
       if (state.player) {
-        clientSave(1, state.player);
+        await clientSave(1, state.player);
       }
       state.currentScreen = 'main-menu';
       render();
@@ -904,6 +1265,13 @@ async function startGame() {
   `;
   
   try {
+    // If we already have a player (from auto-load), we can skip /api/init (GET)
+    if (state.player) {
+      state.currentScreen = 'game';
+      render();
+      return;
+    }
+
     const res = await fetch("/api/init", { method: "GET" });
     const data: GameData = await res.json().catch(() => null);
     

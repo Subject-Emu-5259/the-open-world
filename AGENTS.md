@@ -1,8 +1,8 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.99.0
-**Last Updated**: August 24, 2026
+**Version**: 0.99.1
+**Last Updated**: August 25, 2026
 
 ---
 
@@ -11,7 +11,7 @@
 ### Stateless Design (v0.22.0+)
 - **Client** maintains `state.player` and sends it with every request
 - **Server** processes commands and returns updated player state
-- No server-side session storage required
+- Server-side Redis save slot persists progress across refresh/reinstall
 
 ### Key Files
 - `src/server/game-engine.ts` — Main game logic, command processing
@@ -52,7 +52,11 @@
 ## Known Issues
 
 1. **Fullscreen in iframe** — Reddit's sandbox prevents true fullscreen
-2. **localStorage on server** — Not available, using stateless design instead
+2. **localStorage on server** — Not available; server-side Redis save system used instead
+
+## Latest Release
+
+- **v0.99.1** — Save system rebuild + NPC conversation overhaul. See `docs/RELEASE-NOTES-v0.99.1.md`.
 
 ---
 
@@ -66,5 +70,7 @@
 - [x] Professional Schools & Careers ✅
 - [x] Faction Group Chats ✅
 - [x] Implement Faction Wars & Political Influence ✅
+- [x] Rebuild server-side save system (auto-save + continue on refresh)
+- [x] Overhaul NPC conversation engine (contextual greetings + replies)
 - [ ] Add more international mission strings
 - [ ] Expand vehicle racing system

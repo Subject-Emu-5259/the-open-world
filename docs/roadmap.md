@@ -15,7 +15,9 @@
 - **August 8, 2026 (v0.91.0)**: Added 3 new achievements, 5 fresh city-life random events, and fixed a duplicate police checkpoint on high-heat travel. Type-check, build, and publish passed. Submitted v0.91.0 for review.
 - **August 7, 2026 (v0.90.0)**: Added 10 new international NPCs and 5 new random events. Type-check, build, and publish passed. Submitted v0.90.0 for review.
 
-## Project Status: v0.99.0 — Global NPC & Random Event Expansion
+## Project Status
+
+- **August 25, 2026**: Rebuilt save system to survive browser refreshes in Reddit iframe. Server `GET /api/init` now checks Redis slot 1 and returns the existing player. Client auto-calls `clientLoad(1)` on startup and shows a Continue button when a save is found. Auto-save now fires after every successful command with fire-and-forget `clientSave(1, state.player)`. Removed dead duplicate `src/server/server.ts`. Overhauled NPC conversation flow: `greet` and `talk` now return updated `player` and call the real conversation engine; NPCs deliver contextual first-line greetings based on relationship and location; `farewell`/`bye`/`goodbye` correctly exit conversations so later commands aren't swallowed. Fixed `text [npc] [message]` to use `commHub.getContacts()` instead of a non-existent `.get()` method. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.: v0.99.0 — Global NPC & Random Event Expansion
 - **Current Focus**: Faction Wars & Political Influence Expansion
 - **Next Milestone**: Faction Wars & Political Influence Expansion
 

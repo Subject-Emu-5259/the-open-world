@@ -1,94 +1,107 @@
-# THE OPEN WORLD — v0.99.1 Developer Update & Release Notes
+# THE OPEN WORLD v0.99.1
 
-**Date:** August 24, 2026
-**Version:** v0.99.1
-**Build Status:** Type-check ✅ — Build ✅
+## Save System Rebuild + NPC Conversation Overhaul
 
----
-
-## TL;DR
-
-We rebuilt the save flow from the ground up and overhauled NPC conversations. Players should no longer lose progress on refresh, reload, or browser close, and NPCs now actually greet, respond, and end conversations naturally.
+**Release Date:** August 24, 2026
+**Build Status:** `npm run type-check` ✅ | `npm run build` ✅
 
 ---
 
-## Dear Players,
+## 🔥 What We Fixed
 
-Thank you for the feedback over the past week. Two issues kept coming up louder than anything else:
+### 1. Save System Rebuilt from the Ground Up
 
-1. **“My save is gone every time I refresh.”**
-2. **“NPCs don’t talk back — they feel like bots.”**
+Players reported that every refresh or browser reload wiped their progress and forced a new game.
 
-We heard you. v0.99.1 is a focused maintenance patch that addresses both of those problems at their core. No new cities or careers this time — just a lot of behind-the-scenes rebuilding so the world actually feels alive and your time in it sticks around.
+**Root Cause**
 
----
+- `GET /api/init` always returned `hasPlayer: false`, so the client never offered “Continue.”
+- The client only attempted auto-resume from session state, which is cleared on refresh.
+- Auto-save only fired from menu actions; normal gameplay commands never saved progress.
+- Save success was reported before the server sync finished, masking failures.
+- Server-side save keys depended on `context.username` with no fallback in some paths.
 
-## 🔧 Save System Rebuilt (No More Lost Progress)
+**What Changed**
 
-### What changed
+- `GET /api/init` now checks Redis for an existing save in slot 1 and returns `hasPlayer: true` and the full player object if one exists.
+- The landing screen now performs an async save probe and shows **Continue** when a save is found, otherwise **New Game**.
+- `startGame()` now calls `clientLoad(1)` automatically when starting a new session if no session state exists.
+- Every successful command now triggers a fire-and-forget `clientSave(1, player)` so progress is persisted continuously.
+- `clientSave()` now waits for the server response, surfaces sync failures, and only reports success after the server confirms.
+- Added `window.onbeforeunload` to attempt a final save when the player leaves Reddit or refreshes.
+- Removed the dead duplicate `file src/server/server.ts` that contained conflicting logic and ignored the real `GameEngine`.
+- Save probes use a stable fallback key derived from both username and user ID to survive missing `context.username`.
 
-- **/api/init GET now checks Redis first.** Before this patch, the game always returned `hasPlayer: false`, so every refresh forced a brand-new character. It now looks up the player by install ID + username and returns your saved character if one exists.
-- **Auto-save is now tied to commands.** After every successful command, the client sends the updated player state to the server in the background. You no longer have to remember to open the menu to save.
-- **Continue / New Game is accurate.** The main menu now displays **Continue from save** when a slot exists, and **New Game** otherwise.
-- **Save on tab close / minimize.** When the page hides (`visibilitychange`), we attempt one last background sync so you don’t lose the last thing you did.
-- **Stronger fallback.** The save key is built from `context.username` + `context.installId`, and the server falls back to `postId` if needed, so reinstalls or cross-tabs are handled more gracefully.
-- **localStorage is no longer the source of truth.** Reddit’s iframe frequently clears localStorage, so we stopped relying on it and moved persistence to the server-side store.
+### 2. NPC Conversation System Overhauled
 
-### What this fixes
+Players reported that NPCs “act like bots” — they never started talking, replies were repetitive, and conversations felt disconnected.
 
-- “I have to start a new game every time I refresh.” ❌
-- “My save disappears when I close the tab.” ❌
-- “I refreshed and my character was gone.” ❌
+**Root Cause**
 
----
+- `talk` / `greet` commands set `currentConversation` but never cleared it, so commands were swallowed after a goodbye.
+- Replies came from 3–5 keyword-matched strings with no context, relationship, mood, or world-state influence.
+- NPCs never greeted the player first; they only responded after the player spoke.
+- No location gating meant players could talk to NPCs anywhere in the world instantly.
+- `text [contact]` was broken because relationships were stored as a plain object, not a `Map`, returning neutral replies for everyone.
 
-## 🗣️ NPC Conversation Overhaul
+**What Changed**
 
-### What changed
+- Added `generateGreeting()` to the conversation engine so NPCs can open dialogue contextually when `talk` or `greet` begins.
+- `talk` and `greet` now emit a greeting line immediately, then keep the conversation open for the player’s next input.
+- Farewells and conversation-end commands now properly clear `currentConversation`, freeing the command input.
+- Replies now incorporate:
+  - NPC mood & relationship toward the player
+  - Current city and district
+  - Time of day
+  - Faction allegiance
+  - Memory of recent interactions
+- Added cooldowns and location logic so NPCs react differently based on schedule context and proximity.
+- Fixed `text` / SMS responses by reading relationships through `npc.relationship` (numeric) instead of a non-existent `Map` method.
+- Social commands now validate the NPC is reachable before responding.
 
-- **talk [name] now initiates a real greeting.** When you use `talk [npc]`, the NPC opens with a contextual greeting based on their role, mood, relationship with you, district, and time of day.
-- **NPCs react differently when you greet them.** `greet [npc]` now advances the conversation and yields a role-aware response instead of silence.
-- **Conversations can actually end.** Saying **bye, goodbye, exit, leave, later, im out, or ima head out** now clears `currentConversation` and returns you to normal command mode.
-- **The conversation engine now tracks flow state.** It records the last NPC question and will occasionally ask you one back, keeping exchanges from feeling one-sided.
+### 3. Cohesion & Stability
 
-### What this fixes
-
-- “NPCs don’t talk or respond.” ❌
-- “NPCs act like bots.” ❌
-- “I got stuck in conversation mode and couldn’t do anything.” ❌
-
----
-
-## 📱 Other Fixes
-
-- **`text [name]` SMS system fixed** — was trying to call `.get()` on a plain object, causing every NPC to return the same neutral reply. It now reads relationship correctly and gives relationship-aware responses.
-- **Removed dead `src/server/server.ts` duplicate** — there were two server files with conflicting logic. The real entry point is `src/server/index.ts`.
-- **README command list synchronized** with the dispatcher so in-game `/help` and the docs finally agree.
-- **Version bumped to v0.99.1** across the client menu, server, and docs.
+- Updated `file docs/UPDATE-LOGS.md`, `file docs/bugs.md`, and this release note.
+- Bumped version indicator strings to `0.99.1` across the client.
+- Cleaned stale audit files and outdated comments.
+- Verified with `npm run type-check` and `npm run build`. No compile-time errors.
 
 ---
 
 ## ⚠️ Known Limitations
 
-- **First-time players still start fresh** — this is intentional. Once you complete character creation and issue your first command, auto-save takes over.
-- **Devvit fullscreen remains restricted** by Reddit’s iframe sandbox; this is outside our control.
-- **Cross-device resume** is currently keyed to your Reddit account + install ID. Playing on a different browser or app install may not carry the same save.
+- **Reddit iframe localStorage:** The game still runs in Reddit’s sandbox, so `localStorage` is cleared across sessions. Progress relies on Reddit Devvit Redis, which is why the server-side save path had to be hardened.
+- **Old saves created before v0.99.1:** They will be detected automatically if they live in Redis slot 1. If a player created multiple manual slots, only slot 1 is checked at startup; other slots remain accessible through the load flow.
+- **First-load latency:** The save probe on the landing screen adds one async roundtrip, but it eliminates the “fresh game every refresh” bug.
 
 ---
 
-## What’s Next
+## 📋 Dev Notes for Rebuild
 
-Now that saves and conversations are stable, we’re shifting focus back to:
+For future reference, the save loop now works like this:
 
-- More dynamic storylines and world events
-- Expanded faction interactions
-- Improved phone/email UX
-- Vehicle racing and property investments
+1. Client loads and calls `GET /api/init`.
+2. Server checks Redis for `save:<username>:1` → if found, returns `hasPlayer: true` + player JSON.
+3. Client renders **Continue** or **New Game**.
+4. If Continue or auto-load, `clientLoad(1)` hydrates `state.player` from Redis.
+5. Every command response includes the updated player state; on success the client immediately calls `clientSave(1, state.player)`.
+6. If the save fails, the client logs the error in the game console and retries on the next command.
+
+The conversation loop now works like this:
+
+1. Player uses `talk [name]` or `greet [name]`.
+2. Server validates location/proximity and starts a conversation context.
+3. Server emits an NPC greeting line generated from mood, place, time, faction, and relationship.
+4. Player’s next free-text input is routed through the conversation engine instead of the regular command dispatcher.
+5. Replies use contextual branch logic and memory.
+6. Farewell commands clear the conversation context and restore normal command input.
 
 ---
 
-## Thank You
+## 🙏 Community
 
-Special thanks to everyone who reported the save-wipe and robot-NPC issues. Your screenshots and reproduction steps made this patch possible.
+Thanks to everyone who reported the save wipes and NPC behavior issues. This rebuild targets the exact failure points raised by players.
 
-**— THE OPEN WORLD dev team**
+Next up: expanded international mission strings and the vehicle racing system.
+
+— THE OPEN WORLD Dev Team

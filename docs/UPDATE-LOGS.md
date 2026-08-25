@@ -1,3 +1,22 @@
+## v0.99.1 — Save System Rebuild + NPC Conversation Overhaul
+Fetched: August 25, 2026
+
+### Fixed
+- Save loss on refresh: Redis slot 1 is now checked on `GET /api/init`; existing saves return the player object.
+- Auto-load at startup: client queries slot 1 and renders Continue when a save is found.
+- Auto-save after every successful command via fire-and-forget `clientSave(1, state.player)` call inside `handleCommand`.
+- Dead duplicate `src/server/server.ts` removed; no more conflicting legacy endpoints.
+- NPCs now speak first: `greet [name]` returns a contextual greeting from `conversationEngine.generateGreeting()`.
+- `talk [name]` is fully wired to the conversation engine and updates returned `player` state.
+- Conversation lock cleared by `farewell`/`bye`/`goodbye`, preventing commands from being swallowed.
+- `text [npc] [message]` fixed to use `commHub.getContacts()` instead of the non-existent `.get()` method.
+
+### Changed
+- Save flow now uses explicit slot `1` for the primary save.
+
+### Files touched
+- `src/client/game.ts`, `src/server/index.ts`, `src/server/game-engine.ts`, `src/server/conversation-engine.ts`, `src/server/comm-hub.ts`
+
 
 ## v0.99.1 - Save & Conversation Rebuild (2026-08-24)
 - **Save system**: server-side Redis as authoritative store (slot 1 auto-save), localStorage as offline fallback, automatic save detection on splash screen, auto-save after every command/window unload.

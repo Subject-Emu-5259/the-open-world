@@ -18,6 +18,66 @@
     "dir": "dist/server",
     "entry": "index.js"
   },
+  "permissions": {
+    "http": {
+      "enable": true,
+      "domains": [
+        "api-inference.huggingface.co",
+        "openrouter.ai",
+        "api.groq.com",
+        "generativelanguage.googleapis.com"
+      ]
+    },
+    "redis": true
+  },
+  "settings": {
+    "global": {
+      "hfApiKey": {
+        "type": "string",
+        "label": "Hugging Face API Key",
+        "isSecret": true,
+        "defaultValue": ""
+      },
+      "hfModel": {
+        "type": "string",
+        "label": "Hugging Face Model",
+        "defaultValue": "HuggingFaceH4/zephyr-7b-beta"
+      },
+      "openrouterApiKey": {
+        "type": "string",
+        "label": "OpenRouter API Key",
+        "isSecret": true,
+        "defaultValue": ""
+      },
+      "openrouterModel": {
+        "type": "string",
+        "label": "OpenRouter Model",
+        "defaultValue": "huggingfaceh4/zephyr-7b-beta:free"
+      },
+      "groqApiKey": {
+        "type": "string",
+        "label": "Groq API Key",
+        "isSecret": true,
+        "defaultValue": ""
+      },
+      "groqModel": {
+        "type": "string",
+        "label": "Groq Model",
+        "defaultValue": "llama3-8b-8192"
+      },
+      "geminiApiKey": {
+        "type": "string",
+        "label": "Google Gemini API Key",
+        "isSecret": true,
+        "defaultValue": ""
+      },
+      "geminiModel": {
+        "type": "string",
+        "label": "Gemini Model",
+        "defaultValue": "gemini-1.5-flash-latest"
+      }
+    }
+  },
   "menu": {
     "items": [
       {

@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.101.0
+// Version: 0.102.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -650,6 +650,16 @@ ${'\u2500'.repeat(50)}
     }
 
     const rel = this.player.relationships[npc.id]!;
+
+    // Once the player has created a named character, treat the world as
+    // having introduced themselves off-screen. This fixes the "Name's
+    // Marcus. What's yours?" loop while still allowing natural conversation.
+    if (this.player.name && this.player.name !== 'Traveler') {
+      if (!rel.flags.includes('knows_name')) rel.flags.push('knows_name');
+      const knownFlag = rel.flags.find((f: string) => f.startsWith('known_name:'));
+      if (!knownFlag) rel.flags.push(`known_name:${this.player.name}`);
+    }
+
     this.player.currentConversation = { npcId: npc.id, npcName: npc.name };
 
     // NPC speaks first so "talk" doesn't feel like talking to a bot
@@ -658,6 +668,10 @@ ${'\u2500'.repeat(50)}
     rel.value = Math.max(-100, Math.min(100, rel.value + opening.relationshipChange));
     rel.lastInteracted = Date.now();
     npc.relationship = rel.value;
+
+    // Remember the greeting so follow-up replies can reference it.
+    rel.memory.push({ role: 'npc', content: opening.text, timestamp: Date.now() });
+    if (rel.memory.length > 20) rel.memory = rel.memory.slice(-20);
 
     return {
       success: true,
@@ -704,11 +718,8 @@ ${'\u2500'.repeat(50)}
     rel.lastInteracted = Date.now();
     npc.relationship = rel.value;
 
-    // Remember the exchange
-    rel.memory.push({ role: 'player', content: input, timestamp: Date.now() });
-    rel.memory.push({ role: 'npc', content: response.text, timestamp: Date.now() });
-    if (rel.memory.length > 20) rel.memory = rel.memory.slice(-20);
-    
+    // Conversation engine already records memory internally. We keep the
+    // relationship object normalized here and trust the engine's transcript.
     let finalMessage = response.text;
     
     // Handle Quest Trigger
@@ -2110,11 +2121,23 @@ Commands:
   setPlayerName(name: string): void { this.player.name = name; }
 
   private getTimeCtx() {
+    const now = this.time.currentTime;
     return {
       hour: this.time.getHour(),
       timeOfDay: this.time.getTimeOfDay(),
       isWeekend: this.time.isWeekend(),
+      dayOfWeek: now.toLocaleDateString('en-US', { weekday: 'long' }),
+      weather: this.getWeatherString(),
     };
+  }
+
+  private getWeatherString(): string {
+    try {
+      const weather = getWeather(this.time.currentTime, this.player.city);
+      return `${weather.temp}°F, ${weather.condition}`;
+    } catch {
+      return 'clear';
+    }
   }
   
   loadState(state: any): void { 
@@ -2138,6 +2161,19 @@ Commands:
       // Preserve relationships as a plain JSON-safe record
       relationships: state.relationships || {},
     }; 
+
+    // Sync NPC relationship values to the player's saved relationships so the
+    // singleton social engine reports the current standing in `people`,
+    // `explore`, and other commands that look at NPC objects directly.
+    if (this.player.relationships) {
+      for (const [npcId, rawRel] of Object.entries(this.player.relationships)) {
+        const rel = rawRel as Relationship;
+        const npc = this.social.getNPCById(npcId);
+        if (npc && rel && typeof rel.value === 'number') {
+          npc.relationship = rel.value;
+        }
+      }
+    }
     
     if (state.achievements) {
       this.achievementEngine.importSerializable(state.achievements);

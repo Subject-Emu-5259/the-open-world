@@ -1,7 +1,7 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.99.2
+**Version**: 0.102.0
 **Last Updated**: August 25, 2026
 
 ---
@@ -56,7 +56,7 @@
 
 ## Latest Release
 
-- **v0.99.2** — Server-first save flow + NPC greeting/farewell polish. See `docs/RELEASE-NOTES-v0.99.2.md`.
+- **v0.102.0** — Serverless LLM NPC brain + rebuilt save flow. See `docs/RELEASE-NOTES-v0.102.0.md`.
 
 ---
 

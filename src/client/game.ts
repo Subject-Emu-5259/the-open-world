@@ -632,6 +632,18 @@ function renderUpdatesScreen() {
       
               <div class="updates-container">
         <div class="update-item">
+          <span class="update-version">v0.102.0</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>🤖 <strong>Serverless LLM NPC Brain</strong> — NPCs can now be powered by Hugging Face, OpenRouter, Groq, or Google Gemini free tiers for natural, in-character replies that remember your name and recent conversation.</li>
+            <li>💾 <strong>Save Flow Hardened</strong> — Redis saves use a stable user key, 30-day expiration, and a synchronous server beacon flush on refresh/close so progress is far less likely to vanish.</li>
+            <li>🧠 <strong>NPC Memory Sync</strong> — Singleton social engine now syncs standing from the player's saved relationships; no more "I'm Marcus, who are you?" loops after reload.</li>
+            <li>🐛 <strong>Type-Safe Fixes</strong> — Cleaned up implicit any casts and relationship-record typing caught by the TypeScript build.</li>
+            <li>🛠️ <strong>Fallback Always Works</strong> — If no API key is configured or the LLM call fails, the local reply generator still handles greetings, names, small talk, questions, and farewells.</li>
+          </ul>
+        </div>
+        
+        <div class="update-item">
           <span class="update-version">v0.99.3</span>
           <span class="update-date">August 25, 2026</span>
           <ul>
@@ -1526,17 +1538,41 @@ document.addEventListener('keydown', (e) => {
 // ============================================
 
 
+// Flush both localStorage and the authoritative server save before the player leaves.
+function flushSaveToLocal(): void {
+  if (!state.player) return;
+  try {
+    const saves = clientLoadAll();
+    saves[1] = { ...state.player, savedAt: Date.now() };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+  } catch (e) {
+    console.warn('[flushSave] local save failed', e);
+  }
+}
+
+function flushSaveToServer(): boolean {
+  if (!state.player) return false;
+  try {
+    const payload = JSON.stringify({ slot: 1, player: state.player });
+    return navigator.sendBeacon('/api/save', new Blob([payload], { type: 'application/json' }));
+  } catch (e) {
+    console.warn('[flushSave] server beacon failed', e);
+    return false;
+  }
+}
+
+function flushSave(): void {
+  flushSaveToLocal();
+  flushSaveToServer();
+}
+
 // Save progress when the user leaves/closes the game window
-window.addEventListener('beforeunload', () => {
-  if (state.player) {
-    // Synchronous localStorage flush; server sync is done via clientSave async
-    try {
-      const saves = clientLoadAll();
-      saves[1] = { ...state.player, savedAt: Date.now() };
-      localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
-    } catch (e) {
-      console.warn('[beforeunload] local save failed', e);
-    }
+window.addEventListener('beforeunload', flushSave);
+
+// Also flush when the tab is hidden (mobile app switching, etc.)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && state.player) {
+    flushSave();
   }
 });
 

@@ -1,10 +1,12 @@
 import type { NPCState } from './social-engine.js';
 import type { Relationship, Player } from '../shared/types.js';
+import { fetchNPCReply } from './llm-provider.js';
 
 export interface GameTimeContext {
   timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
   dayOfWeek?: string;
   weather?: string;
+  hour?: number;
   isWeekend: boolean;
 }
 
@@ -25,55 +27,84 @@ export interface NPCReplyResult {
 /**
  * Best-effort contextual NPC reply generator.
  *
- * This bridge is intentionally local so the game does not depend on an
- * external AI service. It uses the conversation memory, relationship value,
- * NPC personality, and recent player input to produce a believable line.
- *
- * If it cannot produce a strong reply it returns `null`, and the caller
- * falls back to the richer template pipeline in conversation-engine.ts.
+ * v3 now delegates to a serverless LLM backend (HuggingFace preferred, with
+ * OpenRouter / Groq / Gemini fallbacks). If no API key is configured, the LLM
+ * call fails, or the response is malformed, we fall back to the local template
+ * pipeline so the game keeps working offline.
  */
 export async function generateNPCReply(req: NPCReplyRequest): Promise<NPCReplyResult | null> {
+  const { npc, player, relationship: rel, playerInput, purpose } = req;
+  const input = playerInput.trim();
+
+  // Farewell — always allow a clean exit.
+  if (purpose === 'reply' && isFarewell(input.toLowerCase())) {
+    return { text: farewellLine(npc, rel, playerName(rel, player)) };
+  }
+
+  // Try the LLM brain first if any provider is configured.
+  try {
+    const ai = await fetchNPCReply(req);
+    if (ai?.text) return ai;
+  } catch (e) {
+    console.warn('[ai-npc-provider] LLM bridge failed, using local reply.', e);
+  }
+
+  // Local template fallback.
+  return localGenerateReply(req);
+}
+
+// ---------------------------------------------------------------------------
+// LOCAL TEMPLATE FALLBACK
+// ---------------------------------------------------------------------------
+
+function localGenerateReply(req: NPCReplyRequest): NPCReplyResult | null {
   const { npc, player, relationship: rel, playerInput, timeContext, purpose } = req;
   const input = playerInput.trim();
   const lower = input.toLowerCase();
-  const memory = rel.memory;
-
-  // Memory helpers
-  const lastNpc = memory.length > 0 ? memory[memory.length - 1] : null;
-  const lastQuestion = lastNpc?.role === 'npc' && lastNpc.content.includes('?') ? lastNpc.content : '';
-  const knowsName = rel.flags.includes('knows_name') || !!player?.name;
-  const playerName = player?.name || player?.firstName || 'stranger';
+  const knowsName = rel.flags.includes('knows_name') || rel.flags.some(f => f.startsWith('known_name:'));
+  const name = playerName(rel, player);
   const greeting = greetingWord(timeContext.timeOfDay);
 
-  // Farewell — always allow a clean exit.
-  if (['bye', 'goodbye', 'see ya', 'peace', 'later', 'im out', "i'm out", 'gotta go', 'head out'].some(w => lower.includes(w))) {
-    return { text: farewellLine(npc, rel, playerName) };
+  if (purpose === 'greeting' || isGreeting(lower)) {
+    return { text: greetingLine(npc, rel, knowsName, name, greeting) };
   }
 
-  // Greeting branch
-  if (purpose === 'greeting' || (purpose === 'reply' && isGreeting(lower))) {
-    return { text: greetingLine(npc, rel, knowsName, playerName, greeting) };
-  }
-
-  // Name introduction
   const extractedName = extractName(input);
   if (extractedName) {
     return { text: introductionLine(npc, extractedName, greeting), learnedName: extractedName };
   }
 
-  // Answer to a direct yes/no question
+  const lastQuestion = recallLastQuestion(rel.memory);
   if (lastQuestion && (isAffirmative(lower) || isNegative(lower))) {
-    return { text: answerLine(npc, rel, lower, lastQuestion, playerName) };
+    return { text: answerLine(npc, rel, lower, lastQuestion, name) };
   }
 
-  // Small-talk continuation
   if (isSmallTalk(lower)) {
-    return { text: smallTalkLine(npc, rel, playerName, lower) };
+    return { text: smallTalkLine(npc, rel, name, lower) };
   }
 
-  // Generic contextual reply (weak fallback)
-  return genericReply(npc, rel, playerName, lower);
+  return genericReply(npc, rel, name, lower);
 }
+
+function recallLastQuestion(messages: { role: string; content: string }[]): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (m && m.role === 'npc' && m.content.includes('?')) return m.content;
+  }
+  return '';
+}
+
+function playerName(rel: Relationship, player: Player): string {
+  if (player?.name && player.name !== 'Traveler') return player.name;
+  const known = rel.flags.find(f => f.startsWith('known_name:'));
+  if (known) return known.replace('known_name:', '');
+  if (player?.firstName) return player.firstName;
+  return '';
+}
+
+function npcName(npc: NPCState): string { return npc.firstName || npc.name.split(' ')[0] || npc.name; }
+
+function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)] as T; }
 
 function greetingWord(tod: string): string {
   switch (tod) {
@@ -91,6 +122,10 @@ function isGreeting(lower: string): boolean {
   );
 }
 
+function isFarewell(lower: string): boolean {
+  return ['bye', 'goodbye', 'see ya', 'peace', 'later', 'im out', "i'm out", 'gotta go', 'head out', 'ima head out'].some(w => lower.includes(w));
+}
+
 function isAffirmative(lower: string): boolean {
   return ['yeah', 'yes', 'yep', 'yup', 'sure', 'definitely', 'absolutely', 'of course', 'right', 'correct', 'true', 'indeed', 'bet', 'aight', 'alright', 'okay', 'ok'].some(w =>
     lower === w || lower.startsWith(w + ' ') || lower.endsWith(' ' + w)
@@ -104,43 +139,50 @@ function isNegative(lower: string): boolean {
 }
 
 function isSmallTalk(lower: string): boolean {
-  return ['how are you', 'hows it going', "how's it going", 'how you been', 'how you doing', 'whats good', "what's good", 'nothing much', 'not much', 'same old', 'chillin', 'chilling', 'im good', "i'm good", 'doing good', 'fine', 'alright', 'okay', 'ok'].some(w =>
-    lower.includes(w)
-  );
+  return ['how are you', 'hows it going', "how's it going", 'how you been', 'how you doing', 'whats good', "what's good", 'nothing much', 'not much', 'same old', 'chillin', 'chilling', 'im good', "i'm good", 'doing good', 'fine', 'alright', 'okay', 'ok'].some(w => lower.includes(w));
 }
 
 function extractName(input: string): string | null {
   const patterns = [
-    /^(?:i['’]?m|i am)\s+([a-z\s'-]{2,30})$/i,
-    /^(?:call me|my name is|name is)\s+([a-z\s'-]{2,30})$/i,
+    /(?:i['’]?m|i am)\s+([a-z][a-z\s'-]{1,29})/i,
+    /(?:call me|my name is|name is)\s+([a-z][a-z\s'-]{1,29})/i,
   ];
   for (const p of patterns) {
     const m = input.match(p);
-    if (m && m[1]) return m[1].trim().replace(/\s+/g, ' ');
+    if (m && m[1]) {
+      const extracted = m[1].trim().replace(/\s+/g, ' ');
+      if (extracted.length > 1) return extracted;
+    }
   }
   return null;
 }
 
-function npcName(npc: NPCState): string { return npc.firstName || npc.name.split(' ')[0] || npc.name; }
-
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)] as T;
+function greetingLine(npc: NPCState, rel: Relationship, knowsName: boolean, playerName: string, greeting: string): string {
+  if (rel.value > 50 && knowsName && playerName) {
+    return pick([
+      `"What's good, ${playerName}! Good ${greeting} to you."`,
+      `"There they go — ${playerName}! Good ${greeting}, fam."`,
+    ]);
+  }
+  if (rel.value > 0 && knowsName && playerName) {
+    return pick([
+      `"${playerName}, good ${greeting}. What brings you around today?"`,
+      `"Good ${greeting}, ${playerName}. You out here handling business?"`,
+    ]);
+  }
+  if (knowsName && playerName) {
+    return pick([
+      `"Oh, ${playerName}. Didn't expect to see you. Good ${greeting}."`,
+      `"${playerName}. Good ${greeting}. What's on your mind?"`,
+    ]);
+  }
+  return pick([
+    `"Good ${greeting}. I'm ${npcName(npc)}. I don't think we've met — what's your name?"`,
+    `"${npcName(npc)} here. Good ${greeting}. You new around here?"`,
+  ]);
 }
 
-function greetingLine(npc: NPCState, rel: Relationship, knowsName: boolean, playerName: string, greeting: string): NPCReplyResult['text'] {
-  if (rel.value > 50 && knowsName) {
-    return `"What's good, ${playerName}! Good ${greeting} to you."`;
-  }
-  if (rel.value > 0 && knowsName) {
-    return `"${playerName}, good ${greeting}. What brings you around today?"`;
-  }
-  if (knowsName) {
-    return `"Oh, ${playerName}. Didn't expect to see you. Good ${greeting}."`;
-  }
-  return `"Good ${greeting}. I'm ${npcName(npc)}. I don't think we've met — what's your name?"`;
-}
-
-function introductionLine(npc: NPCState, extractedName: string, greeting: string): NPCReplyResult['text'] {
+function introductionLine(npc: NPCState, extractedName: string, greeting: string): string {
   return pick([
     `"${extractedName}, nice to meet you. I'm ${npcName(npc)}. Good ${greeting}."`,
     `"Pleasure, ${extractedName}. I'm ${npcName(npc)}. I'll remember that."`,
@@ -148,8 +190,9 @@ function introductionLine(npc: NPCState, extractedName: string, greeting: string
   ]);
 }
 
-function farewellLine(npc: NPCState, rel: Relationship, playerName: string): NPCReplyResult['text'] {
-  const name = rel.flags.includes('knows_name') ? playerName : '';
+function farewellLine(npc: NPCState, rel: Relationship, playerName: string): string {
+  const knowsName = rel.flags.includes('knows_name') || rel.flags.some(f => f.startsWith('known_name:'));
+  const name = knowsName ? playerName : '';
   return pick([
     name ? `"Take care, ${name}. Catch you around."` : '"Take care. Catch you around."',
     `"Stay safe out there${name ? ', ' + name : ''}."`,
@@ -157,9 +200,10 @@ function farewellLine(npc: NPCState, rel: Relationship, playerName: string): NPC
   ]);
 }
 
-function answerLine(npc: NPCState, rel: Relationship, lower: string, lastQuestion: string, playerName: string): NPCReplyResult['text'] {
+function answerLine(npc: NPCState, rel: Relationship, lower: string, lastQuestion: string, playerName: string): string {
   const affirmative = isAffirmative(lower);
-  const name = rel.flags.includes('knows_name') ? playerName : '';
+  const knowsName = rel.flags.includes('knows_name') || rel.flags.some(f => f.startsWith('known_name:'));
+  const name = knowsName ? playerName : '';
 
   if (lastQuestion.includes('name')) {
     return name
@@ -177,15 +221,16 @@ function answerLine(npc: NPCState, rel: Relationship, lower: string, lastQuestio
     return `"No pressure. The offer stands."`;
   }
 
-  if (affirmative) return `"Aight, noted."`;
-  return `"I feel you."`;
+  if (affirmative) return `"Aight${name ? ' ' + name : ''}, noted."`;
+  return `"I feel you${name ? ', ' + name : ''}."`;
 }
 
-function smallTalkLine(npc: NPCState, rel: Relationship, playerName: string, lower: string): NPCReplyResult['text'] {
-  const name = rel.flags.includes('knows_name') ? playerName : '';
+function smallTalkLine(npc: NPCState, rel: Relationship, playerName: string, lower: string): string {
+  const knowsName = rel.flags.includes('knows_name') || rel.flags.some(f => f.startsWith('known_name:'));
+  const name = knowsName ? playerName : '';
   if (lower.includes('how are you') || lower.includes('hows it') || lower.includes("how's it")) {
     return pick([
-      `"Can't complain. You know how it is — same grind, different day${name ? ', ' + name : ''}."`,
+      `"Can't complain${name ? ', ' + name : ''}. You know how it is — same grind, different day."`,
       `"I'm good${name ? ', ' + name : ''}. Just keeping busy. How about yourself?"`,
     ]);
   }
@@ -196,10 +241,17 @@ function smallTalkLine(npc: NPCState, rel: Relationship, playerName: string, low
 }
 
 function genericReply(npc: NPCState, rel: Relationship, playerName: string, lower: string): NPCReplyResult | null {
-  // Only reply generically if we have a name; otherwise keep prompting for it.
-  if (!rel.flags.includes('knows_name')) return null;
-  const name = playerName;
+  const knowsName = rel.flags.includes('knows_name') || rel.flags.some(f => f.startsWith('known_name:'));
 
+  if (!knowsName) {
+    // Keep prompting for a name naturally.
+    return { text: pick([
+      `"I didn't catch your name. What was it again?"`,
+      `"Sorry — I'm bad with faces. Who are you?"`,
+    ]) };
+  }
+
+  const name = playerName;
   if (rel.value > 30) {
     return { text: pick([
       `"${name}, you always got something interesting to say. Go on."`,

@@ -1,5 +1,7 @@
 # THE OPEN WORLD — Roadmap
 
+- **August 25, 2026 (v0.102.0)**: Added a serverless LLM NPC reply bridge (`src/server/llm-provider.ts`, `src/server/ai-npc-provider.ts`) with Hugging Face as the preferred provider and OpenRouter, Groq, and Gemini free-tier fallbacks. Added `POST /api/npc-reply` to `src/server/index.ts` so NPCs can be queried directly for natural, in-character replies. API keys are managed via Devvit global settings. If no key is configured or all providers fail, the local template generator still runs. `npm run type-check` and `npm run build` passed. Devvit publish pending fresh Reddit OAuth login in this environment.
+
 - **August 25, 2026 (v0.101.0)**: Fixed the NPC conversation amnesia bug. Converted player relationships from a JavaScript `Map` to a JSON-safe plain record so relationship value, flags, and memory survive between commands and refresh. This fixes the loop where NPCs repeated greetings and forgot player intros. Type-check and build passed. Submitted v0.100.0 to Devvit for review.
 
 - **August 24, 2026 (v0.99.0)**: Added 10 new international NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events. `npm run type-check` and `npm run build` passed. Devvit publish pending because the Devvit CLI requires a fresh Reddit OAuth login in this environment.
@@ -19,9 +21,9 @@
 
 ## Project Status
 
-- **August 25, 2026**: Rebuilt save system to survive browser refreshes in Reddit iframe. Server `GET /api/init` now checks Redis slot 1 and returns the existing player. Client auto-calls `clientLoad(1)` on startup and shows a Continue button when a save is found. Auto-save now fires after every successful command with fire-and-forget `clientSave(1, state.player)`. Removed dead duplicate `src/server/server.ts`. Overhauled NPC conversation flow: `greet` and `talk` now return updated `player` and call the real conversation engine; NPCs deliver contextual first-line greetings based on relationship and location; `farewell`/`bye`/`goodbye` correctly exit conversations so later commands aren't swallowed. Fixed `text [npc] [message]` to use `commHub.getContacts()` instead of a non-existent `.get()` method. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.: v0.99.0 — Global NPC & Random Event Expansion
-- **Current Focus**: Faction Wars & Political Influence Expansion
-- **Next Milestone**: Faction Wars & Political Influence Expansion
+- **August 25, 2026**: v0.102.0 — Serverless LLM NPC Brain. Wired NPC conversation engine to a serverless LLM bridge (Hugging Face preferred, OpenRouter/Groq/Gemini fallbacks). Added `POST /api/npc-reply`. Hardened server-authoritative save flow with stable user key, 30-day Redis expiration, and beacon flush on tab close. Fixed NPC memory serialization by keeping relationships as JSON-safe records. NPC greetings now use the saved relationship and learned names. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.
+- **Current Focus**: Serverless LLM NPC Brain & Save Flow Hardening
+- **Next Milestone**: Natural NPC Replies with Free-Tier LLMs
 
 ## Validation Notes
 - **August 24, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_314–npc_323) covering Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.99.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
@@ -167,7 +169,7 @@
 
 ## Development Notes
 
-- **Project**: `/home/workspace/the-open-world/`
+- **Project**: `/home/workspace/Projects/the-open-world/`
 - **Platform**: Devvit (Reddit)
 - **TypeScript**: ✅ Passing
 - **Architecture**: Stateless (client-side state)

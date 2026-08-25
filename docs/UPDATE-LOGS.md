@@ -1,3 +1,62 @@
+## v0.102.0 — Serverless LLM NPC Brain + Save Flow Rebuild
+Fetched: August 25, 2026
+
+### Fixed
+- NPC conversation loop where NPCs repeated the same greeting/name-ask lines.
+- Save identity key now uses `userId ?? username ?? loid ?? player` for stability.
+- Server-side save is compressed, expires after 30 days, and writes before the response returns.
+- Client flush on tab close/refresh uses `navigator.sendBeacon` as a backup to the per-command auto-save.
+- `relationships` command added so players can inspect their NPC standings.
+
+### Added
+- `src/server/llm-provider.ts`: Hugging Face preferred, with OpenRouter, Groq, and Gemini fallbacks.
+- API keys configured through Devvit global settings (`hfApiKey`, `openrouterApiKey`, `groqApiKey`, `geminiApiKey`).
+- LLM prompt includes NPC identity, city/district, time, weather, relationship, and recent memory.
+- Automatic fallback to the local template generator when no LLM key is set or all providers fail.
+- `POST /api/npc-reply` route added to `src/server/index.ts` for direct NPC reply queries.
+- Environment model overrides: `HF_NPC_MODEL`, `OPENROUTER_NPC_MODEL`, `GROQ_NPC_MODEL`, `GEMINI_NPC_MODEL`.
+
+
+### Changed
+- `src/server/ai-npc-provider.ts`: calls `fetchNPCReply` first, then falls back to local templates; farewell handled locally for clean exits.
+- `src/server/game-engine.ts`: stable save key helper; relationship sync from saved state into NPC objects; name flag initialization at conversation start.
+- `src/server/index.ts`: uses `redisCompressed`, 30-day expiration, stable user key.
+- `src/server/conversation-engine.ts`: improved memory recording and learned-name handling.
+- `src/client/game.ts`: `sendBeacon` flush, version log updated.
+- `src/shared/version.ts` and `package.json` bumped to `0.102.0`.
+- `devvit.json`: added `permissions.http` for LLM domains and `settings.global` for API keys.
+- `src/server/index.ts`: added `/api/npc-reply` route using current server time context.
+
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
+## Added
+- `src/server/llm-provider.ts`: serverless LLM bridge (Hugging Face preferred, with OpenRouter, Groq, and Gemini fallbacks).
+- `src/server/ai-npc-provider.ts`: now tries the LLM bridge first and gracefully falls back to the local template pipeline.
+- Environment overrides for LLM models: `HF_NPC_MODEL`, `OPENROUTER_NPC_MODEL`, `GROQ_NPC_MODEL`, `GEMINI_NPC_MODEL`.
+
+### Fixed
+- Save identity now uses `userId → username → loid → player` priority, so progress binds to the Reddit account instead of a volatile display name.
+- `navigator.sendBeacon` fires on `beforeunload` and `visibilitychange` to flush progress to the server before the tab dies.
+- `loadState` now restores each NPC's relationship value from the saved player record.
+- NPC name recognition runs in the LLM parser and the local fallback; name loops are eliminated.
+
+### Changed
+- `src/server/index.ts`: `redisCompressed` import, `saveKey()` helper, 30-day Redis expiration, `serverSavePlayer` / `serverLoadPlayer` helpers.
+- `src/server/game-engine.ts`: added `relationships` command, patched type-strict relationship casts, and seeded `knows_name`/`known_name` on first talk when the player already has a name.
+- `src/client/game.ts`: beacon flush, v0.102.0 update-log entry.
+- `src/shared/version.ts`, `package.json` bumped to `0.102.0`.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
 ## v0.101.0 — NPC Memory & Save Persistence Overhaul
 Fetched: August 25, 2026
 

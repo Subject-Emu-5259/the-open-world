@@ -1,19 +1,52 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createServer, getServerPort, context, reddit } from "@devvit/web/server";
-import { redis } from "@devvit/redis";
+import { redisCompressed as redis } from "@devvit/redis";
 import { GameEngine } from "./game-engine.js";
 
-console.log("[server] THE OPEN WORLD module loaded - STATELESS MODE");
+// NEW imports for serverless NPC reply endpoint
+import { generateNPCReply, type GameTimeContext } from "./ai-npc-provider.js";
+import type { NPCState } from "./social-engine.js";
+import type { Player, Relationship } from "../shared/types.js";
 
-// Single game engine instance (stateless - client sends state)
+console.log("[server] THE OPEN WORLD module loaded - v0.102.0 - STATELESS MODE");
+
+// Single game engine instance (stateless - client sends state).
+// Client ships full player state on every request, so a singleton is safe for
+// the current process while still being server-authoritative.
 const game = new GameEngine();
-async function serverSavePlayer(username: string, player: any, slot = "1"): Promise<void> {
+
+function saveKey(slot = "1"): string {
+  // Prefer the immutable Reddit user id, then username, then LOID (logged-out),
+  // then fall back to a shared placeholder. This keeps saves stable even if
+  // usernames change and avoids collisions with logged-out traffic.
+  const user = context.userId ?? context.username ?? context.loid ?? "player";
+  return `tow:${user}:save:${slot}`;
+}
+
+async function serverSavePlayer(player: any, slot = "1"): Promise<void> {
   try {
-    await redis.set(`${username}_save_${slot}`, JSON.stringify(player));
-    console.log(`[server] Authoritative save: ${username} slot ${slot}`);
+    const payload = JSON.stringify({ ...player, lastSaved: Date.now() });
+    await redis.set(saveKey(slot), payload, {
+      expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    });
+    console.log(`[server] Authoritative save: ${saveKey(slot).replace(/^tow:([^:]+):save:.*/, '$1')}`);
   } catch (e) {
     console.error("[server] Authoritative save failed:", e);
   }
+}
+
+async function serverLoadPlayer(slot = "1"): Promise<any | null> {
+  try {
+    const data = await redis.get(saveKey(slot));
+    if (data && typeof data === "string") {
+      const player = JSON.parse(data);
+      console.log(`[server] Loaded save: ${player.name}`);
+      return player;
+    }
+  } catch (e) {
+    console.error("[server] Authoritative load failed:", e);
+  }
+  return null;
 }
 
 export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse): Promise<void> {
@@ -39,25 +72,26 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
   try {
     // === MAIN GAME API ===
     if (pathname === "/api/init" && method === "GET") {
-      // Try to resume the user's most recent save (slot 1 is the auto-save slot)
-      const slot = url.searchParams.get("slot") || "1";
-      try {
-        const data = await redis.get(`${username}_save_${slot}`);
-        if (data) {
-          const player = JSON.parse(data);
-          console.log(`[server] GET /api/init resumed save for ${username} slot ${slot}: ${player.name}`);
-          rsp.writeHead(200, { "Content-Type": "application/json" });
-          rsp.end(JSON.stringify({
-            type: "init",
-            username,
-            hasPlayer: true,
-            player,
-            dashboard: buildHUD(player),
-          }));
-          return;
-        }
-      } catch (err) {
-        console.error("[server] Redis load error:", err);
+      // Try to resume the user's most recent save. Slot 1 is the auto-save
+      // slot; if it's empty we scan slots 1-3 for any available save.
+      const requestedSlot = url.searchParams.get("slot") || "1";
+      let player: any | null = null;
+
+      for (const slot of [requestedSlot, "1", "2", "3"]) {
+        player = await serverLoadPlayer(slot);
+        if (player) break;
+      }
+
+      if (player) {
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({
+          type: "init",
+          username,
+          hasPlayer: true,
+          player,
+          dashboard: buildHUD(player),
+        }));
+        return;
       }
 
       // No save found - client should show character creation
@@ -76,9 +110,8 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       const slots: Array<{ slot: string; hasSave: boolean; player?: any }> = [];
       try {
         for (let i = 1; i <= 3; i++) {
-          const data = await redis.get(`${username}_save_${i}`);
-          if (data) {
-            const player = JSON.parse(data);
+          const player = await serverLoadPlayer(String(i));
+          if (player) {
             slots.push({ slot: String(i), hasSave: true, player });
           } else {
             slots.push({ slot: String(i), hasSave: false });
@@ -107,10 +140,9 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       }
 
       try {
-        await redis.set(`${username}_save_${slot}`, JSON.stringify(player));
-        console.log(`[server] Saved player ${username} slot ${slot} to Redis`);
+        await serverSavePlayer(player, slot);
         rsp.writeHead(200, { "Content-Type": "application/json" });
-        rsp.end(JSON.stringify({ success: true }));
+        rsp.end(JSON.stringify({ success: true, slot }));
       } catch (err) {
         console.error("[server] Redis save error:", err);
         rsp.writeHead(500, { "Content-Type": "application/json" });
@@ -121,20 +153,14 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
 
     if (pathname === "/api/load" && method === "GET") {
       const slot = url.searchParams.get("slot") || "1";
+      const player = await serverLoadPlayer(slot);
 
-      try {
-        const data = await redis.get(`${username}_save_${slot}`);
-        if (data) {
-          rsp.writeHead(200, { "Content-Type": "application/json" });
-          rsp.end(JSON.stringify({ player: JSON.parse(data) }));
-        } else {
-          rsp.writeHead(404, { "Content-Type": "application/json" });
-          rsp.end(JSON.stringify({ error: "Save not found" }));
-        }
-      } catch (err) {
-        console.error("[server] Redis load error:", err);
-        rsp.writeHead(500, { "Content-Type": "application/json" });
-        rsp.end(JSON.stringify({ error: "Persistence failure" }));
+      if (player) {
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ player }));
+      } else {
+        rsp.writeHead(404, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "Save not found" }));
       }
       return;
     }
@@ -167,7 +193,7 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
         
         const player = game.getPlayer();
         
-        await serverSavePlayer(username, player);
+        await serverSavePlayer(player);
         
         rsp.writeHead(200, { "Content-Type": "application/json" });
         rsp.end(JSON.stringify({
@@ -182,7 +208,7 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       
       // No command - return current state
       const player = game.getPlayer();
-      await serverSavePlayer(username, player);
+      await serverSavePlayer(player);
       rsp.writeHead(200, { "Content-Type": "application/json" });
       rsp.end(JSON.stringify({
         type: "created",
@@ -190,6 +216,49 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
         dashboard: buildHUD(player),
         text: `🌍 Welcome to THE OPEN WORLD, ${player.name}!`,
       }));
+      return;
+    }
+    
+    // === SERVERLESS NPC REPLY API ===
+    if (pathname === "/api/npc-reply" && method === "POST") {
+      const body = await readBody(req);
+      const data = JSON.parse(body || "{}");
+      const input = String(data.input || data.playerInput || "").trim();
+      if (!input || !data.npc) {
+        rsp.writeHead(400, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "Missing npc or input" }));
+        return;
+      }
+
+      const now = new Date();
+      const hour = now.getHours();
+      let timeOfDay: GameTimeContext["timeOfDay"] = "night";
+      if (hour >= 5 && hour < 12) timeOfDay = "morning";
+      else if (hour >= 12 && hour < 17) timeOfDay = "afternoon";
+      else if (hour >= 17 && hour < 21) timeOfDay = "evening";
+
+      const timeContext: GameTimeContext = {
+        timeOfDay,
+        isWeekend: now.getDay() === 0 || now.getDay() === 6,
+        hour,
+      };
+
+      try {
+        const result = await generateNPCReply({
+          npc: data.npc as NPCState,
+          player: (data.player || {}) as Player,
+          relationship: (data.relationship || { value: 0, flags: [], memory: [] }) as Relationship,
+          playerInput: input,
+          timeContext,
+          purpose: data.purpose === "greeting" ? "greeting" : "reply",
+        });
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify(result || { text: "..." }));
+      } catch (err) {
+        console.error("[server] /api/npc-reply error:", err);
+        rsp.writeHead(500, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "NPC reply failed" }));
+      }
       return;
     }
     

@@ -35,8 +35,7 @@
       "hfApiKey": {
         "type": "string",
         "label": "Hugging Face API Key",
-        "isSecret": true,
-        "defaultValue": ""
+        "isSecret": true
       },
       "hfModel": {
         "type": "string",
@@ -46,8 +45,7 @@
       "openrouterApiKey": {
         "type": "string",
         "label": "OpenRouter API Key",
-        "isSecret": true,
-        "defaultValue": ""
+        "isSecret": true
       },
       "openrouterModel": {
         "type": "string",
@@ -57,8 +55,7 @@
       "groqApiKey": {
         "type": "string",
         "label": "Groq API Key",
-        "isSecret": true,
-        "defaultValue": ""
+        "isSecret": true
       },
       "groqModel": {
         "type": "string",
@@ -68,8 +65,7 @@
       "geminiApiKey": {
         "type": "string",
         "label": "Google Gemini API Key",
-        "isSecret": true,
-        "defaultValue": ""
+        "isSecret": true
       },
       "geminiModel": {
         "type": "string",

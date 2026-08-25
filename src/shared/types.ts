@@ -40,6 +40,18 @@ export type District =
   | 'camden' | 'soho' | 'shoreditch' | 'westminster'
   // Tokyo Districts
   | 'shibuya' | 'shinjuku' | 'roppongi' | 'akihabara'
+  // Paris Districts
+  | 'marais' | 'montmartre' | 'latin_quarter' | 'champs_elysees'
+  // Berlin Districts
+  | 'kreuzberg' | 'mitte' | 'neukolln' | 'prenzlauer_berg'
+  // Dubai Districts
+  | 'dubai_marina' | 'downtown_dubai' | 'palm_jumeirah' | 'deira'
+  // Mexico City Districts
+  | 'condesa' | 'polanco' | 'coyoacan' | 'zocalo'
+  // Toronto Districts
+  | 'distillery_district' | 'entertainment_district' | 'kensington_market' | 'yorkville'
+  // Sydney Districts
+  | 'the_rocks' | 'darling_harbour' | 'surry_hills' | 'bondi'
   // Generic (for cities without specific districts)
   | 'downtown_generic' | 'suburbs' | 'industrial' | 'uptown';
 
@@ -53,7 +65,7 @@ export interface PlayerSkills { charisma: number; tech: number; fitness: number;
 export interface Reputation { professional: number; social: number; criminal: number; community: number; }
 export interface Job { title: string; employer: string; tier: JobTier; dailyPay: number; skillReq: keyof PlayerSkills; skillReqValue: number; }
 export interface InventoryItem { id: string; name: string; type: string; value: number; condition: number; }
-export interface Vehicle { id: string; name: string; type: string; value: number; condition: number; }
+export interface Vehicle { id: string; name: string; type: string; value: number; condition: number; mileage: number; lastService: number; }
 export interface ConversationMessage { role: 'player' | 'npc' | 'system'; content: string; timestamp: number; }
 export interface Relationship { value: number; flags: string[]; metAt: number; lastInteracted: number; memory: ConversationMessage[]; }
 export interface Player {
@@ -220,6 +232,36 @@ export const DISTRICT_METADATA: Record<District, { city: City; displayName: stri
   shinjuku: { city: 'tokyo', displayName: 'Shinjuku', crimeRate: 20, communityRepBonus: 5, jobTypes: ['corporate', 'government', 'hospitality'], description: 'Busiest station.' },
   roppongi: { city: 'tokyo', displayName: 'Roppongi', crimeRate: 25, communityRepBonus: 0, jobTypes: ['finance', 'nightlife', 'expat'], description: 'Expat hub.' },
   akihabara: { city: 'tokyo', displayName: 'Akihabara', crimeRate: 10, communityRepBonus: 15, jobTypes: ['tech', 'retail', 'gaming'], description: 'Anime paradise.' },
+  // Paris
+  marais: { city: 'paris', displayName: 'Le Marais', crimeRate: 30, communityRepBonus: 10, jobTypes: ['fashion', 'creative', 'tourism'], description: 'Historic and trendy.' },
+  montmartre: { city: 'paris', displayName: 'Montmartre', crimeRate: 40, communityRepBonus: 15, jobTypes: ['art', 'tourism', 'hospitality'], description: 'Bohemian hilltop.' },
+  latin_quarter: { city: 'paris', displayName: 'Latin Quarter', crimeRate: 25, communityRepBonus: 20, jobTypes: ['education', 'creative', 'retail'], description: 'Student life.' },
+  champs_elysees: { city: 'paris', displayName: 'Champs-Élysées', crimeRate: 35, communityRepBonus: 0, jobTypes: ['luxury_retail', 'finance', 'tourism'], description: 'Iconic avenue.' },
+  // Berlin
+  kreuzberg: { city: 'berlin', displayName: 'Kreuzberg', crimeRate: 45, communityRepBonus: 20, jobTypes: ['creative', 'nightlife', 'service'], description: 'Alternative and edgy.' },
+  mitte: { city: 'berlin', displayName: 'Mitte', crimeRate: 30, communityRepBonus: 5, jobTypes: ['tech', 'government', 'professional'], description: 'Central business.' },
+  neukolln: { city: 'berlin', displayName: 'Neukölln', crimeRate: 50, communityRepBonus: 15, jobTypes: ['creative', 'service', 'retail'], description: 'Hip and diverse.' },
+  prenzlauer_berg: { city: 'berlin', displayName: 'Prenzlauer Berg', crimeRate: 20, communityRepBonus: 10, jobTypes: ['professional', 'service', 'education'], description: 'Gentrified families.' },
+  // Dubai
+  dubai_marina: { city: 'dubai', displayName: 'Dubai Marina', crimeRate: 10, communityRepBonus: 5, jobTypes: ['tourism', 'hospitality', 'real_estate'], description: 'Modern skyscrapers.' },
+  downtown_dubai: { city: 'dubai', displayName: 'Downtown Dubai', crimeRate: 15, communityRepBonus: 0, jobTypes: ['finance', 'corporate', 'luxury_retail'], description: 'Burj Khalifa area.' },
+  palm_jumeirah: { city: 'dubai', displayName: 'Palm Jumeirah', crimeRate: 5, communityRepBonus: 5, jobTypes: ['hospitality', 'luxury_service'], description: 'Artificial island.' },
+  deira: { city: 'dubai', displayName: 'Deira', crimeRate: 35, communityRepBonus: 15, jobTypes: ['trade', 'service', 'retail'], description: 'Historic market area.' },
+  // Mexico City
+  condesa: { city: 'mexico_city', displayName: 'La Condesa', crimeRate: 30, communityRepBonus: 15, jobTypes: ['creative', 'hospitality', 'professional'], description: 'Art deco and parks.' },
+  polanco: { city: 'mexico_city', displayName: 'Polanco', crimeRate: 20, communityRepBonus: 0, jobTypes: ['finance', 'luxury_retail', 'corporate'], description: 'Upscale and modern.' },
+  coyoacan: { city: 'mexico_city', displayName: 'Coyoacán', crimeRate: 25, communityRepBonus: 20, jobTypes: ['art', 'education', 'tourism'], description: 'Frida Kahlo neighborhood.' },
+  zocalo: { city: 'mexico_city', displayName: 'Zócalo', crimeRate: 45, communityRepBonus: 10, jobTypes: ['government', 'trade', 'tourism'], description: 'The historic heart.' },
+  // Toronto
+  distillery_district: { city: 'toronto', displayName: 'Distillery District', crimeRate: 20, communityRepBonus: 10, jobTypes: ['creative', 'tourism', 'retail'], description: 'Victorian industrial.' },
+  entertainment_district: { city: 'toronto', displayName: 'Entertainment District', crimeRate: 35, communityRepBonus: 5, jobTypes: ['media', 'nightlife', 'hospitality'], description: 'Theaters and clubs.' },
+  kensington_market: { city: 'toronto', displayName: 'Kensington Market', crimeRate: 40, communityRepBonus: 20, jobTypes: ['creative', 'retail', 'service'], description: 'Eclectic market.' },
+  yorkville: { city: 'toronto', displayName: 'Yorkville', crimeRate: 15, communityRepBonus: 5, jobTypes: ['luxury_retail', 'professional', 'finance'], description: 'Upscale shopping.' },
+  // Sydney
+  the_rocks: { city: 'sydney', displayName: 'The Rocks', crimeRate: 25, communityRepBonus: 10, jobTypes: ['tourism', 'hospitality', 'history'], description: 'Historic waterfront.' },
+  darling_harbour: { city: 'sydney', displayName: 'Darling Harbour', crimeRate: 30, communityRepBonus: 5, jobTypes: ['tourism', 'entertainment', 'hospitality'], description: 'Pedestrian precinct.' },
+  surry_hills: { city: 'sydney', displayName: 'Surry Hills', crimeRate: 35, communityRepBonus: 15, jobTypes: ['creative', 'tech', 'food_service'], description: 'Fashion and food.' },
+  bondi: { city: 'sydney', displayName: 'Bondi', crimeRate: 25, communityRepBonus: 10, jobTypes: ['fitness', 'tourism', 'hospitality'], description: 'Famous beach.' },
   // Generic
   downtown_generic: { city: 'memphis', displayName: 'Downtown', crimeRate: 45, communityRepBonus: 5, jobTypes: ['corporate', 'service', 'retail'], description: 'City center.' },
   suburbs: { city: 'memphis', displayName: 'Suburbs', crimeRate: 25, communityRepBonus: 10, jobTypes: ['service', 'retail', 'education'], description: 'Family-friendly.' },

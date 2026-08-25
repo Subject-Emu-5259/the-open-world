@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createServer, getServerPort, context, reddit } from "@devvit/web/server";
+import { redis } from "@devvit/redis";
 import { GameEngine } from "./game-engine.js";
 
 console.log("[server] THE OPEN WORLD module loaded - STATELESS MODE");
@@ -8,11 +9,13 @@ console.log("[server] THE OPEN WORLD module loaded - STATELESS MODE");
 const game = new GameEngine();
 
 export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse): Promise<void> {
-  const url = req.url ?? "";
+  const requestUrl = req.url ?? "";
+  const url = new URL(requestUrl, `http://localhost`);
+  const pathname = url.pathname;
   const method = req.method ?? "GET";
   const username = context.username ?? "player";
   
-  console.log(`[server] ${method} ${url} user=${username}`);
+  console.log(`[server] ${method} ${requestUrl} user=${username}`);
   
   // CORS
   rsp.setHeader("Access-Control-Allow-Origin", "*");
@@ -27,10 +30,29 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
   
   try {
     // === MAIN GAME API ===
-    if (url === "/api/init" && method === "GET") {
-      // Return default player for new users
-      // Note: Player starts fresh each session (stateless)
-      
+    if (pathname === "/api/init" && method === "GET") {
+      // Try to resume the user's most recent save (slot 1 is the auto-save slot)
+      const slot = url.searchParams.get("slot") || "1";
+      try {
+        const data = await redis.get(`${username}_save_${slot}`);
+        if (data) {
+          const player = JSON.parse(data);
+          console.log(`[server] GET /api/init resumed save for ${username} slot ${slot}: ${player.name}`);
+          rsp.writeHead(200, { "Content-Type": "application/json" });
+          rsp.end(JSON.stringify({
+            type: "init",
+            username,
+            hasPlayer: true,
+            player,
+            dashboard: buildHUD(player),
+          }));
+          return;
+        }
+      } catch (err) {
+        console.error("[server] Redis load error:", err);
+      }
+
+      // No save found - client should show character creation
       rsp.writeHead(200, { "Content-Type": "application/json" });
       rsp.end(JSON.stringify({
         type: "init",
@@ -41,8 +63,75 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       }));
       return;
     }
+
+    if (pathname === "/api/save-slots" && method === "GET") {
+      const slots: Array<{ slot: string; hasSave: boolean; player?: any }> = [];
+      try {
+        for (let i = 1; i <= 3; i++) {
+          const data = await redis.get(`${username}_save_${i}`);
+          if (data) {
+            const player = JSON.parse(data);
+            slots.push({ slot: String(i), hasSave: true, player });
+          } else {
+            slots.push({ slot: String(i), hasSave: false });
+          }
+        }
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ slots }));
+      } catch (err) {
+        console.error("[server] Redis save-slots error:", err);
+        rsp.writeHead(500, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "Persistence failure" }));
+      }
+      return;
+    }
+
+    if (pathname === "/api/save" && method === "POST") {
+      const body = await readBody(req);
+      const data = JSON.parse(body || "{}");
+      const slot = data.slot || "1";
+      const player = data.player;
+
+      if (!player) {
+        rsp.writeHead(400, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "No player data provided" }));
+        return;
+      }
+
+      try {
+        await redis.set(`${username}_save_${slot}`, JSON.stringify(player));
+        console.log(`[server] Saved player ${username} slot ${slot} to Redis`);
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ success: true }));
+      } catch (err) {
+        console.error("[server] Redis save error:", err);
+        rsp.writeHead(500, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "Persistence failure" }));
+      }
+      return;
+    }
+
+    if (pathname === "/api/load" && method === "GET") {
+      const slot = url.searchParams.get("slot") || "1";
+
+      try {
+        const data = await redis.get(`${username}_save_${slot}`);
+        if (data) {
+          rsp.writeHead(200, { "Content-Type": "application/json" });
+          rsp.end(JSON.stringify({ player: JSON.parse(data) }));
+        } else {
+          rsp.writeHead(404, { "Content-Type": "application/json" });
+          rsp.end(JSON.stringify({ error: "Save not found" }));
+        }
+      } catch (err) {
+        console.error("[server] Redis load error:", err);
+        rsp.writeHead(500, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ error: "Persistence failure" }));
+      }
+      return;
+    }
     
-    if (url === "/api/init" && method === "POST") {
+    if (pathname === "/api/init" && method === "POST") {
       const body = await readBody(req);
       const data = JSON.parse(body || "{}");
       
@@ -73,6 +162,7 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
         rsp.writeHead(200, { "Content-Type": "application/json" });
         rsp.end(JSON.stringify({
           text: result.message,
+          npcName: result.npcName,
           dashboard: buildHUD(player),
           player,
           success: result.success,
@@ -93,23 +183,33 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
     }
     
     // === DEVVIT INTERNAL ENDPOINTS ===
-    if (url === "/internal/on-app-install" && method === "POST") {
+    if (pathname === "/internal/on-app-install" && method === "POST") {
       console.log("[server] App installation triggered");
       rsp.writeHead(204);
       rsp.end();
       return;
     }
     
-    if (url === "/internal/on-app-uninstall" && method === "POST") {
+    if (pathname === "/internal/on-app-uninstall" && method === "POST") {
       console.log("[server] App uninstallation triggered");
       rsp.writeHead(204);
       rsp.end();
       return;
     }
     
-    if (url === "/internal/menu/post-create" && method === "POST") {
+    if (pathname === "/internal/menu/post-create" && method === "POST") {
       console.log("[server] Menu post-create triggered");
-      
+
+      // Deduplicate repeated menu clicks: if we already created a post for this
+      // user in this subreddit recently, navigate to it instead of making another.
+      const idempotencyKey = `menu_post:${context.subredditName ?? ''}:${username}`;
+      const existingPostId = await redis.get(idempotencyKey);
+      if (existingPostId) {
+        rsp.writeHead(200, { "Content-Type": "application/json" });
+        rsp.end(JSON.stringify({ navigateTo: { post: existingPostId } }));
+        return;
+      }
+
       try {
         // Create a custom post with the game
         const post = await reddit.submitCustomPost({
@@ -117,6 +217,8 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
           title: "🌍 THE OPEN WORLD — A Life Simulation",
           entry: "game",
         });
+
+        await redis.set(idempotencyKey, post.id);
         
         console.log(`[server] Created post: ${post.id}`);
         

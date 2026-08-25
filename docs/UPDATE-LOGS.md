@@ -1,3 +1,37 @@
+
+## v0.99.1 - Save & Conversation Rebuild (2026-08-24)
+- **Save system**: server-side Redis as authoritative store (slot 1 auto-save), localStorage as offline fallback, automatic save detection on splash screen, auto-save after every command/window unload.
+- **NPC conversation**: NPCs now respond automatically when `talk` starts, greeting the player based on relationship/time/state; conversations can be exited with `bye`, `end`, `leave`, or `exit`.
+- **Social fixes**: `people` command falls back to city-wide NPC list when district match is empty; `text` command reads relationship state properly (object not Map).
+- **Dead code**: removed unused `src/server/server.ts` duplicate handler.
+- **Build/type-check**: both pass.
+
+## Version: v0.99.0 — August 24, 2026
+
+### ✅ New in v0.99.0
+- **Global NPC Expansion**: added 10 new international NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include Harajuku designer, Notting Hill bookshop owner, Seine boat captain, Berlin museum curator, Dubai falconer, Mexico City mezcal sommelier, Toronto graffiti artist, Sydney Opera House stagehand, Akihabara arcade technician, and Paris antique map seller.
+- **New City Encounters**: added 5 fresh random events — Pop-Up Street Gallery, Language Exchange Picnic, Vintage Record Fair, Rooftop Herb Garden, and Impromptu Dance Parade — that reward creativity, charisma, happiness, intelligence, money, community reputation, or stress relief depending on player choice.
+- **Version sync**: all project files aligned to `v0.99.0` with `src/shared/version.ts` as the single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_314–npc_323) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.99.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.99.0`.
+- `package.json` — version bumped to `0.99.0`.
+- `src/client/game.ts` — added v0.99.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.99.0 entry added.
+- `AGENTS.md` — version and last-updated bumped.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
 ## Version: v0.98.0 — August 21, 2026
 
 ### ✅ New in v0.98.0

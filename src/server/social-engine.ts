@@ -292,6 +292,19 @@ export class SocialEngine {
       { id: 'npc_312', name: 'Naoko Fujiwara', role: 'bonsai_teacher', district: 'shinjuku', city: 'tokyo', age: 51, gender: 'female', personality: ['serene', 'wise'], description: 'Holds weekend bonsai classes from a Shinjuku rooftop and speaks in gentle metaphors.', firstName: 'Naoko', lastName: 'Fujiwara' },
       { id: 'npc_313', name: 'Rami Khalil', role: 'spice_merchant', district: 'deira', city: 'dubai', age: 48, gender: 'male', personality: ['persuasive', 'warm'], description: 'Stacks saffron and sumac in Deira’s spice souk, brewing tiny cups of cardamom coffee.', firstName: 'Rami', lastName: 'Khalil' },
 
+
+      // v0.99.0 — Global City Characters
+      { id: 'npc_314', name: 'Hana Mori', role: 'harajuku_designer', district: 'harajuku', city: 'tokyo', age: 27, gender: 'female', personality: ['creative', 'trendy'], description: 'Designs bold Harajuku streetwear pieces from a tiny studio above Takeshita Street.', firstName: 'Hana', lastName: 'Mori' },
+      { id: 'npc_315', name: 'Hamish O\'Connor', role: 'bookshop_owner', district: 'notting_hill', city: 'london', age: 54, gender: 'male', personality: ['bookish', 'witty'], description: 'Runs a faded Notting Hill bookshop where he recommends novels based on mood, not genre.', firstName: 'Hamish', lastName: 'O\'Connor' },
+      { id: 'npc_316', name: 'Sylvie Rousseau', role: 'boat_captain', district: 'seine_river', city: 'paris', age: 42, gender: 'female', personality: ['romantic', 'steadfast'], description: 'Steers a small river cruiser along the Seine and knows every bridge by its shadows.', firstName: 'Sylvie', lastName: 'Rousseau' },
+      { id: 'npc_317', name: 'Klaus Weber', role: 'museum_curator', district: 'museum_island', city: 'berlin', age: 49, gender: 'male', personality: ['precise', 'passionate'], description: 'Curates rotating exhibits on Museum Island and argues that history is best told through objects.', firstName: 'Klaus', lastName: 'Weber' },
+      { id: 'npc_318', name: 'Faisal Al-Rashid', role: 'falconer', district: 'dubai_desert', city: 'dubai', age: 38, gender: 'male', personality: ['patient', 'proud'], description: 'Trains falcons for heritage shows outside Dubai and treats each bird like family.', firstName: 'Faisal', lastName: 'Al-Rashid' },
+      { id: 'npc_319', name: 'Diego Mendoza', role: 'mezcal_sommelier', district: 'roma_norte', city: 'mexico_city', age: 36, gender: 'male', personality: ['warm', 'knowledgeable'], description: 'Pours small-batch mezcal in Roma Norte and explains every agave varietal with reverence.', firstName: 'Diego', lastName: 'Mendoza' },
+      { id: 'npc_320', name: 'Zoe Kim', role: 'graffiti_artist', district: 'graffiti_alley', city: 'toronto', age: 25, gender: 'female', personality: ['rebellious', 'idealistic'], description: 'Tags legal walls in Graffiti Alley and sells stencil prints to tourists on weekends.', firstName: 'Zoe', lastName: 'Kim' },
+      { id: 'npc_321', name: 'Marcus Bell', role: 'opera_stagehand', district: 'sydney_opera', city: 'sydney', age: 44, gender: 'male', personality: ['gruff', 'loyal'], description: 'Works backstage at the Sydney Opera House and has stories about every diva who forgot her lines.', firstName: 'Marcus', lastName: 'Bell' },
+      { id: 'npc_322', name: 'Kenji Watanabe', role: 'arcade_tech', district: 'akihabara', city: 'tokyo', age: 52, gender: 'male', personality: ['nostalgic', 'skilled'], description: 'Repairs vintage arcade cabinets in Akihabara and keeps a high-score list no one has beaten.', firstName: 'Kenji', lastName: 'Watanabe' },
+      { id: 'npc_323', name: 'Amélie Dufresne', role: 'map_seller', district: 'bouquinistes', city: 'paris', age: 61, gender: 'female', personality: ['mysterious', 'erudite'], description: 'Sells antique maps and prints from a Bouquinistes box along the Seine.', firstName: 'Amélie', lastName: 'Dufresne' },
+
     ];
 
     residents.forEach(r => {

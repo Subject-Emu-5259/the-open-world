@@ -1,8 +1,8 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.98.0
-**Last Updated**: August 21, 2026
+**Version**: 0.99.0
+**Last Updated**: August 24, 2026
 
 ---
 
@@ -65,6 +65,6 @@
 - [x] Add achievement tracking ✅
 - [x] Professional Schools & Careers ✅
 - [x] Faction Group Chats ✅
-- [ ] Implement Faction Wars & Political Influence
+- [x] Implement Faction Wars & Political Influence ✅
 - [ ] Add more international mission strings
 - [ ] Expand vehicle racing system

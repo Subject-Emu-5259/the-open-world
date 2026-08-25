@@ -8,7 +8,21 @@ export class CommHub {
   private socialFeed: SocialPost[] = [];
   private voicemails: Voicemail[] = [];
   private notifications: Notification[] = [];
+  private contacts: Contact[] = [];
+  private drafts: { emails: EmailDraft[], sms: SMSDraft[] } = { emails: [], sms: [] };
+  private groupChats: GroupChat[] = [];
   
+  // === CONTACTS ===
+  addContact(contact: Contact): void {
+    if (!this.contacts.find(c => c.id === contact.id)) {
+      this.contacts.push(contact);
+    }
+  }
+
+  getContacts(): Contact[] {
+    return this.contacts.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   // Send email (formal/business communication)
   sendEmail(to: string, subject: string, body: string, from: string = 'player'): Email {
     const email: Email = {
@@ -26,9 +40,9 @@ export class CommHub {
   }
   
   // Receive email from NPCs/businesses
-  receiveEmail(from: string, fromName: string, subject: string, body: string): Email {
+  receiveEmail(from: string, fromName: string, subject: string, body: string, attachment?: Attachment): Email {
     const email: Email = {
-      id: `email_${Date.now()}`,
+      id: `email_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
       from,
       fromName,
       to: 'player',
@@ -37,35 +51,40 @@ export class CommHub {
       timestamp: Date.now(),
       read: false,
       starred: false,
+      attachment,
     };
     this.emails.push(email);
     return email;
   }
   
   // Send SMS (casual communication)
-  sendSMS(to: string, message: string): SMSMessage {
+  sendSMS(to: string, message: string, attachment?: Attachment): SMSMessage {
     const sms: SMSMessage = {
-      id: `sms_${Date.now()}`,
+      id: `sms_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
       from: 'player',
       to,
       message,
       timestamp: Date.now(),
       read: true,
+      starred: false,
+      attachment,
     };
     this.sms.push(sms);
     return sms;
   }
   
   // Receive SMS from NPCs
-  receiveSMS(from: string, fromName: string, message: string): SMSMessage {
+  receiveSMS(from: string, fromName: string, message: string, attachment?: Attachment): SMSMessage {
     const sms: SMSMessage = {
-      id: `sms_${Date.now()}`,
+      id: `sms_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
       from,
       fromName,
       to: 'player',
       message,
       timestamp: Date.now(),
       read: false,
+      starred: false,
+      attachment,
     };
     this.sms.push(sms);
     return sms;
@@ -131,6 +150,63 @@ export class CommHub {
     return this.socialFeed.slice(0, limit);
   }
   
+  // New: Compose email
+  composeEmail(from: string, toName: string, subject: string, body: string): Email | null {
+    // Find recipient by name (placeholder logic, usually handled by GameEngine)
+    const email: Email = {
+      id: `email_${Date.now()}`,
+      from,
+      to: toName.toLowerCase().replace(/\s+/g, '_'),
+      fromName: 'Player',
+      subject,
+      body,
+      timestamp: Date.now(),
+      read: true,
+      starred: false,
+    };
+    this.emails.push(email);
+    return email;
+  }
+
+  // Get email by ID
+  getEmailById(id: string): Email | undefined {
+    return this.emails.find(e => e.id === id);
+  }
+
+  // Delete email
+  deleteEmail(id: string): boolean {
+    const index = this.emails.findIndex(e => e.id === id);
+    if (index !== -1) {
+      this.emails.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+
+  // Get SMS by ID
+  getSMSById(id: string): SMSMessage | undefined {
+    return this.sms.find(s => s.id === id);
+  }
+
+  // Delete SMS
+  deleteSMS(id: string): boolean {
+    const index = this.sms.findIndex(s => s.id === id);
+    if (index !== -1) {
+      this.sms.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+
+  // Mark all as read
+  markAllEmailsRead(): void {
+    this.emails.forEach(e => e.read = true);
+  }
+
+  markAllSMSRead(): void {
+    this.sms.forEach(s => s.read = true);
+  }
+
   // Get phone state
   getPhoneState(): { notifications: Notification[] } {
     return {
@@ -176,6 +252,84 @@ export class CommHub {
       read: false,
     });
   }
+
+  // === GROUP CHATS ===
+  createGroupChat(id: string, name: string, members: string[]): void {
+    if (!this.groupChats.find(g => g.id === id)) {
+      this.groupChats.push({ id, name, members, messages: [] });
+    }
+  }
+
+  joinGroupChat(id: string, memberId: string = 'player'): void {
+    const group = this.groupChats.find(g => g.id === id);
+    if (group && !group.members.includes(memberId)) {
+      group.members.push(memberId);
+      this.addNotification('Group Chat', `You were added to ${group.name}`);
+    }
+  }
+
+  sendGroupMessage(groupId: string, from: string, message: string): void {
+    const group = this.groupChats.find(g => g.id === groupId);
+    if (group) {
+      group.messages.push({
+        from,
+        message,
+        timestamp: Date.now()
+      });
+      // Limit message history to 50
+      if (group.messages.length > 50) group.messages.shift();
+    }
+  }
+
+  getGroupChat(id: string): GroupChat | undefined {
+    return this.groupChats.find(g => g.id === id);
+  }
+
+  getGroupChats(): GroupChat[] {
+    return this.groupChats;
+  }
+
+  // === SEARCH ===
+  searchComm(query: string): { emails: Email[], sms: SMSMessage[] } {
+    const q = query.toLowerCase();
+    return {
+      emails: this.emails.filter(e => 
+        e.subject.toLowerCase().includes(q) || 
+        e.body.toLowerCase().includes(q) || 
+        e.fromName?.toLowerCase().includes(q)
+      ),
+      sms: this.sms.filter(s => 
+        s.message.toLowerCase().includes(q) || 
+        s.fromName?.toLowerCase().includes(q)
+      )
+    };
+  }
+
+  // === DRAFTS ===
+  saveEmailDraft(draft: EmailDraft): void {
+    const index = this.drafts.emails.findIndex(d => d.id === draft.id);
+    if (index !== -1) this.drafts.emails[index] = draft;
+    else this.drafts.emails.push({ ...draft, id: `draft_${Date.now()}` });
+  }
+
+  getEmailDrafts(): EmailDraft[] {
+    return this.drafts.emails;
+  }
+}
+
+interface Attachment {
+  type: 'money' | 'item' | 'location' | 'contact';
+  value: any;
+  label: string;
+}
+
+interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  notes?: string;
+  isFavorite: boolean;
 }
 
 interface Email {
@@ -188,6 +342,7 @@ interface Email {
   timestamp: number;
   read: boolean;
   starred: boolean;
+  attachment?: Attachment;
 }
 
 interface SMSMessage {
@@ -199,6 +354,29 @@ interface SMSMessage {
   content?: string;
   timestamp: number;
   read: boolean;
+  starred: boolean;
+  attachment?: Attachment;
+}
+
+interface EmailDraft {
+  id?: string;
+  to: string;
+  subject: string;
+  body: string;
+  attachment?: Attachment;
+}
+
+interface SMSDraft {
+  id?: string;
+  to: string;
+  message: string;
+}
+
+interface GroupChat {
+  id: string;
+  name: string;
+  members: string[]; // NPC IDs
+  messages: { from: string, message: string, timestamp: number }[];
 }
 
 interface CallLog {
@@ -247,14 +425,16 @@ export function generateInitialMessages(comm: CommHub): void {
     'admin@westmemphis.gov',
     'West Memphis City Services',
     'Welcome to West Memphis!',
-    `Welcome to West Memphis, Arkansas!\n\nYour new life begins here. The city offers various opportunities for employment, education, and community engagement.\n\nVisit the Job Center downtown to explore career options.\n\n- West Memphis City Hall`
+    `Welcome to West Memphis, Arkansas!\n\nYour new life begins here. The city offers various opportunities for employment, education, and community engagement.\n\nVisit the Job Center downtown to explore career options.\n\n- West Memphis City Hall`,
+    undefined
   );
   
   // SMS from Uncle Ray
   comm.receiveSMS(
     'npc_006',
     'Uncle Ray',
-    "Welcome to the neighborhood, nephew. Come by the community center when you get a chance. Got some wisdom to share."
+    "Welcome to the neighborhood, nephew. Come by the community center when you get a chance. Got some wisdom to share.",
+    undefined
   );
   
   // Social post

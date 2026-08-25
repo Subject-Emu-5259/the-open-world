@@ -1,5 +1,7 @@
 # THE OPEN WORLD — Roadmap
 
+- **August 24, 2026 (v0.99.0)**: Added 10 new international NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events. `npm run type-check` and `npm run build` passed. Devvit publish pending because the Devvit CLI requires a fresh Reddit OAuth login in this environment.
+
 - **August 21, 2026 (v0.98.0)**: Added 10 new international NPCs across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events. `npm run type-check` and `npm run build` passed. Devvit publish pending because the Devvit CLI requires a fresh Reddit OAuth login in this environment.
 
 - **August 17, 2026 (v0.97.0)**: Added 10 new international NPCs across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events. `npm run type-check` and `npm run build` passed. Devvit publish pending because the Devvit CLI requires a fresh Reddit OAuth login in this environment.
@@ -13,11 +15,12 @@
 - **August 8, 2026 (v0.91.0)**: Added 3 new achievements, 5 fresh city-life random events, and fixed a duplicate police checkpoint on high-heat travel. Type-check, build, and publish passed. Submitted v0.91.0 for review.
 - **August 7, 2026 (v0.90.0)**: Added 10 new international NPCs and 5 new random events. Type-check, build, and publish passed. Submitted v0.90.0 for review.
 
-## Project Status: v0.98.0 — Global NPC & Random Event Expansion
+## Project Status: v0.99.0 — Global NPC & Random Event Expansion
 - **Current Focus**: Faction Wars & Political Influence Expansion
 - **Next Milestone**: Faction Wars & Political Influence Expansion
 
 ## Validation Notes
+- **August 24, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_314–npc_323) covering Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.99.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 21, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_304–npc_313) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.98.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 17, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_294–npc_303) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.97.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 14, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_284–npc_293) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.96.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
@@ -25,6 +28,7 @@
 - **August 12, 2026**: `npm run type-check` passed, `npm run build` passed. Expanded property system with luxury penthouses, vacation rentals, warehouses, farmland, and offshore villas across 10 cities. Bumped version files to `v0.94.0`. `devvit publish --public --bump minor` submitted v0.94.0 for review.
 
 ## 🗺️ Phase 5: Global Expansion (Current)
+- [x] **v0.99.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.98.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.97.0**: Global NPC & Random Event Expansion
 - [x] **v0.96.0**: More International NPCs & City-Life Events

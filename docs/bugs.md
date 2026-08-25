@@ -1,8 +1,16 @@
 # THE OPEN WORLD — Bug Tracker
 
-*Last Updated: August 21, 2026*
+*Last Updated: August 24, 2026*
 
 **August 21, 2026 (v0.98.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. `devvit playtest` and `devvit publish` could not run because the Devvit CLI is not authenticated in this environment (`devvit whoami` returns "Not currently logged in"). This blocks local playtest verification and public deployment until Reddit OAuth is completed. Version numbers synced to v0.98.0.
+
+---
+
+## August 24, 2026 — v0.99.0
+- **Status**: No blocking bugs identified.
+- **Validation**: `npm run type-check` passed. `npm run build` passed. `devvit playtest` and `devvit publish` could not run because the Devvit CLI is not authenticated in this environment.
+- **Changes**: Added 10 new international NPCs and 5 new city-life random events. Version synced to 0.99.0.
+- **Notes**: None currently confirmed.
 
 ---
 

@@ -160,6 +160,49 @@ function clientGetSaveSlots(): SaveSlot[] {
   return slots;
 }
 
+// Check server for any available save (slot 1..3)
+async function clientCheckServerSaves(): Promise<PlayerState | null> {
+  try {
+    for (let slot = 1; slot <= 3; slot++) {
+      const res = await fetch(`/api/load?slot=${slot}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.player) return data.player;
+      }
+    }
+  } catch (e) {
+    // Server unavailable - localStorage will be the fallback
+  }
+  return null;
+}
+
+// Detect the best available save (server wins, then localStorage, then none)
+async function clientDetectSave(): Promise<PlayerState | null> {
+  // Prefer server save
+  const serverPlayer = await clientCheckServerSaves();
+  if (serverPlayer) {
+    const saves = clientLoadAll();
+    saves[1] = serverPlayer; // keep server primary save mirrored locally
+    localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+    return serverPlayer;
+  }
+
+  // Fallback to localStorage
+  const saves = clientLoadAll();
+  const localPlayer = saves[1] || saves[2] || saves[3] || null;
+  if (localPlayer) {
+    // Try to migrate local save to server in background
+    fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slot: 1, player: localPlayer }),
+    }).catch(() => {});
+    return localPlayer;
+  }
+
+  return null;
+}
+
 // ============================================
 // GAME STATE
 // ============================================
@@ -167,6 +210,7 @@ function clientGetSaveSlots(): SaveSlot[] {
 const state = {
   currentScreen: 'landing' as GameScreen,
   player: null as PlayerState | null,
+  saveAvailable: false as boolean,
   conversationHistory: [] as Array<{ role: string; content: string }>,
   settings: {
     soundEnabled: true,
@@ -257,7 +301,13 @@ function renderLandingScreen() {
     if (loadingText) loadingText.textContent = 'Initializing economy...';
   }, 1600);
   
-  setTimeout(() => {
+  setTimeout(async () => {
+    // Probe for an existing save while the splash is showing
+    const detected = await clientDetectSave();
+    if (detected) {
+      state.player = detected;
+      state.saveAvailable = true;
+    }
     state.currentScreen = 'main-menu';
     render();
   }, 2400);
@@ -270,7 +320,7 @@ function renderLandingScreen() {
 function renderMainMenu() {
   if (!rootEl) return;
   
-  const hasContinue = state.player !== null;
+  const hasContinue = state.player !== null || state.saveAvailable;
   
   rootEl.innerHTML = `
     <div class="screen menu-screen">
@@ -288,7 +338,7 @@ function renderMainMenu() {
                 <span class="btn-icon">▶</span>
                 <span class="btn-text">Continue</span>
               </div>
-              <span class="btn-sub">${state.player?.name} · ${state.player?.city}</span>
+              <span class="btn-sub">${state.player?.name ? `${state.player.name} · ${state.player.city}` : 'Resume your saved life'}</span>
             </button>
           ` : `
             <button class="menu-btn primary" data-action="new">
@@ -338,8 +388,13 @@ function renderMainMenu() {
 function handleMenuAction(action: string) {
   switch (action) {
     case 'continue':
-    case 'new':
       startGame();
+      break;
+    case 'new':
+      // Force a fresh character even if an auto-save exists
+      state.player = null;
+      state.saveAvailable = false;
+      startGame(true);
       break;
     case 'load':
       state.currentScreen = 'load';
@@ -576,6 +631,32 @@ function renderUpdatesScreen() {
       </div>
       
               <div class="updates-container">
+                <div class="update-item">
+          <span class="update-version">v0.99.1</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>💾 <strong>Save System Rebuilt</strong> - Slot 1 auto-saves to server (Redis) every command and on refresh; localStorage is an offline fallback; splash screen auto-detects and resumes your game.</li>
+            <li>💬 <strong>NPC Conversation Rebuilt</strong> - NPCs now greet first when you talk to them, and conversations can be exited with "bye", "end", "leave", or "exit".</li>
+            <li>🛠️ <strong>Social Polish</strong> - "people" shows city-wide NPCs when no-one is in your exact district; "text" reads relationships correctly.</li>
+            <li>📋 <strong>Developer Update</strong> - Patch focuses on save persistence and NPC conversation quality.</li>
+          <li>🛠️ <strong>Save System Rebuilt</strong> - Redis-first persistence; Continue button appears only when a save exists; auto-save after every command; background save on tab close/minimize; server fallback keyed by username + install ID.</li>
+          <li>✅ <strong>/api/init GET now checks Redis</strong> - returns the saved player instead of forcing a fresh start.</li>
+          <li>🗣️ <strong>NPCs now respond</strong> - talk/greet triggers a contextual greeting; NPCs react to relationship, mood, district, time and role.</li>
+          <li>👋 <strong>Conversations can end</strong> - say bye/goodbye/exit/leave/later/im out/ima head out to exit conversation mode.</li>
+          <li>🔧 <strong>text [name] SMS fixed</strong> - relationship object lookup works and gives relationship-aware replies.</li>
+          <li>🧹 <strong>Dead duplicate server.ts removed</strong> - single source of truth in src/server/index.ts.</li>
+          <li>🔁 <strong>Version Sync</strong> - Bumped to v0.99.1.</li>
+          </ul>
+        </div>
+                <div class="update-item">
+          <span class="update-version">v0.99.0</span>
+          <span class="update-date">August 24, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet a Harajuku designer, a Notting Hill bookshop owner, a Seine boat captain, and more.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Pop-Up Street Gallery, Language Exchange Picnic, Vintage Record Fair, Rooftop Herb Garden, and Impromptu Dance Parade.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.99.0.</li>
+          </ul>
+        </div>
                 <div class="update-item">
           <span class="update-version">v0.98.0</span>
           <span class="update-date">August 21, 2026</span>
@@ -1160,6 +1241,8 @@ async function handleCommand(input: string, convEl: HTMLElement) {
       if (data.player) {
         state.player = data.player;
         updateStats(data.player);
+        // Persist progress automatically after each successful command
+        clientSave(1, data.player).catch((e) => console.warn('[autosave] failed', e));
       }
     } else {
       addMessage(convEl, 'system', "Connection lost. Try again.");
@@ -1252,7 +1335,7 @@ function updateStats(player: PlayerState) {
 // GAME START
 // ============================================
 
-async function startGame() {
+async function startGame(forceNew = false) {
   if (!rootEl) return;
   
   rootEl.innerHTML = `
@@ -1265,24 +1348,32 @@ async function startGame() {
   `;
   
   try {
-    // If we already have a player (from auto-load), we can skip /api/init (GET)
+    // New Game bypasses any autosave
+    if (forceNew) {
+      showCharacterCreation();
+      return;
+    }
+
+    // If we already have a player (from auto-load), go straight in
     if (state.player) {
+      state.saveAvailable = true;
       state.currentScreen = 'game';
       render();
       return;
     }
 
-    const res = await fetch("/api/init", { method: "GET" });
-    const data: GameData = await res.json().catch(() => null);
-    
-    if (data?.hasPlayer && data.player) {
-      state.player = data.player;
+    // Try loading the primary server/local save
+    const loaded = await clientLoad(1);
+    if (loaded) {
+      state.player = loaded;
+      state.saveAvailable = true;
       state.currentScreen = 'game';
       render();
-    } else {
-      // Show character creation
-      showCharacterCreation();
+      return;
     }
+
+    // No save found - create a character
+    showCharacterCreation();
   } catch (e) {
     console.error("Failed to start game:", e);
     state.currentScreen = 'main-menu';
@@ -1412,6 +1503,21 @@ document.addEventListener('keydown', (e) => {
 // ============================================
 // INITIALIZE
 // ============================================
+
+
+// Save progress when the user leaves/closes the game window
+window.addEventListener('beforeunload', () => {
+  if (state.player) {
+    // Synchronous localStorage flush; server sync is done via clientSave async
+    try {
+      const saves = clientLoadAll();
+      saves[1] = { ...state.player, savedAt: Date.now() };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(saves));
+    } catch (e) {
+      console.warn('[beforeunload] local save failed', e);
+    }
+  }
+});
 
 // Start with landing screen
 render();

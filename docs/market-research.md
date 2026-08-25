@@ -1,6 +1,6 @@
 # THE OPEN WORLD — Market Research
 
-*Last Updated: April 15, 2026*
+*Last Updated: May 30, 2026*
 
 ## Market Overview
 
@@ -12,13 +12,12 @@
 - Simulation RPG market highly competitive with EA, Nintendo, Microsoft leading innovation
 
 ### Reddit/Devvit Platform Opportunity
-- Devvit allows free hosting of games on Reddit with potential earnings up to $167,000 per app[^5]
-- Reddit Daily Games Hackathon 2026: $40,000 in prizes awarded[^6]
-- **Key Devvit trends (April 2026)**:
-  - Life simulation games gaining momentum on Reddit
-  - Community-driven games with social features trending
-  - Conversational AI NPCs becoming feasible for Devvit games
-  - Daily games format continues to perform well (NYT-style)
+- Devvit allows free hosting of games on Reddit with potential earnings up to $167,000 per app.
+- **May 2026 Update**: $45K Reddit and Kiro: Community Games Challenge launched (May 13, 2026) to incentivize Devvit game development.
+- **Key Devvit trends (May 2026)**:
+  - Small, high-engagement community games are "big news" in 2026 (Unity Gaming Report).
+  - Increased focus on "Daily Game" formats and social-first mechanics.
+  - Conversational AI integration is now a standard expectation for top-tier Devvit apps.
 - Notable games: Honk, Skyboard, Verdant Life Sim, Pixelary
 - GameMaker now supports direct export to Reddit via Devvit extension
 

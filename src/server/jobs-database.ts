@@ -493,6 +493,134 @@ export const MEMPHIS_JOBS: JobListing[] = [
 ];
 
 // ============================================
+// LONDON, UK JOBS
+// ============================================
+export const LONDON_JOBS: JobListing[] = [
+  {
+    id: 'lon_barista_costa',
+    title: 'Senior Barista',
+    employer: 'Costa Coffee',
+    tier: 'entry',
+    hourlyPay: 12.50,
+    skill: 'charisma',
+    required: 15,
+    city: 'london',
+    district: 'soho',
+    description: 'Craft perfect lattes in the heart of London\'s West End.',
+    category: 'entry',
+    benefits: ['Free coffee', 'Paid break']
+  },
+  {
+    id: 'lon_analyst_barclays',
+    title: 'Financial Analyst',
+    employer: 'Barclays',
+    tier: 'career',
+    hourlyPay: 45.00,
+    skill: 'finance',
+    required: 55,
+    city: 'london',
+    district: 'westminster',
+    description: 'Manage portfolios for a global banking giant in the City.',
+    category: 'career',
+    requirements: ['FINANCE_CERT', '3+ years experience'],
+    benefits: ['Bonus pool', 'Private healthcare']
+  },
+  {
+    id: 'lon_policy_gov',
+    title: 'Policy Advisor',
+    employer: 'UK Government',
+    tier: 'elite',
+    hourlyPay: 65.00,
+    skill: 'charisma',
+    required: 70,
+    city: 'london',
+    district: 'westminster',
+    description: 'Draft international policy at Whitehall.',
+    category: 'government',
+    requirements: ['GLOBAL_POLICY_CERT'],
+    benefits: ['Public sector pension', 'High-level clearance']
+  }
+];
+
+// ============================================
+// TOKYO, JAPAN JOBS
+// ============================================
+export const TOKYO_JOBS: JobListing[] = [
+  {
+    id: 'tok_tech_sony',
+    title: 'Robotics Engineer',
+    employer: 'Sony',
+    tier: 'elite',
+    hourlyPay: 85.00,
+    skill: 'tech',
+    required: 75,
+    city: 'tokyo',
+    district: 'akihabara',
+    description: 'Develop next-generation AI and robotics systems.',
+    category: 'elite',
+    requirements: ['ROBOTICS_LICENSE', 'AI_SOFTWARE_ENG_DEGREE'],
+    benefits: ['Housing allowance', 'Bonus']
+  },
+  {
+    id: 'tok_chef_sushi',
+    title: 'Sushi Master',
+    employer: 'Sukiyabashi Jiro',
+    tier: 'elite',
+    hourlyPay: 120.00,
+    skill: 'cooking',
+    required: 85,
+    city: 'tokyo',
+    district: 'shibuya',
+    description: 'Master the art of high-end sushi in the world\'s most famous shop.',
+    category: 'elite',
+    requirements: ['MASTER_CHEF_CERT', '10+ years apprenticeship'],
+    benefits: ['Prestige', 'Daily allowance']
+  }
+];
+
+// ============================================
+// PARIS, FRANCE JOBS
+// ============================================
+export const PARIS_JOBS: JobListing[] = [
+  {
+    id: 'par_chef_le_meurice',
+    title: 'Sous Chef',
+    employer: 'Le Meurice',
+    tier: 'career',
+    hourlyPay: 55.00,
+    skill: 'cooking',
+    required: 60,
+    city: 'paris',
+    district: 'marais',
+    description: 'Lead a team in one of Paris\' most prestigious kitchens.',
+    category: 'career',
+    requirements: ['MASTER_CHEF_CERT'],
+    benefits: ['Michelin star experience']
+  }
+];
+
+// ============================================
+// SYDNEY, AUSTRALIA JOBS
+// ============================================
+export const SYDNEY_JOBS: JobListing[] = [
+  {
+    id: 'syd_bio_csiro',
+    title: 'Marine Researcher',
+    employer: 'CSIRO',
+    tier: 'career',
+    hourlyPay: 48.00,
+    skill: 'tech',
+    required: 50,
+    city: 'sydney',
+    district: 'darling_harbour',
+    description: 'Research the Great Barrier Reef and marine ecosystems.',
+    category: 'career',
+    requirements: ['MARINE_BIO_LICENSE'],
+    benefits: ['Field work allowance']
+  }
+];
+
+// ============================================
 // LITTLE ROCK, AR JOBS (25+ jobs)
 // ============================================
 export const LITTLE_ROCK_JOBS: JobListing[] = [
@@ -1050,7 +1178,15 @@ export const SOUTHAVEN_JOBS: JobListing[] = [
 ];
 
 // Combined job listings
-export const ALL_JOBS: JobListing[] = [...MEMPHIS_JOBS, ...LITTLE_ROCK_JOBS, ...SOUTHAVEN_JOBS];
+export const ALL_JOBS: JobListing[] = [
+  ...MEMPHIS_JOBS, 
+  ...LITTLE_ROCK_JOBS, 
+  ...SOUTHAVEN_JOBS,
+  ...LONDON_JOBS,
+  ...TOKYO_JOBS,
+  ...PARIS_JOBS,
+  ...SYDNEY_JOBS
+];
 
 // Get jobs by city
 export function getJobsByCity(city: string): JobListing[] {

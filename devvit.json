@@ -5,11 +5,11 @@
     "dir": "public",
     "entrypoints": {
       "default": {
-        "inline": true,
+        "inline": false,
         "entry": "game.html"
       },
       "game": {
-        "inline": true,
+        "inline": false,
         "entry": "game.html"
       }
     }
@@ -22,7 +22,7 @@
     "items": [
       {
         "label": "Start a New Life",
-        "description": "Begin your journey in THE OPEN WORLD - a life simulation game set in the Mid-South",
+        "description": "Begin your journey in THE OPEN WORLD - an immersive global life simulation game",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/post-create"

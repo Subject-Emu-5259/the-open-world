@@ -948,6 +948,47 @@ export class StorylineEngine {
           { id: 'leave', text: 'Excuse yourself and head home.', effects: [{ type: 'stat' as const, target: 'stress', value: -2 }] },
         ],
       },
+      // v0.99.0 — City Encounters
+      {
+        title: 'Pop-Up Street Gallery',
+        description: 'Artists have turned a blocked-off lane into an open-air gallery overnight.',
+        outcomes: [
+          { id: 'browse', text: 'Wander the displays and chat with the artists.', effects: [{ type: 'stat' as const, target: 'happiness', value: 6 }, { type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'reputation' as const, target: 'community', value: 3 }] },
+          { id: 'buy', text: 'Buy a small print to support a local painter.', effects: [{ type: 'money' as const, target: 'cash', value: -35 }, { type: 'stat' as const, target: 'happiness', value: 4 }] },
+        ],
+      },
+      {
+        title: 'Language Exchange Picnic',
+        description: 'A group in the park is sharing snacks and practicing phrases in different languages.',
+        outcomes: [
+          { id: 'join', text: 'Bring a dish and learn a few new words.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 3 }, { type: 'stat' as const, target: 'charisma', value: 3 }, { type: 'reputation' as const, target: 'social', value: 4 }] },
+          { id: 'observe', text: 'Listen from a bench with your lunch.', effects: [{ type: 'stat' as const, target: 'happiness', value: 2 }, { type: 'stat' as const, target: 'stress', value: -2 }] },
+        ],
+      },
+      {
+        title: 'Vintage Record Fair',
+        description: 'Crates of vinyl line the sidewalk, and a portable turntable spins rare soul pressings.',
+        outcomes: [
+          { id: 'dig', text: 'Dig through the crates for a hidden gem.', effects: [{ type: 'money' as const, target: 'cash', value: -25 }, { type: 'stat' as const, target: 'happiness', value: 7 }, { type: 'stat' as const, target: 'intelligence', value: 1 }] },
+          { id: 'enjoy', text: 'Stand by the speaker and enjoy the set.', effects: [{ type: 'stat' as const, target: 'happiness', value: 4 }, { type: 'stat' as const, target: 'stress', value: -3 }] },
+        ],
+      },
+      {
+        title: 'Rooftop Herb Garden',
+        description: 'A neighbor invites you up to a rooftop garden to pick fresh herbs and swap recipes.',
+        outcomes: [
+          { id: 'help', text: 'Help water planters and take home a bundle.', effects: [{ type: 'stat' as const, target: 'health', value: 3 }, { type: 'reputation' as const, target: 'community', value: 5 }, { type: 'stat' as const, target: 'happiness', value: 4 }] },
+          { id: 'recipe', text: 'Trade a family recipe for seed cuttings.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'reputation' as const, target: 'community', value: 3 }] },
+        ],
+      },
+      {
+        title: 'Impromptu Dance Parade',
+        description: 'A brass band has started playing on the corner and people are dancing into traffic.',
+        outcomes: [
+          { id: 'dance', text: 'Jump in and dance until the light changes.', effects: [{ type: 'stat' as const, target: 'fitness', value: 3 }, { type: 'stat' as const, target: 'happiness', value: 8 }, { type: 'reputation' as const, target: 'social', value: 3 }] },
+          { id: 'watch', text: 'Clap along from the sidewalk and film a short clip.', effects: [{ type: 'stat' as const, target: 'happiness', value: 3 }, { type: 'stat' as const, target: 'stress', value: -2 }] },
+        ],
+      },
     ];
     
     const selected = events[Math.floor(Math.random() * events.length)];

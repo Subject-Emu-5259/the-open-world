@@ -3,7 +3,7 @@
 
 import type { PlayerState, GameAction } from './game-engine.js';
 
-export type PropertyType = 'house' | 'apartment' | 'commercial' | 'land';
+export type PropertyType = 'house' | 'apartment' | 'commercial' | 'land' | 'luxury_penthouse' | 'vacation_rental' | 'warehouse' | 'farmland' | 'offshore_villa';
 export type InvestmentType = 'stocks' | 'bonds' | 'crypto' | 'business';
 
 export interface Property {
@@ -20,6 +20,7 @@ export interface Property {
   mortgageRemaining: number;
   mortgagePayment: number; // Monthly
   purchasedAt: number;
+  renovationLevel?: number;
 }
 
 export interface Investment {
@@ -153,6 +154,369 @@ export const PROPERTIES_SOUTHAVEN: PropertyListing[] = [
   },
 ];
 
+export const PROPERTIES_INTERNATIONAL: PropertyListing[] = [
+  {
+    id: 'prop_011',
+    name: 'Kensington Townhouse',
+    type: 'house',
+    city: 'london',
+    district: 'kensington',
+    price: 2450000,
+    rentalPotential: 8500,
+    description: 'Stunning 4-story townhouse in prime Kensington. Ultimate prestige.',
+  },
+  {
+    id: 'prop_012',
+    name: 'Shinjuku Micro-Apartment',
+    type: 'apartment',
+    city: 'tokyo',
+    district: 'shinjuku',
+    price: 450000,
+    rentalPotential: 2200,
+    description: 'Efficient and modern micro-apartment in the heart of Tokyo.',
+  },
+  {
+    id: 'prop_013',
+    name: 'Montmartre Artist Studio',
+    type: 'apartment',
+    city: 'paris',
+    district: 'montmartre',
+    price: 680000,
+    rentalPotential: 3100,
+    description: 'Charming studio with high ceilings and city views.',
+  },
+  {
+    id: 'prop_014',
+    name: 'Palm Jumeirah Villa',
+    type: 'house',
+    city: 'dubai',
+    district: 'palm_jumeirah',
+    price: 5200000,
+    rentalPotential: 25000,
+    description: 'Luxury villa on the iconic Palm Jumeirah with private beach access.',
+  },
+  {
+    id: 'prop_015',
+    name: 'Kreuzberg Industrial Loft',
+    type: 'commercial',
+    city: 'berlin',
+    district: 'kreuzberg',
+    price: 1100000,
+    rentalPotential: 5500,
+    description: 'Converted factory loft. Perfect for creative space or luxury living.',
+  },
+];
+
+export const PROPERTIES_NASHVILLE: PropertyListing[] = [
+  {
+    id: 'prop_016',
+    name: 'Music Row Studio Condo',
+    type: 'apartment',
+    city: 'nashville',
+    district: 'music_row',
+    price: 310000,
+    rentalPotential: 2100,
+    description: 'Compact studio right on Music Row. High turnover from touring musicians.',
+  },
+  {
+    id: 'prop_017',
+    name: 'Germantown Historic Home',
+    type: 'house',
+    city: 'nashville',
+    district: 'germantown_nash',
+    price: 425000,
+    rentalPotential: 2400,
+    description: 'Restored Victorian near top restaurants. Active short-term rental market.',
+  },
+];
+
+export const PROPERTIES_ATLANTA: PropertyListing[] = [
+  {
+    id: 'prop_018',
+    name: 'Buckhead Luxury High-Rise',
+    type: 'apartment',
+    city: 'atlanta',
+    district: 'buckhead',
+    price: 650000,
+    rentalPotential: 3800,
+    description: 'Skyline views and concierge service in Atlanta\'s premier financial district.',
+  },
+  {
+    id: 'prop_019',
+    name: 'West End Renovation Project',
+    type: 'house',
+    city: 'atlanta',
+    district: 'west_end',
+    price: 195000,
+    rentalPotential: 1400,
+    description: 'Diamond in the rough near the BeltLine. Strong appreciation bet.',
+  },
+];
+
+export const PROPERTIES_CHICAGO: PropertyListing[] = [
+  {
+    id: 'prop_020',
+    name: 'Loop Micro-Unit',
+    type: 'apartment',
+    city: 'chicago',
+    district: 'loop',
+    price: 285000,
+    rentalPotential: 1900,
+    description: 'Efficient downtown unit walking distance to transit and Millennium Park.',
+  },
+  {
+    id: 'prop_021',
+    name: 'Wicker Park Duplex',
+    type: 'commercial',
+    city: 'chicago',
+    district: 'wicker_park',
+    price: 525000,
+    rentalPotential: 3200,
+    description: 'Mixed-use duplex with retail below and residential above.',
+  },
+];
+
+export const PROPERTIES_NEWYORK: PropertyListing[] = [
+  {
+    id: 'prop_022',
+    name: 'Harlem Brownstone',
+    type: 'house',
+    city: 'new_york',
+    district: 'harlem',
+    price: 1200000,
+    rentalPotential: 5500,
+    description: 'Classic brownstone with original details. Stable long-term rental demand.',
+  },
+  {
+    id: 'prop_023',
+    name: 'Brooklyn Garden Apartment',
+    type: 'apartment',
+    city: 'new_york',
+    district: 'brooklyn',
+    price: 780000,
+    rentalPotential: 3600,
+    description: 'Garden-level unit in a quiet block. Popular with young families.',
+  },
+];
+
+export const PROPERTIES_LOSANGELES: PropertyListing[] = [
+  {
+    id: 'prop_024',
+    name: 'Venice Beach Bungalow',
+    type: 'house',
+    city: 'los_angeles',
+    district: 'venice',
+    price: 1850000,
+    rentalPotential: 7200,
+    description: 'Breezy coastal bungalow blocks from the boardwalk.',
+  },
+  {
+    id: 'prop_025',
+    name: 'Hollywood Studio Tower',
+    type: 'apartment',
+    city: 'los_angeles',
+    district: 'hollywood',
+    price: 420000,
+    rentalPotential: 2300,
+    description: 'No-frills studio tower with pool. Steady supply of aspiring industry renters.',
+  },
+];
+
+export const PROPERTIES_MIAMI: PropertyListing[] = [
+  {
+    id: 'prop_026',
+    name: 'South Beach Art Deco Condo',
+    type: 'apartment',
+    city: 'miami',
+    district: 'downtown_generic',
+    price: 590000,
+    rentalPotential: 3400,
+    description: 'Iconic Art Deco building with seasonal rental upside near the beach.',
+  },
+  {
+    id: 'prop_027',
+    name: 'Wynwood Creative Loft',
+    type: 'commercial',
+    city: 'miami',
+    district: 'industrial',
+    price: 875000,
+    rentalPotential: 4800,
+    description: 'Converted warehouse near the Wynwood Walls. Gallery or studio potential.',
+  },
+];
+
+export const PROPERTIES_HOUSTON: PropertyListing[] = [
+  {
+    id: 'prop_028',
+    name: 'Montrose Mid-Century Home',
+    type: 'house',
+    city: 'houston',
+    district: 'suburbs',
+    price: 355000,
+    rentalPotential: 2100,
+    description: 'Pristine mid-century home in one of Houston\'s most walkable neighborhoods.',
+  },
+  {
+    id: 'prop_029',
+    name: 'Downtown Energy Corridor Office',
+    type: 'commercial',
+    city: 'houston',
+    district: 'downtown_generic',
+    price: 1150000,
+    rentalPotential: 6200,
+    description: 'Small-office suite near the energy corridor. Corporate lease potential.',
+  },
+];
+
+export const PROPERTIES_DALLAS: PropertyListing[] = [
+  {
+    id: 'prop_030',
+    name: 'Uptown High-Rise Condo',
+    type: 'apartment',
+    city: 'dallas',
+    district: 'uptown',
+    price: 480000,
+    rentalPotential: 2700,
+    description: 'Walkable Uptown living with skyline pool and nightlife access.',
+  },
+  {
+    id: 'prop_031',
+    name: 'Deep Ellum Live/Work Loft',
+    type: 'commercial',
+    city: 'dallas',
+    district: 'downtown_generic',
+    price: 670000,
+    rentalPotential: 3800,
+    description: 'Live/work unit in Dallas\'s music and arts district.',
+  },
+];
+
+export const PROPERTIES_PHOENIX: PropertyListing[] = [
+  {
+    id: 'prop_032',
+    name: 'Scottsdale Desert Ranch',
+    type: 'house',
+    city: 'phoenix',
+    district: 'suburbs',
+    price: 520000,
+    rentalPotential: 2600,
+    description: 'Adobe-style ranch with pool and mountain views. Snowbird rental favorite.',
+  },
+  {
+    id: 'prop_033',
+    name: 'Downtown Phoenix Tech Office',
+    type: 'commercial',
+    city: 'phoenix',
+    district: 'downtown_generic',
+    price: 890000,
+    rentalPotential: 4500,
+    description: 'Modern office shell in Phoenix\'s revitalized core. Startup sublease potential.',
+  },
+];
+
+export const PROPERTIES_EXPANSION: PropertyListing[] = [
+  {
+    id: 'prop_034',
+    name: 'Manhattan Skyline Penthouse',
+    type: 'luxury_penthouse',
+    city: 'new_york',
+    district: 'manhattan',
+    price: 5200000,
+    rentalPotential: 22000,
+    description: 'Full-floor penthouse with Central Park views. Ultra-high-net-worth tenant pool.',
+  },
+  {
+    id: 'prop_035',
+    name: 'Malibu Beach Rental Villa',
+    type: 'vacation_rental',
+    city: 'los_angeles',
+    district: 'venice',
+    price: 2800000,
+    rentalPotential: 15000,
+    description: 'Coastal retreat that commands premium nightly rates in summer and holiday seasons.',
+  },
+  {
+    id: 'prop_036',
+    name: 'Palm Jumeirah Offshore Mansion',
+    type: 'offshore_villa',
+    city: 'dubai',
+    district: 'palm_jumeirah',
+    price: 8500000,
+    rentalPotential: 35000,
+    description: 'Private beach, marina access, and concierge service on Dubai\'s most famous archipelago.',
+  },
+  {
+    id: 'prop_037',
+    name: 'Champs-Élysées Penthouse Suite',
+    type: 'luxury_penthouse',
+    city: 'paris',
+    district: 'champs_elysees',
+    price: 4600000,
+    rentalPotential: 19000,
+    description: 'Haussmann-era penthouse with rooftop terrace overlooking the avenue.',
+  },
+  {
+    id: 'prop_038',
+    name: 'South Beach Vacation Condo',
+    type: 'vacation_rental',
+    city: 'miami',
+    district: 'downtown_generic',
+    price: 1150000,
+    rentalPotential: 6500,
+    description: 'Art Deco condo blocks from the beach. Strong short-term rental demand year-round.',
+  },
+  {
+    id: 'prop_039',
+    name: 'Houston Logistics Warehouse',
+    type: 'warehouse',
+    city: 'houston',
+    district: 'industrial',
+    price: 1450000,
+    rentalPotential: 7800,
+    description: 'Distribution warehouse near the ship channel. Long-term logistics tenant available.',
+  },
+  {
+    id: 'prop_040',
+    name: 'Sonoran Desert Farmland',
+    type: 'farmland',
+    city: 'phoenix',
+    district: 'suburbs',
+    price: 420000,
+    rentalPotential: 1100,
+    description: 'Irrigated acreage on the desert fringe. Slow but steady agricultural income and land-appreciation play.',
+  },
+  {
+    id: 'prop_041',
+    name: 'Memphis Distribution Center',
+    type: 'warehouse',
+    city: 'memphis',
+    district: 'orange_mound',
+    price: 680000,
+    rentalPotential: 4200,
+    description: 'Logistics hub near the FedEx superhub. Reliable commercial cash flow.',
+  },
+  {
+    id: 'prop_042',
+    name: 'Buckhead Mansion Estate',
+    type: 'luxury_penthouse',
+    city: 'atlanta',
+    district: 'buckhead',
+    price: 3400000,
+    rentalPotential: 14500,
+    description: 'Gated estate on a private drive. Old-money Atlanta aesthetic with modern amenities.',
+  },
+  {
+    id: 'prop_043',
+    name: 'Sydney Harbour Villa',
+    type: 'offshore_villa',
+    city: 'sydney',
+    district: 'bondi',
+    price: 6200000,
+    rentalPotential: 26000,
+    description: 'Waterfront villa minutes from Bondi Beach. International vacation-rental magnet.',
+  },
+];
+
 export class PropertyEngine {
   private marketTrend: number = 0.003; // 0.3% monthly appreciation
   
@@ -161,7 +525,22 @@ export class PropertyEngine {
   // === PROPERTY LISTINGS ===
   
   getAllListings(): PropertyListing[] {
-    return [...PROPERTIES_MEMPHIS, ...PROPERTIES_LITTLEROCK, ...PROPERTIES_SOUTHAVEN];
+    return [
+      ...PROPERTIES_MEMPHIS,
+      ...PROPERTIES_LITTLEROCK,
+      ...PROPERTIES_SOUTHAVEN,
+      ...PROPERTIES_INTERNATIONAL,
+      ...PROPERTIES_NASHVILLE,
+      ...PROPERTIES_ATLANTA,
+      ...PROPERTIES_CHICAGO,
+      ...PROPERTIES_NEWYORK,
+      ...PROPERTIES_LOSANGELES,
+      ...PROPERTIES_MIAMI,
+      ...PROPERTIES_HOUSTON,
+      ...PROPERTIES_DALLAS,
+      ...PROPERTIES_PHOENIX,
+      ...PROPERTIES_EXPANSION,
+    ];
   }
   
   getListingsByCity(city: string): PropertyListing[] {
@@ -169,14 +548,46 @@ export class PropertyEngine {
       memphis: PROPERTIES_MEMPHIS,
       littlerock: PROPERTIES_LITTLEROCK,
       southaven: PROPERTIES_SOUTHAVEN,
+      nashville: PROPERTIES_NASHVILLE,
+      atlanta: PROPERTIES_ATLANTA,
+      chicago: PROPERTIES_CHICAGO,
+      new_york: PROPERTIES_NEWYORK,
+      los_angeles: PROPERTIES_LOSANGELES,
+      miami: PROPERTIES_MIAMI,
+      houston: PROPERTIES_HOUSTON,
+      dallas: PROPERTIES_DALLAS,
+      phoenix: PROPERTIES_PHOENIX,
+      london: PROPERTIES_INTERNATIONAL.filter(p => p.city === 'london'),
+      tokyo: PROPERTIES_INTERNATIONAL.filter(p => p.city === 'tokyo'),
+      paris: PROPERTIES_INTERNATIONAL.filter(p => p.city === 'paris'),
+      dubai: PROPERTIES_INTERNATIONAL.filter(p => p.city === 'dubai'),
+      berlin: PROPERTIES_INTERNATIONAL.filter(p => p.city === 'berlin'),
     };
-    return listings[city as keyof typeof listings] || [];
+    const base = listings[city as keyof typeof listings] || [];
+    return [...base, ...PROPERTIES_EXPANSION.filter(p => p.city === city)];
   }
   
   getListingById(id: string): PropertyListing | undefined {
     return this.getAllListings().find(p => p.id === id);
   }
   
+  private getTypeEconomics(type: PropertyType, price: number, rentalPotential: number): { rentalIncome: number; maintenanceCost: number; conditionDecay: number } {
+    switch (type) {
+      case 'luxury_penthouse':
+        return { rentalIncome: Math.floor(rentalPotential * 1.2), maintenanceCost: Math.floor(price * 0.015 / 12), conditionDecay: 1 };
+      case 'offshore_villa':
+        return { rentalIncome: Math.floor(rentalPotential * 1.15), maintenanceCost: Math.floor(price * 0.012 / 12), conditionDecay: 1 };
+      case 'vacation_rental':
+        return { rentalIncome: rentalPotential, maintenanceCost: Math.floor(price * 0.01 / 12), conditionDecay: 2 };
+      case 'warehouse':
+        return { rentalIncome: rentalPotential, maintenanceCost: Math.floor(price * 0.008 / 12), conditionDecay: 1 };
+      case 'farmland':
+        return { rentalIncome: Math.floor(rentalPotential * 0.7), maintenanceCost: Math.floor(price * 0.003 / 12), conditionDecay: 0 };
+      default:
+        return { rentalIncome: rentalPotential, maintenanceCost: Math.floor(price * 0.01 / 12), conditionDecay: 1 };
+    }
+  }
+
   // === PROPERTY PURCHASE ===
   
   purchaseProperty(player: PlayerState, listingId: string, useMortgage: boolean = true): GameAction {
@@ -205,6 +616,7 @@ export class PropertyEngine {
     }
     
     // Create property
+    const economics = this.getTypeEconomics(listing.type, listing.price, listing.rentalPotential);
     const property: Property = {
       id: `owned_${listing.id}_${Date.now()}`,
       name: listing.name,
@@ -214,11 +626,12 @@ export class PropertyEngine {
       purchasePrice: listing.price,
       currentValue: listing.price,
       condition: 100,
-      rentalIncome: listing.rentalPotential,
-      maintenanceCost: Math.floor(listing.price * 0.01 / 12), // 1% annually
+      rentalIncome: economics.rentalIncome,
+      maintenanceCost: economics.maintenanceCost,
       mortgageRemaining: useMortgage ? listing.price - downPayment : 0,
-      mortgagePayment: useMortgage ? Math.floor((listing.price - downPayment) * 0.005) : 0, // ~0.5%/month
+      mortgagePayment: useMortgage ? Math.floor((listing.price - downPayment) * 0.005) : 0,
       purchasedAt: Date.now(),
+      renovationLevel: 0,
     };
     
     const cashSpent = useMortgage ? downPayment : listing.price;
@@ -232,8 +645,9 @@ ${listing.description}
 - Purchase Price: $${listing.price.toLocaleString()}
 - Down Payment: $${downPayment.toLocaleString()}
 - Mortgage: ${useMortgage ? `$${property.mortgageRemaining.toLocaleString()} ($${property.mortgagePayment}/mo)` : 'None (Cash Purchase)'}
-- Rental Income: $${listing.rentalPotential}/mo
-- Location: ${listing.district.replace('_', ' ')}, ${listing.city.replace('littlerock', 'Little Rock').replace('memphis', 'Memphis').replace('southaven', 'Southaven')}
+- Rental Income: $${property.rentalIncome.toLocaleString()}/mo
+- Type: ${property.type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+- Location: ${listing.district.replace('_', ' ')}, ${listing.city.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).replace('Littlerock', 'Little Rock').replace('New York', 'New York').replace('Los Angeles', 'Los Angeles')}
 
 **Cash spent:** $${cashSpent.toLocaleString()}
 Use "properties" to view your portfolio.`,
@@ -263,17 +677,31 @@ Use "properties" to view your portfolio.`,
   
   applyMonthlyAppreciation(properties: Property[]): void {
     properties.forEach(p => {
-      // Random appreciation/depreciation within market trend
-      const variance = (Math.random() - 0.5) * 0.005;
-      const monthlyChange = this.marketTrend + variance;
+      const economics = this.getTypeEconomics(p.type, p.purchasePrice, p.rentalIncome);
+      let volatility = 0.005;
+      let trendBias = 0;
+
+      if (p.type === 'luxury_penthouse' || p.type === 'offshore_villa') volatility = 0.012;
+      if (p.type === 'warehouse') { volatility = 0.003; trendBias = 0.001; }
+      if (p.type === 'farmland') { volatility = 0.004; trendBias = 0.0015; }
+
+      const variance = (Math.random() - 0.5) * volatility;
+      const monthlyChange = this.marketTrend + trendBias + variance;
       p.currentValue = Math.floor(p.currentValue * (1 + monthlyChange));
-      
-      // Condition degradation
-      p.condition = Math.max(0, p.condition - 1);
-      
+
+      // Condition degradation (farmland is land, no structural decay)
+      const decay = economics.conditionDecay;
+      p.condition = Math.max(0, p.condition - decay);
+
       // Value adjustment for condition
       if (p.condition < 50) {
         p.currentValue = Math.floor(p.currentValue * 0.99);
+      }
+
+      // Vacation rentals swing with tourist season
+      if (p.type === 'vacation_rental') {
+
+        p.rentalIncome = Math.floor(p.rentalIncome * (0.6 + Math.random() * 0.8));
       }
     });
   }
@@ -294,6 +722,34 @@ Use "properties" to view your portfolio.`,
     return {
       success: true,
       message: `🔧 Repaired ${property.name}. Condition restored to 100%. Cost: $${repairCost.toLocaleString()}`,
+    };
+  }
+
+  renovateProperty(property: Property, player: PlayerState): GameAction {
+    const level = property.renovationLevel ?? 0;
+    if (level >= 5) {
+      return { success: false, message: `${property.name} is already fully renovated (Level 5).` };
+    }
+
+    const cost = Math.floor(property.purchasePrice * 0.05 * (level + 1));
+    if (player.money < cost) {
+      return {
+        success: false,
+        message: `Renovation costs $${cost.toLocaleString()}. You have $${player.money.toLocaleString()}.`,
+      };
+    }
+
+    player.money -= cost;
+    property.renovationLevel = level + 1;
+    property.condition = 100;
+    const valueBoost = Math.floor(property.purchasePrice * 0.05);
+    property.currentValue += valueBoost;
+    const incomeBoost = Math.floor(property.purchasePrice * 0.002);
+    property.rentalIncome += incomeBoost;
+
+    return {
+      success: true,
+      message: `🏗️ Renovated ${property.name} to Level ${property.renovationLevel}!\n🔨 Cost: $${cost.toLocaleString()}\n📈 Value boost: +$${valueBoost.toLocaleString()}\n💰 Rent boost: +$${incomeBoost.toLocaleString()}/mo`,
     };
   }
   

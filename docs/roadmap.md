@@ -1,6 +1,6 @@
 # THE OPEN WORLD — Roadmap
 
-- **August 25, 2026 (v0.100.0)**: Fixed the NPC conversation amnesia bug. Converted player relationships from a JavaScript `Map` to a JSON-safe plain record so relationship value, flags, and memory survive between commands and refresh. This fixes the loop where NPCs repeated greetings and forgot player intros. Type-check and build passed. Submitted v0.100.0 to Devvit for review.
+- **August 25, 2026 (v0.101.0)**: Fixed the NPC conversation amnesia bug. Converted player relationships from a JavaScript `Map` to a JSON-safe plain record so relationship value, flags, and memory survive between commands and refresh. This fixes the loop where NPCs repeated greetings and forgot player intros. Type-check and build passed. Submitted v0.100.0 to Devvit for review.
 
 - **August 24, 2026 (v0.99.0)**: Added 10 new international NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events. `npm run type-check` and `npm run build` passed. Devvit publish pending because the Devvit CLI requires a fresh Reddit OAuth login in this environment.
 

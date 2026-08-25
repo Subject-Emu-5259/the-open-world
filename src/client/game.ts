@@ -642,13 +642,14 @@ function renderUpdatesScreen() {
         </div>
         
                               <div class="update-item">
-          <span class="update-version">v0.100.0</span>
+          <span class="update-version">v0.101.0</span>
           <span class="update-date">August 25, 2026</span>
           <ul>
-            <li>🧠 <strong>NPC Memory Fixed</strong> - Relationships now save as plain records so NPCs remember your name, chat history, and mood between messages.</li>
-            <li>💾 <strong>Save Persistence Improved</strong> - Full player state (including conversation memory) is persisted server-side after every command.</li>
-            <li>🗣️ <strong>No More "What's yours?" Loop</strong> - Saying your name correctly updates the NPC's memory instead of resetting the introduction.</li>
-            <li>🤝 <strong>Assist & Quests</strong> - Relationship changes from helping NPCs and completing quests now persist.</li>
+            <li>💾 <strong>Server-Authoritative Auto-Save</strong> - Every command is saved to Redis before the response returns; a synchronous beacon flush also fires on tab close/refresh.</li>
+            <li>🧠 <strong>NPC Memory Fixed</strong> - Relationships now save as plain records so NPCs remember your name, chat history, and mood between messages and across reloads.</li>
+            <li>🗣️ <strong>No More "What's yours?" Loop</strong> - NPCs recognize "I'm...", "I am...", "call me...", and "my name is..." and stop asking once they know you.</li>
+            <li>🤖 <strong>Local NPC Reply Generator</strong> - New AI-style bridge produces natural greetings, answers, small talk, and farewells from memory and relationship context.</li>
+            <li>🤝 <strong>Assist & Quests</strong> - Relationship changes from helping NPCs and completing quests now persist correctly.</li>
           </ul>
         </div>
               <div class="update-item">

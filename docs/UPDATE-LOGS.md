@@ -1,4 +1,4 @@
-## v0.100.0 — NPC Memory & Save Persistence Hotfix
+## v0.101.0 — NPC Memory & Save Persistence Overhaul
 Fetched: August 25, 2026
 
 ### Fixed
@@ -7,18 +7,23 @@ Fetched: August 25, 2026
 - `knows_name` flag and conversation memory now persist, fixing the "Name's Marcus. What's yours?" loop.
 - `assist [name]` and quest reward relationship changes updated to use the plain-object record.
 - Full player state (including `currentConversation`) now serializes into the server-side auto-save.
+- server-side authoritative auto-save after every command in POST /api/init; synchronous navigator.sendBeacon flush on tab close.
+
+### Added
+- local memory-aware NPC reply generator in src/server/ai-npc-provider.ts; natural name extraction from 'I'm...', 'I am...', 'call me...', and 'my name is...'.
 
 ### Changed
 - `src/server/game-engine.ts`: `relationships` is now `{}`; `initPlayer`, `loadState`, `getPlayer`, `talk`, `continueConversation`, and `helpNPC` all use bracket notation.
 - `src/server/storyline-engine.ts`: quest reward relationship update uses `Record<string, Relationship>`.
-- `src/shared/version.ts`, `package.json`, and in-file headers bumped to `0.100.0`.
+- `src/shared/version.ts`, `package.json`, and in-file headers bumped to `0.101.0`.
 - `src/client/game.ts` update-log screen updated.
-- `docs/RELEASE-NOTES-v0.100.0.md` and `docs/REDDIT-UPDATE-v0.100.0.md` created.
+- `docs/RELEASE-NOTES-v0.101.0.md` and `docs/REDDIT-UPDATE-v0.101.0.md` created.
+- POST /api/init persistence; conversation-engine tryAI uses new AI bridge and records learnedName; client beforeunload beacon; shared/types.ts Player.name optional; docs and in-game log updated.
 
 ### Validation
 - `npm run type-check` passed.
 - `npm run build` passed.
-- `devvit publish --public --bump minor` submitted v0.100.0 for review.
+- `devvit publish --public --bump minor` submitted v0.101.0 for review.
 
 ---
 

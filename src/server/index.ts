@@ -7,6 +7,14 @@ console.log("[server] THE OPEN WORLD module loaded - STATELESS MODE");
 
 // Single game engine instance (stateless - client sends state)
 const game = new GameEngine();
+async function serverSavePlayer(username: string, player: any, slot = "1"): Promise<void> {
+  try {
+    await redis.set(`${username}_save_${slot}`, JSON.stringify(player));
+    console.log(`[server] Authoritative save: ${username} slot ${slot}`);
+  } catch (e) {
+    console.error("[server] Authoritative save failed:", e);
+  }
+}
 
 export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse): Promise<void> {
   const requestUrl = req.url ?? "";
@@ -154,10 +162,12 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       const input = String(data.input || data.text || "").trim();
       if (input) {
         console.log(`[server] Processing command: "${input}", current job: ${JSON.stringify(game.getPlayer().job)}`);
-        const result = game.processCommand(input);
+        const result = await game.processCommand(input);
         console.log(`[server] After command, job: ${JSON.stringify(game.getPlayer().job)}`);
         
         const player = game.getPlayer();
+        
+        await serverSavePlayer(username, player);
         
         rsp.writeHead(200, { "Content-Type": "application/json" });
         rsp.end(JSON.stringify({
@@ -172,6 +182,7 @@ export async function serverOnRequest(req: IncomingMessage, rsp: ServerResponse)
       
       // No command - return current state
       const player = game.getPlayer();
+      await serverSavePlayer(username, player);
       rsp.writeHead(200, { "Content-Type": "application/json" });
       rsp.end(JSON.stringify({
         type: "created",

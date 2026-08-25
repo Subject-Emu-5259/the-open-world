@@ -1,2 +1,2 @@
 // THE OPEN WORLD - Game Version
-export const GAME_VERSION = '0.100.0';
+export const GAME_VERSION = '0.101.0';

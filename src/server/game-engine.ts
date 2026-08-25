@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.100.0
+// Version: 0.101.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -597,7 +597,7 @@ ${'\u2500'.repeat(50)}
     return { success: true, message: `👥 **People in ${header}**\n${'─'.repeat(40)}\n${list}\n\nType "talk [name]" to interact.` };
   }
 
-  talk(name: string): GameAction {
+  async talk(name: string): Promise<GameAction> {
     const nearby = this.social.getNPCByCity(this.player.city);
 
     if (!name.trim()) {
@@ -653,8 +653,8 @@ ${'\u2500'.repeat(50)}
     this.player.currentConversation = { npcId: npc.id, npcName: npc.name };
 
     // NPC speaks first so "talk" doesn't feel like talking to a bot
-    const timeCtx = undefined;
-    const opening = this.conversation.generateGreeting(npc, this.player, rel, timeCtx);
+    const timeCtx = this.getTimeCtx();
+    const opening = await this.conversation.generateGreeting(npc, this.player, rel, timeCtx);
     rel.value = Math.max(-100, Math.min(100, rel.value + opening.relationshipChange));
     rel.lastInteracted = Date.now();
     npc.relationship = rel.value;
@@ -666,7 +666,7 @@ ${'\u2500'.repeat(50)}
     };
   }
   
-  continueConversation(input: string): GameAction {
+  async continueConversation(input: string): Promise<GameAction> {
     const conv = this.player.currentConversation;
     if (!conv) return { success: false, message: "You aren't in a conversation." };
 
@@ -696,8 +696,8 @@ ${'\u2500'.repeat(50)}
     }
     const rel = this.player.relationships[npc.id]!;
 
-    const timeCtx = undefined;
-    const response = this.conversation.generateResponse(npc, input, this.player, rel, timeCtx);
+    const timeCtx = this.getTimeCtx();
+    const response = await this.conversation.generateResponse(npc, input, this.player, rel, timeCtx);
 
     // Update relationship
     rel.value = Math.max(-100, Math.min(100, rel.value + response.relationshipChange));
@@ -744,7 +744,7 @@ ${'\u2500'.repeat(50)}
     return { success: true, message: 'Conversation ended.' };
   }
 
-  greet(npcName: string): GameAction {
+  async greet(npcName: string): Promise<GameAction> {
     return this.talk(npcName);
   }
 
@@ -2108,6 +2108,14 @@ Commands:
     };
   }
   setPlayerName(name: string): void { this.player.name = name; }
+
+  private getTimeCtx() {
+    return {
+      hour: this.time.getHour(),
+      timeOfDay: this.time.getTimeOfDay(),
+      isWeekend: this.time.isWeekend(),
+    };
+  }
   
   loadState(state: any): void { 
     this.player = { 
@@ -2209,7 +2217,7 @@ Commands:
   }
 
   // === COMMAND DISPATCHER ===
-  processCommand(input: string): GameAction {
+  async processCommand(input: string): Promise<GameAction> {
     this.updateIncarceration();
     this.decayHeat();
 
@@ -2235,7 +2243,7 @@ Commands:
       // Meta commands still reach the normal dispatcher below.
       // Everything else is part of the active NPC conversation.
       if (cmd && !['status', 'help', 'sleep', 'people'].includes(cmd)) {
-        return this.continueConversation(input);
+        return await this.continueConversation(input);
       }
     }
     
@@ -2269,8 +2277,8 @@ Commands:
       case 'travel': result = rawArgs ? this.travelTo(rawArgs) : { success: false, message: 'Travel where? Usage: travel [city]' }; break;
       
       // Social
-      case 'talk': result = this.talk(rawArgs); break;
-      case 'greet': result = this.greet(rawArgs); break;
+      case 'talk': result = await this.talk(rawArgs); break;
+      case 'greet': result = await this.greet(rawArgs); break;
       case 'assist': result = rawArgs ? this.helpNPC(rawArgs) : { success: false, message: 'Assist whom? Type "people" to see who\'s around.' }; break;
       case 'people': result = this.people(); break;
       case 'end':

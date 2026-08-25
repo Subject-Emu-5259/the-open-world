@@ -69,7 +69,7 @@ export interface Vehicle { id: string; name: string; type: string; value: number
 export interface ConversationMessage { role: 'player' | 'npc' | 'system'; content: string; timestamp: number; }
 export interface Relationship { value: number; flags: string[]; metAt: number; lastInteracted: number; memory: ConversationMessage[]; }
 export interface Player {
-  id: string; redditUsername: string; firstName: string; lastName: string; age: number; gender: string;
+  id: string; redditUsername: string; name: string; firstName: string; lastName: string; age: number; gender: string;
   background: Background; traits: Trait[]; perk: Perk;
   health: number; happiness: number; energy: number; stress: number;
   skills: PlayerSkills; reputation: Reputation;

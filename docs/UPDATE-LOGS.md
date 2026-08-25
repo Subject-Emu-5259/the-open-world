@@ -1,3 +1,70 @@
+## v0.99.2 — Save System & NPC Conversation Patch
+Fetched: August 25, 2026
+
+### Added / Changed
+- Rebuilt save flow with server-first Redis persistence.
+- `GET /api/init` returns saved player from slot 1; splash shows Continue/New Game.
+- Auto-save after every command and on page unload / visibility change.
+- `localStorage` kept as offline fallback only.
+- Overhauled NPC conversation: NPCs greet first, contextual lines, proper exit words.
+- Fixed `text [name] [message]` to use relationship-aware replies.
+- Fixed `people` to show city-wide NPCs when district data is missing.
+- Bumped version to v0.99.2.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- Devvit publish pending fresh Reddit OAuth login.
+
+---
+
+## v0.99.2 — Server-First Save Flow + NPC Greeting & Farewell Polish
+Fetched: August 25, 2026
+
+### Summary
+Finalized the save authority so progress survives browser refreshes, and removed known NPC conversation traps (silent start, no exit, wrong relationship lookup).
+
+### Changes
+- **Client boot flow (`src/client/game.ts`)** – now starts with `/api/init` and continues an existing player instead of always creating a new one.
+- **Auto-save after every command** – `clientSave(slot, player)` is called after every server response.
+- **Unload flush** – `beforeunload` pushes the latest player state to the server before the page closes.
+- **New Game clears server slot** – explicit `/api/clear-save/1` so a restart is clean.
+- **Save errors are logged** – in-game activity feed shows `Save failed` instead of silently swallowing.
+- **NPC greets first** – `talk [name]` opens with `generateGreeting()` from the NPC.
+- **Farewell tokens release conversation lock** – mapped `bye/goodbye/leave/exit/later/im out`.
+- **text command fix** – `relationships` object handling corrected.
+- **people command robust** – returns city NPCs even when district data is sparse.
+- **Dead file removed** – `src/server/server.ts` duplicate.
+- **Version bump** – `v0.99.2` across shared version and docs.
+
+### Fixed Issues
+- Players losing progress on refresh / reload.
+- NPCs not greeting first / feeling bot-like.
+- Conversation lock never clearing on goodbye.
+
+---
+
+## v0.99.2 — Server-Side Save Fix + NPC Conversation Polish
+Fetched: August 25, 2026
+
+### Fixed
+- Save flow is now server-first: every command triggers a Redis save to slot 1, and `/api/init` returns the existing player state for a Continue option.
+- `beforeunload` flushes current state to the server so reloads do not lose progress.
+- New Game path explicitly clears the server-side save slot and resets in-memory state.
+- NPCs greet the player first when using `talk [name]` via `conversationEngine.generateGreeting()`.
+- Conversation lock is cleared by `bye`, `leave`, `exit`, `later`, `im out`, `goodbye`, preventing commands from being swallowed.
+- `people` returns all city NPCs when district data is sparse.
+- `text [name]` handles relationship objects correctly.
+- Dead duplicate `src/server/server.ts` removed.
+
+### Changed
+- `src/shared/version.ts` bumped to v0.99.2.
+- `docs/RELEASE-NOTES-v0.99.2.md` and `docs/REDDIT-UPDATE-v0.99.2.md` created.
+
+### Files touched
+- `src/client/game.ts`, `src/server/index.ts`, `src/server/game-engine.ts`, `src/server/social-engine.ts`, `src/server/conversation-engine.ts`, `src/server/comm-hub.ts`, `src/shared/version.ts`
+
+
 ## v0.99.1 — Save System Rebuild + NPC Conversation Overhaul
 Fetched: August 25, 2026
 

@@ -632,7 +632,7 @@ function renderUpdatesScreen() {
       
               <div class="updates-container">
                 <div class="update-item">
-          <span class="update-version">v0.99.1</span>
+          <span class="update-version">v0.99.2</span>
           <span class="update-date">August 25, 2026</span>
           <ul>
             <li>💾 <strong>Save System Rebuilt</strong> - Slot 1 auto-saves to server (Redis) every command and on refresh; localStorage is an offline fallback; splash screen auto-detects and resumes your game.</li>
@@ -645,7 +645,7 @@ function renderUpdatesScreen() {
           <li>👋 <strong>Conversations can end</strong> - say bye/goodbye/exit/leave/later/im out/ima head out to exit conversation mode.</li>
           <li>🔧 <strong>text [name] SMS fixed</strong> - relationship object lookup works and gives relationship-aware replies.</li>
           <li>🧹 <strong>Dead duplicate server.ts removed</strong> - single source of truth in src/server/index.ts.</li>
-          <li>🔁 <strong>Version Sync</strong> - Bumped to v0.99.1.</li>
+          <li>🔁 <strong>Version Sync</strong> - Bumped to v0.99.2 with server-first save flow and NPC greeting polish.</li>
           </ul>
         </div>
                 <div class="update-item">

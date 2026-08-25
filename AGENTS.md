@@ -1,7 +1,7 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.99.1
+**Version**: 0.99.2
 **Last Updated**: August 25, 2026
 
 ---
@@ -56,7 +56,7 @@
 
 ## Latest Release
 
-- **v0.99.1** — Save system rebuild + NPC conversation overhaul. See `docs/RELEASE-NOTES-v0.99.1.md`.
+- **v0.99.2** — Server-first save flow + NPC greeting/farewell polish. See `docs/RELEASE-NOTES-v0.99.2.md`.
 
 ---
 
@@ -72,5 +72,6 @@
 - [x] Implement Faction Wars & Political Influence ✅
 - [x] Rebuild server-side save system (auto-save + continue on refresh)
 - [x] Overhaul NPC conversation engine (contextual greetings + replies)
+- [x] Finalize server-first save authority and continue-on-refresh
 - [ ] Add more international mission strings
 - [ ] Expand vehicle racing system

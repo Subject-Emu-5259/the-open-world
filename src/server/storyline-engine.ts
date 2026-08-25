@@ -1106,8 +1106,13 @@ export class StorylineEngine {
     }
     if (quest.reward.relationship) {
       const { target, value } = quest.reward.relationship;
-      const currentRel = player.relationships.get(target) || 0;
-      player.relationships.set(target, Math.min(100, currentRel + value));
+      if (!player.relationships) player.relationships = {};
+      if (!player.relationships[target]) {
+        player.relationships[target] = { value: 0, flags: [], metAt: Date.now(), lastInteracted: Date.now(), memory: [] };
+      }
+      const rel = player.relationships[target];
+      rel.value = Math.min(100, (rel.value || 0) + value);
+      rel.lastInteracted = Date.now();
     }
     
     this.activeQuests.delete(questId);

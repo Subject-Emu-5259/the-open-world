@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.96.0
+// Version: 0.100.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -12,6 +12,7 @@ import { ConversationEngine } from './conversation-engine.js';
 import { WORLD_CITIES } from '../shared/world-data.js';
 import { AchievementEngine } from './achievements.js';
 import type { SerializableAchievements } from './achievements.js';
+import type { Relationship } from '../shared/types.js';
 import { SchoolEngine } from './school-engine.js';
 import { VehicleService } from './vehicle-service.js';
 import { RacingService, RACE_TRACKS } from './racing-service.js';
@@ -45,7 +46,7 @@ export interface PlayerState {
   vehicles: any[];
   properties: Property[];
   investments: Investment[];
-  relationships: Map<string, number>;
+  relationships: Record<string, Relationship>;
   createdAt: number;
   lastActive: number;
   currentConversation?: any;
@@ -139,7 +140,7 @@ export class GameEngine {
       vehicles: [],
       properties: [],
       investments: [],
-      relationships: new Map(),
+      relationships: {},
       createdAt: Date.now(),
       lastActive: Date.now(),
       incarcerated: false,
@@ -759,9 +760,13 @@ ${'\u2500'.repeat(50)}
     
     const result = this.social.interact(npc.id, { type: 'help' });
     
-    if (!this.player.relationships) this.player.relationships = new Map();
-    const currentRel = this.player.relationships.get(npc.id) || 0;
-    this.player.relationships.set(npc.id, currentRel + (result.relationshipChange || 0));
+    if (!this.player.relationships) this.player.relationships = {};
+    if (!this.player.relationships[npc.id]) {
+      this.player.relationships[npc.id] = { value: 0, flags: [], metAt: Date.now(), lastInteracted: Date.now(), memory: [] };
+    }
+    const rel = this.player.relationships[npc.id];
+    rel.value = Math.max(-100, Math.min(100, rel.value + (result.relationshipChange || 0)));
+    rel.lastInteracted = Date.now();
     
     this.player.reputation.community += 1;
     
@@ -2091,17 +2096,11 @@ Commands:
   }
 
   getPlayer(): any { 
-    // Convert Map to object for JSON serialization
-    const relationships = this.player.relationships instanceof Map 
-      ? Object.fromEntries(this.player.relationships) 
-      : this.player.relationships;
-    
     // Get time and weather info
     const weather = getWeather(this.time.currentTime, this.player.city);
     
     return { 
       ...this.player,
-      relationships,
       achievements: this.achievementEngine.exportSerializable(),
       gameTime: this.time.formatTime(),
       gameDate: this.time.formatDate(),
@@ -2128,10 +2127,8 @@ Commands:
       inventory: state.inventory || [],
       visitedCities: state.visitedCities || ['west_memphis'],
       workDaysCompleted: state.workDaysCompleted || 0,
-      // Convert relationships back to Map if needed
-      relationships: state.relationships instanceof Map 
-        ? state.relationships 
-        : new Map(Object.entries(state.relationships || {})),
+      // Preserve relationships as a plain JSON-safe record
+      relationships: state.relationships || {},
     }; 
     
     if (state.achievements) {

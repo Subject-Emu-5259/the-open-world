@@ -631,7 +631,27 @@ function renderUpdatesScreen() {
       </div>
       
               <div class="updates-container">
-                <div class="update-item">
+        <div class="update-item">
+          <span class="update-version">v0.99.3</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>🧠 <strong>NPC Memory Fixed</strong> — Relationships now save correctly as JSON, so NPCs remember your name, conversation history, and how they feel about you across commands and reloads.</li>
+            <li>💾 <strong>Save Serialization Hardened</strong> — Server-side Redis save now preserves the full relationship record; no more lost NPC context on refresh.</li>
+            <li>🛠️ <strong>Code Cleanup</strong> — Removed stale version header and unified relationship record usage across game engine and storyline engine.</li>
+          </ul>
+        </div>
+        
+                              <div class="update-item">
+          <span class="update-version">v0.100.0</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>🧠 <strong>NPC Memory Fixed</strong> - Relationships now save as plain records so NPCs remember your name, chat history, and mood between messages.</li>
+            <li>💾 <strong>Save Persistence Improved</strong> - Full player state (including conversation memory) is persisted server-side after every command.</li>
+            <li>🗣️ <strong>No More "What's yours?" Loop</strong> - Saying your name correctly updates the NPC's memory instead of resetting the introduction.</li>
+            <li>🤝 <strong>Assist & Quests</strong> - Relationship changes from helping NPCs and completing quests now persist.</li>
+          </ul>
+        </div>
+              <div class="update-item">
           <span class="update-version">v0.99.2</span>
           <span class="update-date">August 25, 2026</span>
           <ul>

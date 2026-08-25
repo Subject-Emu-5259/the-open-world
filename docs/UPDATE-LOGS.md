@@ -1,3 +1,45 @@
+## v0.100.0 — NPC Memory & Save Persistence Hotfix
+Fetched: August 25, 2026
+
+### Fixed
+- NPCs forgot everything between messages because `relationships` was stored as a `Map`, which does not JSON-serialize to Redis.
+- Converted `relationships` to a plain `Record<string, Relationship>` so NPC memory, flags, and relationship value survive every save/load.
+- `knows_name` flag and conversation memory now persist, fixing the "Name's Marcus. What's yours?" loop.
+- `assist [name]` and quest reward relationship changes updated to use the plain-object record.
+- Full player state (including `currentConversation`) now serializes into the server-side auto-save.
+
+### Changed
+- `src/server/game-engine.ts`: `relationships` is now `{}`; `initPlayer`, `loadState`, `getPlayer`, `talk`, `continueConversation`, and `helpNPC` all use bracket notation.
+- `src/server/storyline-engine.ts`: quest reward relationship update uses `Record<string, Relationship>`.
+- `src/shared/version.ts`, `package.json`, and in-file headers bumped to `0.100.0`.
+- `src/client/game.ts` update-log screen updated.
+- `docs/RELEASE-NOTES-v0.100.0.md` and `docs/REDDIT-UPDATE-v0.100.0.md` created.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.100.0 for review.
+
+---
+
+## v0.99.3 — NPC Relationship Memory Fix + Save Serialization Hardening
+Fetched: August 25, 2026
+
+### Fixed
+- `player.relationships` are now stored as a plain JSON-safe `Record<string, Relationship>` instead of a JavaScript `Map`.
+- Relationship objects (value, flags, memory, metAt, lastInteracted) are preserved through every Redis save/load loop.
+- NPCs now remember their last greeting, the player's name, and recent conversation history across commands and page reloads.
+- `helpNPC` and quest reward paths were updated to use the new relationship record shape.
+- Removed stale `Version: 0.96.0` comment from `game-engine.ts`.
+- Bumped version metadata to v0.99.3.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- Publish pending Devvit OAuth completion.
+
+---
+
 ## v0.99.2 — Save System & NPC Conversation Patch
 Fetched: August 25, 2026
 

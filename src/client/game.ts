@@ -632,6 +632,35 @@ function renderUpdatesScreen() {
       
               <div class="updates-container">
         <div class="update-item">
+          <span class="update-version">v0.104.2</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🏠 <strong>Cash Property Purchases</strong> — You can now buy real estate outright. "buy property [name]" defaults to cash when you can afford the full price, and you can add "cash" or "mortgage" to force a payment method.</li>
+            <li>❓ <strong>Help Updated</strong> — The in-game help now explains cash vs. mortgage purchasing.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.104.0</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🌍 <strong>International Mission Expansion</strong> — 10 new quests tied to the v0.103.0 global NPCs. Ask NPCs for "quests" or "work" in Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney.</li>
+            <li>🏁 <strong>World Street Series Racing</strong> — New 'race season' and 'race standings' commands, plus 5 new international tracks. Compete across a 5-race championship with points and earnings.</li>
+            <li>📜 <strong>Quest Log</strong> — New 'quests' command shows active objectives, progress, and rewards.</li>
+            <li>🔁 <strong>Version Sync</strong> — Bumped all project files to v0.104.0 and verified type-check/build.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
+          <span class="update-version">v0.103.0</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> — Added 10 new global characters across Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney.</li>
+            <li>🎲 <strong>New City Encounters</strong> — Five fresh random events: Lost Tourist, Pop-Up Job Fair, Celebrity Sighting, Street Chess Match, and Sudden Summer Storm.</li>
+          </ul>
+        </div>
+        
+        <div class="update-item">
           <span class="update-version">v0.102.0</span>
           <span class="update-date">August 25, 2026</span>
           <ul>

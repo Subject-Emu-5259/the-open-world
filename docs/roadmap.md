@@ -1,4 +1,7 @@
 # THE OPEN WORLD — Roadmap
+- **August 28, 2026 (v0.104.2)**: Fixed property purchases so players can pay cash. "buy property [name]" now defaults to cash when the full price is available; add "cash" or "mortgage" to force a payment method. Updated in-game help text and real-estate listings.
+- **August 28, 2026 (v0.104.2)**: Added 10 new international NPCs across Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney (npc_324–npc_333 in `src/server/social-engine.ts`). Added 5 new city-life random events — Lost Tourist, Pop-Up Job Fair, Celebrity Sighting, Street Chess Match, and Sudden Summer Storm — to `src/server/storyline-engine.ts`. `npm run type-check` and `npm run build` passed. `devvit publish --public --bump minor` is pending fresh Reddit OAuth login in this environment.
+
 
 - **August 25, 2026 (v0.102.0)**: Added a serverless LLM NPC reply bridge (`src/server/llm-provider.ts`, `src/server/ai-npc-provider.ts`) with Hugging Face as the preferred provider and OpenRouter, Groq, and Gemini free-tier fallbacks. Added `POST /api/npc-reply` to `src/server/index.ts` so NPCs can be queried directly for natural, in-character replies. API keys are managed via Devvit global settings. If no key is configured or all providers fail, the local template generator still runs. `npm run type-check` and `npm run build` passed. Devvit publish pending fresh Reddit OAuth login in this environment.
 
@@ -21,9 +24,10 @@
 
 ## Project Status
 
-- **August 25, 2026**: v0.102.0 — Serverless LLM NPC Brain. Wired NPC conversation engine to a serverless LLM bridge (Hugging Face preferred, OpenRouter/Groq/Gemini fallbacks). Added `POST /api/npc-reply`. Hardened server-authoritative save flow with stable user key, 30-day Redis expiration, and beacon flush on tab close. Fixed NPC memory serialization by keeping relationships as JSON-safe records. NPC greetings now use the saved relationship and learned names. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.
-- **Current Focus**: Serverless LLM NPC Brain & Save Flow Hardening
-- **Next Milestone**: Natural NPC Replies with Free-Tier LLMs
+- **August 28, 2026**: v0.104.2 — Cash Property Purchases + Help Clarification. Fixed the real-estate buy command to support outright cash buys and explained cash vs. mortgage in help.
+- **August 28, 2026**: v0.104.2 — International NPC Expansion + City-Life Encounters. Added 10 new international NPCs and 5 new random events. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.
+- **Current Focus**: Expanding global city content (NPCs, events, districts)
+- **Next Milestone**: Persistent quest chains and city-specific storylines
 
 ## Validation Notes
 - **August 24, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_314–npc_323) covering Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.99.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
@@ -34,6 +38,7 @@
 - **August 12, 2026**: `npm run type-check` passed, `npm run build` passed. Expanded property system with luxury penthouses, vacation rentals, warehouses, farmland, and offshore villas across 10 cities. Bumped version files to `v0.94.0`. `devvit publish --public --bump minor` submitted v0.94.0 for review.
 
 ## 🗺️ Phase 5: Global Expansion (Current)
+- [x] **v0.104.2**: Cash Property Purchases — support cash and mortgage options in real-estate; default to cash when affordable\n- [x] **v0.104.2**: International NPC & Random Event Expansion — 10 new global NPCs + 5 new city encounters
 - [x] **v0.99.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.98.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.97.0**: Global NPC & Random Event Expansion

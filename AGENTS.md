@@ -1,8 +1,8 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.102.0
-**Last Updated**: August 25, 2026
+**Version**: 0.104.2
+**Last Updated**: August 28, 2026
 
 ---
 
@@ -17,7 +17,8 @@
 - `src/server/game-engine.ts` — Main game logic, command processing
 - `src/server/index.ts` — HTTP API endpoints
 - `src/client/game.ts` — React-like client UI
-- `src/server/social-engine.ts` — 42 NPCs with schedules
+- `src/server/social-engine.ts` — 42 NPCs + 10 international quests
+- `src/server/racing-service.ts` — Racing + World Street Series championship
 - `src/server/property-engine.ts` — Real estate & investments
 - `src/server/storyline-engine.ts` — Dynamic events
 
@@ -41,11 +42,12 @@
 |----------|----------|
 | **Core** | work, apply, apply [job], status, help, sleep, study, enroll, study hours, gym |
 | **Travel** | travel [city], explore, goto [district] |
-| **Social** | talk [name], greet [name], people, assist [name], factions, chat [id] |
-| **Property** | real-estate, buy property [name], sell property [name], properties |
+| **Social** | talk [name], greet [name], people, assist [name], factions, chat [id], quests |
+| **Property** | real-estate, buy property [name] [cash|mortgage], sell property [name], properties |
 | **Invest** | invest, invest [name] [amount], investments |
-| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name], inspect [name], service [name] [oil|tires|brakes|tuneup|wash], maintain [name], repair vehicle [name] |
+| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name], inspect [name], service [name] [oil|tires|brakes|tuneup|wash], maintain [name], repair vehicle [name], race [track], race season, race standings |
 | **Events** | event, event choice [id] |
+| **Racing** | race [track], race season, race standings |
 
 ---
 
@@ -56,6 +58,8 @@
 
 ## Latest Release
 
+- **v0.104.2** — International Mission Expansion + Racing Championship. Added 10 global quests tied to v0.103.0 NPCs, 5 new international race tracks, and a multi-race World Street Series championship system.
+- **v0.103.0** — Global NPC expansion (10 new international characters) + 5 new city-life random events.
 - **v0.102.0** — Serverless LLM NPC brain + rebuilt save flow. See `docs/RELEASE-NOTES-v0.102.0.md`.
 
 ---
@@ -73,5 +77,5 @@
 - [x] Rebuild server-side save system (auto-save + continue on refresh)
 - [x] Overhaul NPC conversation engine (contextual greetings + replies)
 - [x] Finalize server-first save authority and continue-on-refresh
-- [ ] Add more international mission strings
-- [ ] Expand vehicle racing system
+- [x] Add more international mission strings
+- [x] Expand vehicle racing system

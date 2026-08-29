@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.102.0
+// Version: 0.104.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -487,7 +487,7 @@ ${'\u2500'.repeat(50)}
 
 **\ud83c\udfe0 Property & Wealth**
 \u2022 real-estate - View properties
-\u2022 buy property [name]
+\u2022 buy property [name] [cash|mortgage]
 \u2022 sell property [name]
 \u2022 properties - Your portfolio
 \u2022 renovate property [name] - Upgrade a property ($)
@@ -498,9 +498,10 @@ ${'\u2500'.repeat(50)}
 \u2022 sell vehicle [name] - Sell a vehicle
 \u2022 maintain [name] - Perform maintenance ($)
 \u2022 repair vehicle [name] - Full repair ($$)
-
-**\ud83d\udc65 Social & Comms**\u2022 race - View race tracks
+\u2022 race - View race tracks
 \u2022 race [track] - Enter a street/circuit race ($$)
+\u2022 race season - Start the World Street Series championship
+\u2022 race standings - View current championship standings
 
 \u2022 people - See who's around
 \u2022 talk [name] - Chat with NPC
@@ -1054,29 +1055,74 @@ ${'\u2500'.repeat(50)}
     
     return { 
       success: true, 
-      message: `🏠 **Real Estate - ${this.player.city.replace('_', ' ')}**\n${'─'.repeat(50)}\n📈 Market: ${market.trend}\n💡 ${market.recommendation}\n\n${list}\n\nType "buy property [name]" to purchase (20% down payment required).` 
+      message: `🏠 **Real Estate - ${this.player.city.replace('_', ' ')}**\n${'─'.repeat(50)}\n📈 Market: ${market.trend}\n💡 ${market.recommendation}\n\n${list}\n\nBuying defaults to cash if you have the full price, otherwise a 20% down-payment mortgage. Add "cash" or "mortgage" to choose: "buy property [name] cash" / "buy property [name] mortgage".` 
     };
   }
 
-  buyProperty(propertyName: string): GameAction {
+  buyProperty(rawInput: string): GameAction {
+    if (!rawInput) {
+      return { success: false, message: 'Which property? Type "real-estate" to see listings.' };
+    }
+
+    // Detect explicit payment method suffixes: "cash" or "mortgage".
+    let propertyName = rawInput;
+    let useMortgage: boolean | null = null;
+    const trimmed = rawInput.trim();
+
+    if (trimmed.endsWith(' cash')) {
+      useMortgage = false;
+      propertyName = trimmed.slice(0, -5).trim();
+    } else if (trimmed.endsWith(' mortgage')) {
+      useMortgage = true;
+      propertyName = trimmed.slice(0, -9).trim();
+    }
+
     if (!propertyName) {
       return { success: false, message: 'Which property? Type "real-estate" to see listings.' };
     }
-    
+
     const listings = this.property.getAllListings();
     const listing = listings.find(l => l.name.toLowerCase().includes(propertyName.toLowerCase()));
-    
+
     if (!listing) {
       return { success: false, message: `Property "${propertyName}" not found. Type "real-estate" to see listings.` };
     }
-    
-    const result = this.property.purchaseProperty(this.player, listing.id, true);
-    
+
+    const downPaymentPercent = 0.20;
+    const downPayment = Math.floor(listing.price * downPaymentPercent);
+
+    if (useMortgage === null) {
+      // Smart default: pay cash if the player can afford the full price,
+      // otherwise fall back to a mortgage with 20% down.
+      if (this.player.money >= listing.price) {
+        useMortgage = false;
+      } else if (this.player.money >= downPayment) {
+        useMortgage = true;
+      } else {
+        return {
+          success: false,
+          message: `You can't afford ${listing.name}. You need $${listing.price.toLocaleString()} for a cash purchase or $${downPayment.toLocaleString()} (20%) for a mortgage. You have $${this.player.money.toLocaleString()}.\n\nUse "buy property ${listing.name} cash" or "buy property ${listing.name} mortgage".`,
+        };
+      }
+    } else if (useMortgage && this.player.money < downPayment) {
+      return {
+        success: false,
+        message: `Need $${downPayment.toLocaleString()} (20%) for a mortgage on ${listing.name}. You have $${this.player.money.toLocaleString()}.`,
+      };
+    } else if (!useMortgage && this.player.money < listing.price) {
+      return {
+        success: false,
+        message: `Need $${listing.price.toLocaleString()} for a cash purchase of ${listing.name}. You have $${this.player.money.toLocaleString()}.`,
+      };
+    }
+
+    const result = this.property.purchaseProperty(this.player, listing.id, useMortgage);
+
     if (result.success && result.data) {
       this.player.money -= result.data.cashSpent;
       this.player.properties.push(result.data.property);
     }
-    
+
     return result;
   }
 
@@ -1365,11 +1411,24 @@ ${'\u2500'.repeat(50)}
   }
 
   race(query: string): GameAction {
-    if (!query) {
+    const q = (query || '').trim().toLowerCase();
+    if (!q) {
       const localTracks = RACE_TRACKS.filter(t => t.city.toLowerCase() === (this.player.city || '').toLowerCase());
       const local = localTracks.map(t => `• ${t.name} — $${t.entryFee.toLocaleString()} entry`).join('\n');
       const localHeader = local ? `\n\n**Local tracks in ${this.player.city}:**\n${local}` : '';
       return { success: true, message: this.racingService.listTracks(this.player.city) + localHeader };
+    }
+    if (q === 'season') {
+      const championship = this.racingService.championshipService.startSeasonChampionship();
+      if (!championship || championship.tracks.length === 0) {
+        return { success: false, message: 'Could not start a championship right now.' };
+      }
+      const standing = this.racingService.championshipService.getStandings();
+      return { success: true, message: `🌍 **World Street Series started!**\n\n${standing.text}` };
+    }
+    if (q === 'standings' || q === 'standing') {
+      const standing = this.racingService.championshipService.getStandings();
+      return { success: true, message: standing.text };
     }
     const vehicle = this.player.vehicles?.[0];
     const result = this.racingService.race(this.player, vehicle, query);
@@ -2020,6 +2079,20 @@ Commands:
   }
 
   // === ACHIEVEMENTS ===
+
+  activeQuests(): GameAction {
+    const quests = this.storyline.getActiveQuests();
+    if (!quests || quests.length === 0) {
+      return { success: true, message: '📜 **Active Quests**\nTalk to NPCs and ask for a *quest* or *favor* to find work.' };
+    }
+    const lines = quests.map(q => {
+      const progress = q.objectives.filter(o => o.isCompleted).length;
+      const total = q.objectives.length;
+      return `• **${q.title}** — ${progress}/${total} objectives\n  ${q.description}`;
+    }).join('\n\n');
+    return { success: true, message: `📜 **Active Quests**\n${'─'.repeat(40)}\n\n${lines}` };
+  }
+
   achievements(): GameAction {
     this.checkAllAchievements();
     const unlocked = this.achievementEngine.getUnlocked();
@@ -2402,6 +2475,10 @@ Commands:
       case 'contacts': result = this.contacts(); break;
       case 'search': result = this.searchComm(rawArgs); break;
       case 'factions': result = this.factions(); break;
+      case 'quests':
+      case 'quest':
+        result = this.activeQuests();
+        break;
       case 'chat': result = this.chat(rawArgs); break;
       case 'influence': result = this.influence(); break;
       case 'support': result = this.support(rawArgs); break;

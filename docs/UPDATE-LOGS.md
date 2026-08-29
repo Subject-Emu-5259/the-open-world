@@ -1,3 +1,99 @@
+## v0.104.2 — Cash Property Purchases + Help Overhaul
+
+**August 28, 2026**
+
+### Added
+- `docs/REDDIT-HOW-TO-PLAY-POST.md`: full player-facing quick-start guide for the subreddit.
+- `docs/INGAME-HELP-REFERENCE.md`: mirror of the help text for docs.
+
+### Changed
+- `src/server/game-engine.ts` `help()` output:
+  - Added sections: Movement, Work & Money, Property & Wealth, Vehicles & Racing, Social & Relationships, Education & Self, Info & Time, Quick Tips.
+  - Explains cash vs. mortgage purchasing explicitly.
+  - Added Social & Relationships header that was missing.
+  - Added `assist`, `quests`, `influence`, `support`, `sabotage`, `chat`, `email`.
+- `src/client/game.ts` update log already references v0.104.2 help update.
+- `AGENTS.md` command reference already updated.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
+## v0.104.0 — International Mission Expansion + World Street Series Racing
+
+**August 28, 2026**
+
+### Added
+- **10 International Quests** in `src/server/social-engine.ts` (offered by the v0.103.0 NPCs):
+  - `q_khalid_signature_scent` — Signature Scent (Dubai)
+  - `q_suki_silk_repair` — Silk Thread Rescue (Tokyo)
+  - `q_marcel_midnight_set` — Midnight Set (Paris)
+  - `q_adeyemi_demo_day` — Demo Day Prep (London)
+  - `q_lena_harvest_festival` — Harvest Festival (Berlin)
+  - `q_camila_mural_mystery` — Mural Mystery (Mexico City)
+  - `q_zara_flavor_contest` — Flavor Contest (Sydney)
+  - `q_raj_open_mic` — Open Mic Scout (Toronto)
+  - `q_noah_river_pollution` — South Bank Waters (London)
+  - `q_yuna_lantern_procession` — Lantern Procession (Tokyo)
+- `NPC_QUEST_OFFERS` mapping so NPCs offer their city-specific missions.
+- `quests` command in `src/server/game-engine.ts` to review active quest progress.
+- **5 New International Race Tracks** in `src/server/racing-service.ts`:
+  - Cairo — Pyramids Plateau Run
+  - Rio de Janeiro — Copacabana Coast Sprint
+  - London — Canary Wharf Underground
+  - Mexico City — Azteca Circuit
+  - Mumbai — Marine Drive Night Run
+- `ChampionshipService` and `Championship` types for a multi-race season.
+- `race season` command to start the 5-race World Street Series championship.
+- `race standings` command to check championship points, wins, and next track.
+
+### Changed
+- `src/shared/version.ts` and `package.json` bumped to `0.104.0`.
+- `src/server/game-engine.ts`, `src/server/index.ts`, `src/client/game.ts`, `AGENTS.md`, `docs/roadmap.md`, and `docs/bugs.md` synced to `v0.104.0`.
+- `docs/RELEASE-NOTES-v0.104.0.md` and `docs/REDDIT-UPDATE-v0.104.0.md` created.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` and `devvit publish --public --bump minor` blocked: Devvit CLI is not authenticated (`devvit whoami` returns "Not currently logged in").
+
+---
+
+## v0.103.0 — International NPC Expansion + City-Life Encounters
+
+**August 28, 2026**
+
+### Added
+- 10 new international NPCs in `src/server/social-engine.ts`:
+  - `npc_324` — Khalid Al-Rashid — Deira perfume merchant (Dubai)
+  - `npc_325` — Suki Watanabe — Asakusa vintage kimono dealer (Tokyo)
+  - `npc_326` — Marcel Durand — Saint-Germain jazz club owner (Paris)
+  - `npc_327` — Adeyemi Okonkwo — Shoreditch tech-bootcamp instructor (London)
+  - `npc_328` — Lena Hoffmann — Tempelhofer Feld urban farmer (Berlin)
+  - `npc_329` — Camila Espinoza — Coyoacán mural tour guide (Mexico City)
+  - `npc_330` — Zara Chen — The Rocks ice-cream vendor (Sydney)
+  - `npc_331` — Raj Malhotra — Distillery District comedy-club booker (Toronto)
+  - `npc_332` — Noah Fisher — South Bank fisherman (London)
+  - `npc_333` — Yuna Park — Asakusa lantern shop owner (Tokyo)
+- 5 new random events in `src/server/storyline-engine.ts`:
+  - Lost Tourist
+  - Pop-Up Job Fair
+  - Celebrity Sighting
+  - Street Chess Match
+  - Sudden Summer Storm
+
+### Changed
+- `src/shared/version.ts` and `package.json` bumped to `0.103.0`.
+- `src/server/game-engine.ts`, `src/server/index.ts`, `src/client/game.ts`, `AGENTS.md`, `docs/roadmap.md`, and `docs/bugs.md` synced to `v0.103.0`.
+- `docs/RELEASE-NOTES-v0.103.0.md` and `docs/REDDIT-UPDATE-v0.103.0.md` created.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` and `devvit publish --public --bump minor` blocked: Devvit CLI is not authenticated (`devvit whoami` returns "Not currently logged in").
+
 ## v0.102.0 — Serverless LLM NPC Brain + Save Flow Rebuild
 Fetched: August 25, 2026
 

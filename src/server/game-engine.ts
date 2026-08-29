@@ -470,66 +470,74 @@ export class GameEngine {
     return { 
       success: true, 
       message: `\ud83c\udfae **THE OPEN WORLD - Commands**
-${'\u2500'.repeat(50)}
+${'\\u2500'.repeat(50)}
 
-**\ud83d\udccd Movement**
-\u2022 travel [city] - Go to another city
-\u2022 explore - Look around current area
-\u2022 goto [district] - Move to a district
+**\\ud83d\\udccd Movement**
+\\u2022 travel [city] - Move to another city
+\\u2022 explore - Look around your current area
+\\u2022 goto [district] - Move to a city district
 
-**\ud83d\udcbc Work & Money**
-\u2022 apply - See job listings
-\u2022 apply [job] - Get hired
-\u2022 work - Work a shift (8 hrs)
-\u2022 bank - Check bank balance
-\u2022 deposit [amount] - Put cash in bank
-\u2022 withdraw [amount] - Take cash out
+**\\ud83d\\udcbc Work & Money**
+\\u2022 apply - See job listings
+\\u2022 apply [job] - Apply for a specific job
+\\u2022 work - Work a shift
+\\u2022 bank - Check your bank balance
+\\u2022 deposit [amount] - Move cash to the bank
+\\u2022 withdraw [amount] - Take cash from the bank
 
-**\ud83c\udfe0 Property & Wealth**
-\u2022 real-estate - View properties
-\u2022 buy property [name] [cash|mortgage]
-\u2022 sell property [name]
-\u2022 properties - Your portfolio
-\u2022 renovate property [name] - Upgrade a property ($)
-\u2022 invest - Investment options
-\u2022 investments - Your investments
-\u2022 vehicles - Your garage
-\u2022 buy vehicle [type] - Purchase a vehicle
-\u2022 sell vehicle [name] - Sell a vehicle
-\u2022 maintain [name] - Perform maintenance ($)
-\u2022 repair vehicle [name] - Full repair ($$)
-\u2022 race - View race tracks
-\u2022 race [track] - Enter a street/circuit race ($$)
-\u2022 race season - Start the World Street Series championship
-\u2022 race standings - View current championship standings
+**\\ud83c\\udfe0 Property & Wealth**
+\\u2022 real-estate - View listings in your city
+\\u2022 buy property [name] [cash|mortgage] - Buy a property
+   - If you have the full price, it pays cash automatically.
+   - Add \\"cash\\" to pay outright. Add \\"mortgage\\" to finance with 20% down.
+\\u2022 sell property [name] - Sell a property
+\\u2022 properties - View your owned properties
+\\u2022 renovate property [name] - Upgrade a property (costs money)
+\\u2022 invest - See investment options
+\\u2022 investments - View your portfolio
 
-\u2022 people - See who's around
-\u2022 talk [name] - Chat with NPC
-\u2022 greet [name] - Say hello
-\u2022 contacts - View saved contacts
-\u2022 factions - View your groups
-\u2022 influence - View faction power
-\u2022 support [id] - Help your faction
-\u2022 sabotage [id] - Attack a rival
-\u2022 chat [id] - Enter group chat
-\u2022 email - Check inbox & commands
-\u2022 text [name] [msg] - Send SMS
+**\\ud83d\\ude97 Vehicles & Racing**
+\\u2022 vehicles - Your garage
+\\u2022 buy vehicle [type] - Purchase a vehicle
+\\u2022 sell vehicle [name] - Sell a vehicle
+\\u2022 maintain [name] - Basic maintenance
+\\u2022 repair vehicle [name] - Full repair
+\\u2022 race - List race tracks
+\\u2022 race [track] - Enter a race
+\\u2022 race season - Start the World Street Series
+\\u2022 race standings - Championship standings
 
-**\ud83c\udf93 Education & Self**
-\u2022 enroll [school_id] [course_id] - Start a program
-\u2022 study hours [n] - Progress your course
-\u2022 gym - Workout ($15, FIT +2)
+**\\ud83d\\udc65 Social & Relationships**
+\\u2022 people - See who's nearby
+\\u2022 talk [name] - Chat with an NPC
+\\u2022 greet [name] - Greet an NPC
+\\u2022 contacts - View saved contacts
+\\u2022 assist [name] - Help an NPC
+\\u2022 factions - View your factions
+\\u2022 influence - View faction power
+\\u2022 support [id] - Help your faction
+\\u2022 sabotage [id] - Attack a rival faction
+\\u2022 chat [id] - Enter a group chat
+\\u2022 email - Check your inbox
+\\u2022 text [name] [message] - Send an SMS
+\\u2022 quests - View active quests
 
-**\ud83d\udcd6 Info**
-\u2022 status - Your life snapshot
-\u2022 help - This list
-\u2022 sleep - Rest 8 hours
-\u2022 event - Active events
+**\\ud83c\\udf93 Education & Self**
+\\u2022 enroll [school_id] [course_id] - Start a course
+\\u2022 study hours [n] - Study for N hours
+\\u2022 gym - Work out ($15)
 
-**\ud83d\udca1 Tips**
-\u2022 Weather affects work pay
-\u2022 Sleep to restore energy
-\u2022 Explore to find NPCs` 
+**\\ud83d\\udcd6 Info & Time**
+\\u2022 status - Your full life snapshot
+\\u2022 help - Show this list
+\\u2022 sleep - Rest 8 hours
+\\u2022 event - See active events
+
+**\\ud83d\\udca1 Quick Tips**
+\\u2022 Weather affects how much certain jobs pay.
+\\u2022 Sleep restores energy.
+\\u2022 Explore to find new NPCs and random events.
+\\u2022 If a property is confusing: try \\"buy property Wicker Park Duplex\\".` 
     };
   }
 

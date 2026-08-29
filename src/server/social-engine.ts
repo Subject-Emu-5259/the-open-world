@@ -1,3 +1,102 @@
+
+// v0.104.0 — International Missions
+export const INTERNATIONAL_QUESTS: Quest[] = [
+  {
+    id: 'q_khalid_signature_scent',
+    title: 'Signature Scent',
+    description: 'Khalid needs three rare ingredients from the spice souk to finish a custom attar for a royal client.',
+    status: 'available',
+    reward: { money: 450, relationship: { target: 'npc_324', value: 15 } },
+    objectives: [{ description: 'Gather 3 rare spice ingredients from Dubai vendors.', isCompleted: false }],
+  },
+  {
+    id: 'q_suki_silk_repair',
+    title: 'Silk Thread Rescue',
+    description: 'Suki has a tear in a priceless antique kimono and needs a master weaver in Asakusa to repair it by festival time.',
+    status: 'available',
+    reward: { money: 380, relationship: { target: 'npc_325', value: 12 } },
+    objectives: [{ description: 'Deliver the damaged kimono to the Asakusa master weaver.', isCompleted: false }],
+  },
+  {
+    id: 'q_marcel_midnight_set',
+    title: 'Midnight Set',
+    description: "Marcel's headline sax player vanished. He needs someone with enough charm to book a replacement before midnight.",
+    status: 'available',
+    reward: { money: 520, stat: { target: 'charisma', value: 4 } },
+    objectives: [{ description: 'Find and recruit a replacement saxophonist in Paris.', isCompleted: false }],
+  },
+  {
+    id: 'q_adeyemi_demo_day',
+    title: 'Demo Day Prep',
+    description: "Adeyemi's bootcamp students are demoing apps tomorrow. Help him debug three student projects before the showcase.",
+    status: 'available',
+    reward: { money: 400, stat: { target: 'intelligence', value: 5 } },
+    objectives: [{ description: 'Debug 3 student app projects in Shoreditch.', isCompleted: false }],
+  },
+  {
+    id: 'q_lena_harvest_festival',
+    title: 'Harvest Festival',
+    description: 'Lena needs volunteers to set up stalls and protect crops from a sudden summer storm before the community harvest festival.',
+    status: 'available',
+    reward: { money: 350, relationship: { target: 'npc_328', value: 14 } },
+    objectives: [{ description: 'Help set up the Tempelhofer Feld harvest festival and save the crops.', isCompleted: false }],
+  },
+  {
+    id: 'q_camila_mural_mystery',
+    title: 'Mural Mystery',
+    description: "One of Coyoacán's famous murals is being defaced overnight. Camila needs someone to stake out the alley and catch the culprit.",
+    status: 'available',
+    reward: { money: 480, stat: { target: 'fitness', value: 3 } },
+    objectives: [{ description: 'Stake out the mural and identify the vandal.', isCompleted: false }],
+  },
+  {
+    id: 'q_zara_flavor_contest',
+    title: 'Flavor Contest',
+    description: "Zara's handcart is entered in a Sydney harbour ice-cream flavor contest. Help her source exotic toppings before judging.",
+    status: 'available',
+    reward: { money: 420, stat: { target: 'charisma', value: 3 } },
+    objectives: [{ description: 'Collect 3 exotic ice-cream toppings around Sydney.', isCompleted: false }],
+  },
+  {
+    id: 'q_raj_open_mic',
+    title: 'Open Mic Scout',
+    description: 'Raj needs fresh faces for the Distillery District comedy showcase. Bring him three promising new acts.',
+    status: 'available',
+    reward: { money: 500, relationship: { target: 'npc_331', value: 13 } },
+    objectives: [{ description: 'Recruit 3 new comedians for the open mic showcase.', isCompleted: false }],
+  },
+  {
+    id: 'q_noah_river_pollution',
+    title: 'South Bank Waters',
+    description: 'Noah finds dead fish near his Thames fishing spot and suspects illegal dumping. Help gather proof and report it.',
+    status: 'available',
+    reward: { money: 390, relationship: { target: 'npc_332', value: 15 } },
+    objectives: [{ description: 'Collect water samples and evidence of pollution by the South Bank.', isCompleted: false }],
+  },
+  {
+    id: 'q_yuna_lantern_procession',
+    title: 'Lantern Procession',
+    description: "Yuna's Asakusa lantern shop must prepare 50 lanterns for a nighttime procession. Lend a steady hand.",
+    status: 'available',
+    reward: { money: 460, stat: { target: 'intelligence', value: 2 } },
+    objectives: [{ description: 'Help craft and deliver 50 paper lanterns for the Asakusa procession.', isCompleted: false }],
+  },
+];
+
+// Map quest IDs to the NPCs that offer them.
+export const NPC_QUEST_OFFERS: Record<string, string[]> = {
+  npc_324: ['q_khalid_signature_scent'],
+  npc_325: ['q_suki_silk_repair'],
+  npc_326: ['q_marcel_midnight_set'],
+  npc_327: ['q_adeyemi_demo_day'],
+  npc_328: ['q_lena_harvest_festival'],
+  npc_329: ['q_camila_mural_mystery'],
+  npc_330: ['q_zara_flavor_contest'],
+  npc_331: ['q_raj_open_mic'],
+  npc_332: ['q_noah_river_pollution'],
+  npc_333: ['q_yuna_lantern_procession'],
+};
+
 // THE OPEN WORLD - NPC & Social Engine
 // NPCs operate on independent schedules, factions react dynamically
 
@@ -305,16 +404,32 @@ export class SocialEngine {
       { id: 'npc_322', name: 'Kenji Watanabe', role: 'arcade_tech', district: 'akihabara', city: 'tokyo', age: 52, gender: 'male', personality: ['nostalgic', 'skilled'], description: 'Repairs vintage arcade cabinets in Akihabara and keeps a high-score list no one has beaten.', firstName: 'Kenji', lastName: 'Watanabe' },
       { id: 'npc_323', name: 'Amélie Dufresne', role: 'map_seller', district: 'bouquinistes', city: 'paris', age: 61, gender: 'female', personality: ['mysterious', 'erudite'], description: 'Sells antique maps and prints from a Bouquinistes box along the Seine.', firstName: 'Amélie', lastName: 'Dufresne' },
 
+      // v0.103.0 — International NPCs
+      { id: 'npc_324', name: 'Khalid Al-Rashid', role: 'perfume_merchant', district: 'deira', city: 'dubai', age: 47, gender: 'male', personality: ['persuasive', 'warm'], description: 'Blends attar and oud in Deira and never forgets a loyal customer\u2019s signature scent.', firstName: 'Khalid', lastName: 'Al-Rashid' },
+      { id: 'npc_325', name: 'Suki Watanabe', role: 'vintage_kimono_dealer', district: 'asakusa', city: 'tokyo', age: 53, gender: 'female', personality: ['elegant', 'knowledgeable'], description: 'Sources antique kimonos from temple fairs and explains the symbolism behind every motif.', firstName: 'Suki', lastName: 'Watanabe' },
+      { id: 'npc_326', name: 'Marcel Durand', role: 'jazz_club_owner', district: 'saint_germain', city: 'paris', age: 44, gender: 'male', personality: ['charismatic', 'nostalgic'], description: 'Runs a smoky Saint-Germain basement club where young musicians test new sounds.', firstName: 'Marcel', lastName: 'Durand' },
+      { id: 'npc_327', name: 'Adeyemi Okonkwo', role: 'tech_bootcamp_instructor', district: 'shoreditch', city: 'london', age: 35, gender: 'male', personality: ['encouraging', 'driven'], description: 'Teaches free coding classes in Shoreditch and connects graduates to startup jobs.', firstName: 'Adeyemi', lastName: 'Okonkwo' },
+      { id: 'npc_328', name: 'Lena Hoffmann', role: 'urban_farmer', district: 'tempelhofer_feld', city: 'berlin', age: 31, gender: 'female', personality: ['practical', 'idealistic'], description: 'Grows vegetables on a former airport field and organizes community harvest days.', firstName: 'Lena', lastName: 'Hoffmann' },
+      { id: 'npc_329', name: 'Camila Espinoza', role: 'mural_tour_guide', district: 'coyoacan', city: 'mexico_city', age: 29, gender: 'female', personality: ['passionate', 'witty'], description: 'Leads mural tours in Coyoacán and tells stories the history books skip.', firstName: 'Camila', lastName: 'Espinoza' },
+      { id: 'npc_330', name: 'Zara Chen', role: 'boardwalk_ice_cream_vendor', district: 'the_rocks', city: 'sydney', age: 23, gender: 'female', personality: ['cheerful', 'hardworking'], description: 'Serves unexpected flavors from a handcart near the harbour and remembers regulars.', firstName: 'Zara', lastName: 'Chen' },
+      { id: 'npc_331', name: 'Raj Malhotra', role: 'comedy_club_booker', district: 'distillery_district', city: 'toronto', age: 38, gender: 'male', personality: ['sharp', 'approachable'], description: 'Books rising stand-up acts in the Distillery District and scouts talent at open mics.', firstName: 'Raj', lastName: 'Malhotra' },
+      { id: 'npc_332', name: 'Noah Fisher', role: 'riverside_fisherman', district: 'south_bank', city: 'london', age: 61, gender: 'male', personality: ['stoic', 'generous'], description: 'Fishes the Thames at dawn and sells surplus catch to neighbors at cost.', firstName: 'Noah', lastName: 'Fisher' },
+      { id: 'npc_333', name: 'Yuna Park', role: 'lantern_shop_owner', district: 'asakusa', city: 'tokyo', age: 40, gender: 'female', personality: ['serene', 'crafty'], description: 'Sells handmade paper lanterns in a quiet Asakusa side street and offers tea to curious visitors.', firstName: 'Yuna', lastName: 'Park' },
+
+
     ];
 
     residents.forEach(r => {
+      const offeredQuests = NPC_QUEST_OFFERS[r.id] || [];
       this.npcs.set(r.id, {
         ...r,
         schedule: this.generateSchedule(r.role),
         relationship: 0,
         mood: 'neutral',
         memories: [],
-        quests: [],
+        quests: [
+          ...INTERNATIONAL_QUESTS.filter(q => offeredQuests.includes(q.id)).map(q => ({ ...q })),
+        ],
       });
     });
   }

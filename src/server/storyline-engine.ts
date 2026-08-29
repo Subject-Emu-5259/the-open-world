@@ -989,6 +989,46 @@ export class StorylineEngine {
           { id: 'watch', text: 'Clap along from the sidewalk and film a short clip.', effects: [{ type: 'stat' as const, target: 'happiness', value: 3 }, { type: 'stat' as const, target: 'stress', value: -2 }] },
         ],
       },
+      {
+        title: 'Lost Tourist',
+        description: 'A confused tourist is struggling with a paper map and asking for directions in a language you barely understand.',
+        outcomes: [
+          { id: 'guide', text: 'Walk them to the nearest transit stop and point out the landmarks.', effects: [{ type: 'reputation' as const, target: 'community', value: 5 }, { type: 'stat' as const, target: 'happiness', value: 3 }] },
+          { id: 'translate', text: 'Use your phone to translate directions and draw a quick route.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'reputation' as const, target: 'social', value: 3 }] },
+        ],
+      },
+      {
+        title: 'Pop-Up Job Fair',
+        description: 'A small hiring event appeared in a nearby plaza. Recruiters chat with passers-by under branded tents.',
+        outcomes: [
+          { id: 'network', text: 'Hand out resumes and meet every recruiter.', effects: [{ type: 'reputation' as const, target: 'professional', value: 6 }, { type: 'stat' as const, target: 'stress', value: 2 }] },
+          { id: 'observe', text: 'Listen in and collect business cards for later.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'money' as const, target: 'cash', value: 0 }] },
+        ],
+      },
+      {
+        title: 'Celebrity Sighting',
+        description: 'A famous actor or athlete is eating at the cafe across the street, surrounded by paparazzi and fans.',
+        outcomes: [
+          { id: 'photo', text: 'Snap a respectful photo from the sidewalk.', effects: [{ type: 'stat' as const, target: 'happiness', value: 5 }, { type: 'reputation' as const, target: 'social', value: 2 }] },
+          { id: 'ignore', text: 'Keep walking and avoid the chaos.', effects: [{ type: 'stat' as const, target: 'stress', value: -3 }] },
+        ],
+      },
+      {
+        title: 'Street Chess Match',
+        description: 'An old-timer is playing speed chess on a folding board, calling out challenges to anyone who walks by.',
+        outcomes: [
+          { id: 'play', text: 'Sit down and accept the challenge.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 3 }, { type: 'money' as const, target: 'cash', value: -5 }, { type: 'stat' as const, target: 'happiness', value: 4 }] },
+          { id: 'watch', text: 'Watch the crowd favorite and learn their opening.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 1 }, { type: 'stat' as const, target: 'stress', value: -2 }] },
+        ],
+      },
+      {
+        title: 'Sudden Summer Storm',
+        description: 'The sky breaks open without warning. Pedestrians scatter and street vendors struggle to cover their stalls.',
+        outcomes: [
+          { id: 'help', text: 'Help a vendor pull a tarp over their goods.', effects: [{ type: 'reputation' as const, target: 'community', value: 5 }, { type: 'stat' as const, target: 'health', value: -2 }] },
+          { id: 'shelter', text: 'Duck into the nearest shop and wait it out.', effects: [{ type: 'stat' as const, target: 'happiness', value: 2 }, { type: 'money' as const, target: 'cash', value: -10 }] },
+        ],
+      },
     ];
     
     const selected = events[Math.floor(Math.random() * events.length)];

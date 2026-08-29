@@ -184,6 +184,82 @@ export const RACE_TRACKS: RaceTrack[] = [
     distance: 0.5,
     heatRisk: 3,
   },
+  {
+    id: 'cairo_pyramid_sprint',
+    name: 'Pyramid Plateau Sprint',
+    city: 'Cairo',
+    aliases: ['cairo', 'cai'],
+    region: 'International',
+    type: 'street',
+    description: 'Dusty roads along the Giza plateau at golden hour. Tourists film everything.',
+    entryFee: 650,
+    prizePool: 5200,
+    participants: 8,
+    laps: 2,
+    distance: 3.2,
+    heatRisk: 11,
+  },
+  {
+    id: 'rio_copacabana_circuit',
+    name: 'Copacabana Beach Circuit',
+    city: 'Rio de Janeiro',
+    aliases: ['rio', 'copacabana'],
+    region: 'International',
+    type: 'circuit',
+    description: 'A tight shoreline loop packed with spectators, samba, and sudden rain.',
+    entryFee: 700,
+    prizePool: 6000,
+    participants: 9,
+    laps: 4,
+    distance: 2.1,
+    heatRisk: 9,
+  },
+  {
+    id: 'london_docklands_street',
+    name: 'Docklands Midnight Run',
+    city: 'London',
+    aliases: ['london', 'ldn'],
+    region: 'International',
+    type: 'street',
+    description: 'Glass towers and cobblestone alleys. CCTV everywhere, but the crowd loves the spectacle.',
+    entryFee: 900,
+    prizePool: 7500,
+    participants: 10,
+    laps: 3,
+    distance: 2.8,
+    heatRisk: 15,
+  },
+  {
+    id: 'mumbai_marine_drive',
+    name: 'Marine Drive Queens Necklace',
+    city: 'Mumbai',
+    aliases: ['mumbai', 'bom'],
+    region: 'International',
+    type: 'street',
+    description: 'A high-speed dash along the curved waterfront. Monsoon puddles make it unpredictable.',
+    entryFee: 600,
+    prizePool: 5000,
+    participants: 8,
+    laps: 3,
+    distance: 2.4,
+    heatRisk: 13,
+  },
+  {
+    id: 'mexico_city_zocalo_drag',
+    name: 'Zocalo Historic Drag',
+    city: 'Mexico City',
+    aliases: ['mexico city', 'mex'],
+    region: 'International',
+    type: 'drag',
+    description: 'A quarter-mile blast past the cathedral before the plaza fills with early commuters.',
+    entryFee: 450,
+    prizePool: 3600,
+    participants: 7,
+    laps: 1,
+    distance: 0.25,
+    heatRisk: 7,
+  },
+
 ];
 
 const TYPE_BONUS: Record<string, number> = {
@@ -201,7 +277,109 @@ const TRACK_TYPE_MOD: Record<TrackType, Record<string, number>> = {
   street: { sports: 6, motorcycle: 8, luxury: 2, truck: -6 },
 };
 
+// -------------------------------------------------------------------------
+// Race Championship / Season System
+// -------------------------------------------------------------------------
+
+export interface ChampionshipStanding {
+  trackId: string;
+  placement: number;
+  prize: number;
+  points: number;
+}
+
+export interface Championship {
+  id: string;
+  name: string;
+  season: number;
+  tracks: RaceTrack[];
+  standings: ChampionshipStanding[];
+  startedAt: number;
+}
+
+export class ChampionshipService {
+  private championships: Map<string, Championship> = new Map();
+  private activeChampionshipId: string | null = null;
+  private currentRaceIndex: number = 0;
+
+  private static POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+
+  createChampionship(name: string, trackIds: string[]): Championship | null {
+    const tracks = trackIds.map(id => RACE_TRACKS.find(t => t.id === id)).filter(Boolean) as RaceTrack[];
+    if (tracks.length < 2) return null;
+    const season = new Date().getFullYear();
+    const id = `champ_${Date.now()}`;
+    const championship: Championship = { id, name, season, tracks, standings: [], startedAt: Date.now() };
+    this.championships.set(id, championship);
+    this.activeChampionshipId = id;
+    this.currentRaceIndex = 0;
+    return championship;
+  }
+
+  startSeasonChampionship(): Championship | null {
+    if (this.activeChampionshipId) {
+      const active = this.championships.get(this.activeChampionshipId);
+      if (active && this.currentRaceIndex < active.tracks.length) return active;
+    }
+
+    const tracks = RACE_TRACKS.filter(t => t.region === 'International').slice(0, 5);
+    return this.createChampionship(`World Street Series ${new Date().getFullYear()}`, tracks.map(t => t.id));
+  }
+
+  currentOpponentCount(track: RaceTrack): number {
+    return track.participants;
+  }
+
+  recordRaceResult(track: RaceTrack, placement: number, prize: number): void {
+    const championship = this.activeChampionshipId ? this.championships.get(this.activeChampionshipId) : undefined;
+    if (!championship) return;
+    const points = ChampionshipService.POINTS[placement - 1] || 0;
+    championship.standings.push({ trackId: track.id, placement, prize, points });
+    this.currentRaceIndex += 1;
+  }
+
+  getStandings(): { championship?: Championship; currentRace: number; totalRaces: number; text: string } {
+    const championship = this.activeChampionshipId ? this.championships.get(this.activeChampionshipId) : undefined;
+    if (!championship) return { currentRace: 0, totalRaces: 0, text: 'No active championship. Start one with `race season`.' };
+
+    const totalPoints = championship.standings.reduce((s, r) => s + r.points, 0);
+    const totalPrize = championship.standings.reduce((s, r) => s + r.prize, 0);
+    const wins = championship.standings.filter(r => r.placement === 1).length;
+    const nextTrack = championship.tracks[this.currentRaceIndex];
+
+    let text = `🏆 **${championship.name}** — Season ${championship.season}\n`;
+    text += `${'─'.repeat(40)}\n`;
+    text += `Race ${Math.min(this.currentRaceIndex + 1, championship.tracks.length)} of ${championship.tracks.length}\n`;
+    text += `Points: ${totalPoints} | Wins: ${wins} | Earnings: $${totalPrize.toLocaleString()}\n\n`;
+    text += 'Race log:\n';
+    for (const r of championship.standings) {
+      const t = RACE_TRACKS.find(tr => tr.id === r.trackId);
+      text += `  • ${t?.name || r.trackId}: ${r.placement}${this.ordinalSuffix(r.placement)} — ${r.points} pts\n`;
+    }
+    if (nextTrack) {
+      text += `\nNext: **${nextTrack.name}** (${nextTrack.city}) — Entry $${nextTrack.entryFee.toLocaleString()}`;
+    } else {
+      text += `\nSeason complete! Final points: ${totalPoints}`;
+    }
+    return { championship, currentRace: this.currentRaceIndex, totalRaces: championship.tracks.length, text };
+  }
+
+  reset(): void {
+    this.championships.clear();
+    this.activeChampionshipId = null;
+    this.currentRaceIndex = 0;
+  }
+
+  private ordinalSuffix(n: number): string {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || 'th';
+  }
+}
+
+
 export class RacingService {
+  public championshipService: ChampionshipService = new ChampionshipService();
   listTracks(currentCity?: string): string {
     const byRegion: Record<string, RaceTrack[]> = {};
     for (const track of RACE_TRACKS) {
@@ -218,7 +396,7 @@ export class RacingService {
         message += `  ${track.description}\n`;
       }
     }
-    message += '\nUsage: `race <track name>` | `race list`\n';
+    message += '\nUsage: `race <track name>` | `race list` | `race season`\n';
     return message;
   }
 
@@ -283,6 +461,7 @@ export class RacingService {
     opponentScores.push(finalScore);
     opponentScores.sort((a, b) => b - a);
     const placement = opponentScores.indexOf(finalScore) + 1;
+    this.championshipService?.recordRaceResult(track, placement, 0); // prize calculated below
 
     const prize = this.calculatePrize(placement, track);
     const wear = this.calculateWear(track, placement);

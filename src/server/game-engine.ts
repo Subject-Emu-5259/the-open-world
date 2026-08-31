@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.104.0
+// Version: 0.105.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -500,11 +500,15 @@ ${'\\u2500'.repeat(50)}
 \\u2022 vehicles - Your garage
 \\u2022 buy vehicle [type] - Purchase a vehicle
 \\u2022 sell vehicle [name] - Sell a vehicle
-\\u2022 maintain [name] - Basic maintenance
+\\2022 fuel [name] - Refuel vehicle
+2022 register [name] - Register + inspect vehicle
+2022 maintain [name] - Basic maintenance
+2022 customize [name] [mod] - Install mods (tint, paint, rims, spoiler, stereo, exhaust, suspension, turbo)
 \\u2022 repair vehicle [name] - Full repair
 \\u2022 race - List race tracks
 \\u2022 race [track] - Enter a race
-\\u2022 race season - Start the World Street Series
+\\2022 tow [name] - Emergency tow for immobilized vehicle
+2022 race season - Start the World Street Series
 \\u2022 race standings - Championship standings
 
 **\\ud83d\\udc65 Social & Relationships**
@@ -1312,42 +1316,52 @@ ${'\\u2500'.repeat(50)}
       return `• ${v.name} - ${v.type} | Condition: ${v.condition ?? 100}% | Value: $${this.vehicleService.currentValue(v).toLocaleString()} | Risk: ${risk}%${overdueStr}`;
     }).join('\n');
 
-    return { success: true, message: `🚗 **Your Vehicles**\n${'─'.repeat(30)}\n${list}\n\nCommands: inspect [name] | maintain [name] | service [name] [oil|tires|brakes|tuneup|wash] | repair vehicle [name]` };
+    return { success: true, message: `🚗 **Your Vehicles**\n${'─'.repeat(30)}\n${list}\n\nCommands: inspect [name] | fuel [name] | maintain [name] | service [name] [oil|tires|brakes|tuneup|wash] | repair vehicle [name] | register [name] | customize [name] [mod]` };
   }
 
   buyVehicle(type: string): GameAction {
-    const prices: Record<string, { name: string; price: number }> = {
-      car: { name: 'Used Sedan', price: 5000 },
-      truck: { name: 'Used Pickup', price: 8000 },
-      motorcycle: { name: 'Used Motorcycle', price: 3000 },
-      bike: { name: 'Bicycle', price: 150 },
-      luxury: { name: 'Luxury Sedan', price: 35000 },
-      sports: { name: 'Sports Car', price: 25000 },
+    const prices: Record<string, { name: string; price: number; fuelCap: number; mpg: number }> = {
+      car: { name: 'Used Sedan', price: 5000, fuelCap: 14, mpg: 28 },
+      truck: { name: 'Used Pickup', price: 8000, fuelCap: 23, mpg: 18 },
+      motorcycle: { name: 'Used Motorcycle', price: 3000, fuelCap: 4, mpg: 45 },
+      bike: { name: 'Bicycle', price: 150, fuelCap: 0, mpg: 0 },
+      luxury: { name: 'Luxury Sedan', price: 35000, fuelCap: 19, mpg: 22 },
+      sports: { name: 'Sports Car', price: 25000, fuelCap: 16, mpg: 18 },
     };
-    
+
     const vehicle = prices[type.toLowerCase()];
     if (!vehicle) {
       return { success: false, message: `Unknown vehicle type: "${type}". Available: car, truck, motorcycle, bike, luxury, sports` };
     }
-    
+
     if (this.player.money < vehicle.price) {
       return { success: false, message: `Need $${vehicle.price.toLocaleString()} for a ${vehicle.name}. You have $${this.player.money.toFixed(2)}.` };
     }
-    
+
     this.player.money -= vehicle.price;
     this.player.vehicles.push({
       id: `vehicle_${Date.now()}`,
       name: vehicle.name,
-      type: type,
+      type: type.toLowerCase(),
       value: vehicle.price,
       condition: 100,
       mileage: 0,
       lastService: Date.now(),
-      lastServices: {},
+      services: {},
       purchasedAt: Date.now(),
+      fuel: vehicle.fuelCap,
+      fuelCap: vehicle.fuelCap,
+      mpg: vehicle.mpg,
+      registered: false,
+      registrationExpiry: 0,
+      inspected: false,
+      inspectionExpiry: 0,
+      modifications: [],
+      immobilized: false,
     });
-    
-    return { success: true, message: `🚗 Purchased ${vehicle.name} for $${vehicle.price.toLocaleString()}. Type "vehicles" to see your garage.` };
+
+    const regTip = vehicle.fuelCap > 0 ? `\n\n📋 Tip: Register your vehicle with "register [name]" and refuel with "fuel [name]".` : '';
+    return { success: true, message: `🚗 Purchased ${vehicle.name} for $${vehicle.price.toLocaleString()}.${regTip}` };
   }
 
   sellVehicle(name: string): GameAction {
@@ -1371,6 +1385,26 @@ ${'\\u2500'.repeat(50)}
     this.player.vehicles.splice(index, 1);
     
     return { success: true, message: `🚗 Sold ${vehicle.name} for $${sellPrice.toLocaleString()}. Your new balance is $${this.player.money.toFixed(2)}.` };
+  }
+
+  fuelVehicle(name: string): GameAction {
+    if (!name) return { success: false, message: 'Fuel which vehicle? Type "vehicles" to see your garage.' };
+    return this.vehicleService.fuel(name, this.player);
+  }
+
+  registerVehicle(name: string): GameAction {
+    if (!name) return { success: false, message: 'Register which vehicle? Type "vehicles" to see your garage.' };
+    return this.vehicleService.register(name, this.player);
+  }
+
+  customizeVehicle(name: string, mod: string): GameAction {
+    if (!name) return { success: false, message: 'Customize which vehicle? Type "vehicles" to see your garage.' };
+    return this.vehicleService.customize(name, mod || '', this.player);
+  }
+
+  emergencyTow(name: string): GameAction {
+    if (!name) return { success: false, message: 'Tow which vehicle? Type "vehicles" to see your garage.' };
+    return this.vehicleService.emergencyTow(name, this.player);
   }
 
   repairVehicle(name: string): GameAction {
@@ -2449,6 +2483,30 @@ Commands:
             result = this.serviceVehicle(vehicleName, serviceType);
           }
         }
+        break;
+      case 'fuel':
+      case 'refuel':
+        result = rawArgs ? this.fuelVehicle(rawArgs) : { success: false, message: 'Fuel which vehicle? Usage: fuel [vehicle name]' };
+        break;
+      case 'register':
+        result = rawArgs ? this.registerVehicle(rawArgs) : { success: false, message: 'Register which vehicle? Usage: register [vehicle name]' };
+        break;
+      case 'customize': {
+        const cvParts = rawArgs.split(/\s+/).filter(Boolean);
+        if (cvParts.length === 0) {
+          result = { success: false, message: 'Customize which vehicle? Try "customize [vehicle name]" to see mods.' };
+        } else {
+          const knownMods = ['tint', 'spoiler', 'paint', 'rims', 'exhaust', 'stereo', 'turbo', 'suspension'];
+          const lastIsMod = knownMods.includes(cvParts[cvParts.length - 1]!.toLowerCase());
+          const cvName = lastIsMod ? cvParts.slice(0, -1).join(' ').trim() : rawArgs;
+          const cvMod = lastIsMod ? cvParts[cvParts.length - 1]! : '';
+          result = cvName ? this.customizeVehicle(cvName, cvMod) : { success: false, message: 'Customize which vehicle? Usage: customize [vehicle name] [mod]. Try "customize sedan" for available mods.' };
+        }
+        break;
+      }
+      case 'tow':
+      case 'emergency':
+        result = rawArgs ? this.emergencyTow(rawArgs) : { success: false, message: 'Tow which vehicle? Usage: tow [vehicle name] | emergency [vehicle name]' };
         break;
       case 'inspect':
         result = this.inspectVehicle(rawArgs);

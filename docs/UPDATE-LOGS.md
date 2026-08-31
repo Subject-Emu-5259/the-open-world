@@ -1,3 +1,25 @@
+## v0.105.0 — Vehicle Maintenance Expansion + City Events
+
+**August 31, 2026**
+
+### Added
+- `VehicleService` now tracks fuel, registration/inspection, modifications, immobilization, and impound risk per vehicle.
+- New vehicle commands: `fuel [name]` (or `refuel`), `register [name]`, `customize [name] [mod]`, `tow [name]` (or `emergency`).
+- Vehicles now consume fuel on travel; refuel at $3.50/gallon. Running out of fuel immobilizes the vehicle.
+- Vehicles can be immobilized by severe breakdowns; use `tow` or `repair vehicle` to restore them.
+- Added visual/performance customization options in `src/server/vehicle-service.ts`: tint, spoiler, exhaust, suspension, paint, rims, turbo, stereo.
+- Added 8 new city-life random events in `src/server/storyline-engine.ts`: Parking Ticket, Charity Fundraiser, Protest March, Food Truck Discovery, Tech Demo Booth, Lost Pet Poster, Rooftop Party Invite, and Free Sample Day.
+
+### Changed
+- `GameEngine.help()` updated to list new vehicle commands under Vehicles & Racing.
+- `GameEngine.buyVehicle()` now initializes fuel capacity, MPG, registration state, and modification arrays.
+- `GameEngine.travelTo()` consumes fuel and can immobilize vehicles on severe breakdowns.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
+
 ## v0.104.2 — Cash Property Purchases + Help Overhaul
 
 **August 28, 2026**
@@ -1612,3 +1634,26 @@ Fetched: August 25, 2026
 
 *Last Updated: May 23, 2026*
 *Current Version: 0.56.0*
+
+## v0.105.0 — August 31, 2026
+
+### 🛠️ Vehicle Maintenance Expansion
+- Added fuel system to all vehicles with tank size and consumption rates.
+- Added `fuel [name]` / `refuel [name]` command to top off tanks.
+- Added `register` command to handle vehicle registration and annual renewal.
+- Added `customize [name] [mod]` command for visual and performance modifications.
+- Impound risk rises when vehicles are unregistered, in critical condition, or illegally modified.
+- Added `emergency / tow [name]` command to recover immobilized vehicles.
+
+### 🌆 New City-Life Random Events
+- **Parking Ticket**: Pay the fine or risk reputation hit.
+- **Charity Fundraiser**: Donate money or hours to boost community standing.
+- **Protest March**: Join, watch, or detour around a peaceful protest.
+- **Food Truck Discovery**: Try samples or grab a meal.
+- **Tech Demo Booth**: Beta test or early-invest in a startup.
+- **Lost Pet Poster**: Search for the pet and claim a reward.
+- **Rooftop Party Invite**: Attend for social points or sell the wristband.
+- **Free Sample Day**: Stock up on free groceries and tell friends.
+
+### 🔁 Version Sync
+- Bumped version across `package.json`, `src/shared/version.ts`, `src/server/game-engine.ts`, and client update log.

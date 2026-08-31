@@ -153,3 +153,4 @@ All previously reported bugs have been fixed. TypeScript compilation passes with
 - Run `npm run dev` to start local development server
 - Run `npm run deploy` to upload to Devvit
 - Run `npm run launch` to publish after verification
+**August 31, 2026 (v0.105.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. `devvit playtest` launched successfully and `devvit publish --public --bump minor` submitted v0.105.0 for review. 8 new random events added and vehicle maintenance system expanded.

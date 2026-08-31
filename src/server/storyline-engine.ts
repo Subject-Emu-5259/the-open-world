@@ -529,6 +529,74 @@ export class StorylineEngine {
           { id: 'return', text: 'Take it to the nearest post office.', effects: [{ type: 'reputation' as const, target: 'community', value: 7 }] },
         ],
       },
+      // v0.105.0 events
+      {
+        title: 'Parking Ticket Surprise',
+        description: 'You return to your vehicle and find a bright-red citation under the wiper.',
+        outcomes: [
+          { id: 'pay', text: 'Pay the fine online immediately.', effects: [{ type: 'money' as const, target: 'cash', value: -65 }, { type: 'stat' as const, target: 'stress', value: 3 }] },
+          { id: 'contest', text: 'Contest it—there were no posted signs!', effects: [{ type: 'money' as const, target: 'cash', value: -20 }, { type: 'reputation' as const, target: 'community', value: 2 }] },
+        ],
+      },
+      {
+        title: 'Food Truck Festival',
+        description: 'A row of food trucks has taken over the street, each with a longer line than the last.',
+        outcomes: [
+          { id: 'splurge', text: 'Treat yourself to the most expensive item on the menu.', effects: [{ type: 'money' as const, target: 'cash', value: -35 }, { type: 'stat' as const, target: 'happiness', value: 10 }, { type: 'stat' as const, target: 'energy', value: 5 }] },
+          { id: 'sample', text: 'Grab a free sample and people-watch.', effects: [{ type: 'stat' as const, target: 'happiness', value: 4 }, { type: 'reputation' as const, target: 'social', value: 2 }] },
+        ],
+      },
+      {
+        title: 'Startup Pitch on the Corner',
+        description: 'A nervous founder with a tablet stops you, asking for feedback on a "revolutionary" app idea.',
+        outcomes: [
+          { id: 'invest', text: 'Invest $500 for 1% equity. You believe in the hustle.', effects: [{ type: 'money' as const, target: 'cash', value: -500 }, { type: 'money' as const, target: 'cash', value: 1200 }, { type: 'reputation' as const, target: 'professional', value: 5 }] },
+          { id: 'advise', text: 'Give honest advice and wish them luck.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'reputation' as const, target: 'professional', value: 3 }] },
+          { id: 'decline', text: 'Politely say you are not interested.', effects: [] },
+        ],
+      },
+      {
+        title: 'Neighborhood Protest',
+        description: 'A peaceful march blocks the street. Chants echo off the buildings and signs wave in the air.',
+        outcomes: [
+          { id: 'join', text: 'March alongside them for an hour.', effects: [{ type: 'stat' as const, target: 'happiness', value: 5 }, { type: 'reputation' as const, target: 'community', value: 6 }, { type: 'stat' as const, target: 'energy', value: -8 }] },
+          { id: 'document', text: 'Record a short clip to share responsibly.', effects: [{ type: 'reputation' as const, target: 'social', value: 4 }, { type: 'stat' as const, target: 'stress', value: 2 }] },
+          { id: 'detour', text: 'Take a side street and avoid the crowd.', effects: [{ type: 'stat' as const, target: 'stress', value: -3 }] },
+        ],
+      },
+      {
+        title: 'Lost Phone',
+        description: 'A smartphone buzzes on a park bench. The screen shows a missed call from "Mom."',
+        outcomes: [
+          { id: 'return', text: 'Answer when it rings and arrange a return.', effects: [{ type: 'reputation' as const, target: 'community', value: 8 }, { type: 'stat' as const, target: 'happiness', value: 5 }, { type: 'money' as const, target: 'cash', value: 10 }] },
+          { id: 'sell_fenced', text: 'Pocket it and head to a phone resale kiosk.', effects: [{ type: 'money' as const, target: 'cash', value: 120 }, { type: 'reputation' as const, target: 'community', value: -5 }, { type: 'reputation' as const, target: 'criminal', value: 5 }] },
+        ],
+      },
+      {
+        title: 'Community Garden Invite',
+        description: 'A neighbor invites you to help plant a new community garden plot.',
+        outcomes: [
+          { id: 'dig', text: 'Spend the morning digging and planting.', effects: [{ type: 'stat' as const, target: 'fitness', value: 2 }, { type: 'reputation' as const, target: 'community', value: 7 }, { type: 'stat' as const, target: 'energy', value: -10 }] },
+          { id: 'donate_soil', text: 'Buy bags of soil instead of working.', effects: [{ type: 'money' as const, target: 'cash', value: -40 }, { type: 'reputation' as const, target: 'community', value: 4 }] },
+        ],
+      },
+      {
+        title: 'Traffic Light Cash',
+        description: 'At a red light, a charismatic squeegee washer earns your attention with a perfect windshield clean.',
+        outcomes: [
+          { id: 'tip', text: 'Hand them a $5 bill.', effects: [{ type: 'money' as const, target: 'cash', value: -5 }, { type: 'stat' as const, target: 'happiness', value: 3 }, { type: 'reputation' as const, target: 'community', value: 1 }] },
+          { id: 'ignore', text: 'Wave them off and check your phone.', effects: [{ type: 'stat' as const, target: 'stress', value: -1 }] },
+        ],
+      },
+      {
+        title: 'Street Art Auction',
+        description: 'A muralist is auctioning a one-of-a-kind canvas on the sidewalk to fund a community center.',
+        outcomes: [
+          { id: 'bid', text: 'Place a winning bid of $250.', effects: [{ type: 'money' as const, target: 'cash', value: -250 }, { type: 'stat' as const, target: 'happiness', value: 8 }, { type: 'reputation' as const, target: 'community', value: 4 }] },
+          { id: 'share', text: 'Share the auction on social media.', effects: [{ type: 'reputation' as const, target: 'social', value: 5 }] },
+        ],
+      },
+
       // v0.88.0 events
       {
         title: 'Spontaneous Karaoke Contest',

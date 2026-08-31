@@ -45,7 +45,7 @@
 | **Social** | talk [name], greet [name], people, assist [name], factions, chat [id], quests |
 | **Property** | real-estate, buy property [name] [cash|mortgage], sell property [name], properties |
 | **Invest** | invest, invest [name] [amount], investments |
-| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name], inspect [name], service [name] [oil|tires|brakes|tuneup|wash], maintain [name], repair vehicle [name], race [track], race season, race standings |
+| **Vehicles** | vehicles, buy vehicle [type], sell vehicle [name], inspect [name], fuel [name], service [name] [oil|tires|brakes|tuneup|wash], maintain [name], repair vehicle [name], register [name], customize [name] [mod], tow [name], race [track], race season, race standings |
 | **Events** | event, event choice [id] |
 | **Racing** | race [track], race season, race standings |
 

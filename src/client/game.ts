@@ -632,6 +632,16 @@ function renderUpdatesScreen() {
       
               <div class="updates-container">
         <div class="update-item">
+          <span class="update-version">v0.105.0</span>
+          <span class="update-date">August 31, 2026</span>
+          <ul>
+            <li>🚗 <strong>Deeper Vehicle Ownership</strong> — Vehicles now have fuel, registration, inspections, and visual modifications. Commands: fuel [name], register, inspect [name], customize [name] [mod], emergency/tow.</li>
+            <li>🎲 <strong>New City Encounters</strong> — Eight more random events: Parking Ticket, Charity Fundraiser, Protest March, Food Truck, Tech Demo, Lost Pet Poster, Rooftop Party, and Free Sample Day.</li>
+            <li>🔧 <strong>Vehicle Consequences</strong> — Unregistered or dangerous vehicles can be impounded. Breakdowns scale with condition and maintenance history.</li>
+          </ul>
+        </div>
+
+        <div class="update-item">
           <span class="update-version">v0.104.2</span>
           <span class="update-date">August 28, 2026</span>
           <ul>

@@ -1,4 +1,7 @@
 # THE OPEN WORLD — Roadmap
+- **August 31, 2026 (v0.105.0)**: Expanded vehicle maintenance with a fuel system, registration/renewal, visual/performance customization, impound risk, and emergency towing commands. Added 8 new city-life random events — Parking Ticket, Charity Fundraiser, Protest March, Food Truck Discovery, Tech Demo Booth, Lost Pet Poster, Rooftop Party Invite, and Free Sample Day. `npm run type-check` and `npm run build` passed. `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
+
+
 - **August 28, 2026 (v0.104.2)**: Fixed property purchases so players can pay cash. "buy property [name]" now defaults to cash when the full price is available; add "cash" or "mortgage" to force a payment method. Updated in-game help text and real-estate listings.
 - **August 28, 2026 (v0.104.2)**: Added 10 new international NPCs across Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney (npc_324–npc_333 in `src/server/social-engine.ts`). Added 5 new city-life random events — Lost Tourist, Pop-Up Job Fair, Celebrity Sighting, Street Chess Match, and Sudden Summer Storm — to `src/server/storyline-engine.ts`. `npm run type-check` and `npm run build` passed. `devvit publish --public --bump minor` is pending fresh Reddit OAuth login in this environment.
 
@@ -24,12 +27,14 @@
 
 ## Project Status
 
+- **August 31, 2026**: v0.105.0 — Vehicle Maintenance Expansion + 8 New Random Events. Added fuel, registration, customization, impound/towing, and new city encounters. Type-check/build passed; `devvit publish --public --bump minor` submitted for review.
 - **August 28, 2026**: v0.104.2 — Cash Property Purchases + Help Clarification. Fixed the real-estate buy command to support outright cash buys and explained cash vs. mortgage in help.
 - **August 28, 2026**: v0.104.2 — International NPC Expansion + City-Life Encounters. Added 10 new international NPCs and 5 new random events. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.
 - **Current Focus**: Expanding global city content (NPCs, events, districts)
 - **Next Milestone**: Persistent quest chains and city-specific storylines
 
 ## Validation Notes
+- **August 31, 2026**: `npm run type-check` passed, `npm run build` passed. Expanded `src/server/vehicle-service.ts` with fuel, registration, customization, immobilization, and towing. Added 8 new random events to `src/server/storyline-engine.ts`. `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
 - **August 24, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_314–npc_323) covering Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.99.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 21, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_304–npc_313) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.98.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 17, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_294–npc_303) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.97.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
@@ -38,7 +43,10 @@
 - **August 12, 2026**: `npm run type-check` passed, `npm run build` passed. Expanded property system with luxury penthouses, vacation rentals, warehouses, farmland, and offshore villas across 10 cities. Bumped version files to `v0.94.0`. `devvit publish --public --bump minor` submitted v0.94.0 for review.
 
 ## 🗺️ Phase 5: Global Expansion (Current)
+- [x] **v0.105.0**: Vehicle Maintenance Expansion — fuel, registration, customization, impound/towing system
+- [x] **v0.105.0**: Random Events Expansion — 8 new city-life encounters
 - [x] **v0.104.2**: Cash Property Purchases — support cash and mortgage options in real-estate; default to cash when affordable\n- [x] **v0.104.2**: International NPC & Random Event Expansion — 10 new global NPCs + 5 new city encounters
+- [x] **v0.105.0**: Vehicle Maintenance Expansion — fuel, registration, customization, towing, impound risk; 8 new city-life events
 - [x] **v0.99.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.98.0**: Global NPC & Random Event Expansion — 10 new NPCs across global cities + 5 new random events
 - [x] **v0.97.0**: Global NPC & Random Event Expansion

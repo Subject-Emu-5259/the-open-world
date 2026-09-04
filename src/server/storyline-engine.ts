@@ -529,7 +529,47 @@ export class StorylineEngine {
           { id: 'return', text: 'Take it to the nearest post office.', effects: [{ type: 'reputation' as const, target: 'community', value: 7 }] },
         ],
       },
-      // v0.105.0 events
+      // v0.108.0 — Coastal & Street Encounters
+      {
+        title: 'Beach Bonfire Invitation',
+        description: 'A group at the shoreline invites you to join a sunset bonfire driftwood gathering.',
+        outcomes: [
+          { id: 'join', text: 'Pull up a log and roast marshmallows with strangers.', effects: [{ type: 'stat' as const, target: 'happiness', value: 8 }, { type: 'reputation' as const, target: 'social', value: 4 }, { type: 'stat' as const, target: 'energy', value: -4 }] },
+          { id: 'pass', text: 'Wave and keep walking along the water.', effects: [{ type: 'stat' as const, target: 'stress', value: -3 }] },
+        ],
+      },
+      {
+        title: 'Street Poet Dedication',
+        description: 'A spoken-word artist on the corner asks for a topic, then dedicates a verse to your life.',
+        outcomes: [
+          { id: 'tip', text: 'Tip $15 and ask for a printed copy.', effects: [{ type: 'money' as const, target: 'cash', value: -15 }, { type: 'stat' as const, target: 'charisma', value: 3 }, { type: 'stat' as const, target: 'happiness', value: 6 }] },
+          { id: 'listen', text: 'Listen quietly and let the crowd pass.', effects: [{ type: 'stat' as const, target: 'intelligence', value: 2 }, { type: 'stat' as const, target: 'stress', value: -2 }] },
+        ],
+      },
+      {
+        title: 'Vintage Camera Find',
+        description: 'A flea-market stall is closing early and offers you a working film camera at a bargain.',
+        outcomes: [
+          { id: 'buy', text: 'Buy it and shoot a roll around the district.', effects: [{ type: 'money' as const, target: 'cash', value: -40 }, { type: 'stat' as const, target: 'happiness', value: 7 }, { type: 'stat' as const, target: 'intelligence', value: 2 }] },
+          { id: 'pass', text: 'Decline but chat about the gear.', effects: [{ type: 'stat' as const, target: 'charisma', value: 1 }] },
+        ],
+      },
+      {
+        title: 'Community Fridge Restock',
+        description: 'Volunteers are stocking a public community fridge with fresh produce and pantry staples.',
+        outcomes: [
+          { id: 'donate', text: 'Donate $25 worth of groceries.', effects: [{ type: 'money' as const, target: 'cash', value: -25 }, { type: 'reputation' as const, target: 'community', value: 8 }, { type: 'stat' as const, target: 'happiness', value: 5 }] },
+          { id: 'help', text: 'Help organize the shelves for an hour.', effects: [{ type: 'reputation' as const, target: 'community', value: 6 }, { type: 'stat' as const, target: 'energy', value: -5 }, { type: 'stat' as const, target: 'happiness', value: 4 }] },
+        ],
+      },
+      {
+        title: 'Open Air Jazz Quartet',
+        description: 'A four-piece jazz band sets up on a plaza bench and plays standards as commuters slow down.',
+        outcomes: [
+          { id: 'tip', text: 'Drop a tip and stay for the set.', effects: [{ type: 'money' as const, target: 'cash', value: -20 }, { type: 'stat' as const, target: 'happiness', value: 9 }, { type: 'stat' as const, target: 'stress', value: -5 }] },
+          { id: 'busk', text: 'Ask to sit in for one song.', effects: [{ type: 'stat' as const, target: 'charisma', value: 4 }, { type: 'stat' as const, target: 'stress', value: 3 }] },
+        ],
+      },      // v0.105.0 events
       {
         title: 'Parking Ticket Surprise',
         description: 'You return to your vehicle and find a bright-red citation under the wiper.',

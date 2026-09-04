@@ -1,6 +1,10 @@
 # THE OPEN WORLD — Bug Tracker
 
-*Last Updated: August 28, 2026*
+*Last Updated: September 4, 2026*
+
+**September 4, 2026 (v0.108.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. Added 5 new international NPCs and 5 new city-life random events. Version numbers synced to v0.108.0. `devvit playtest` could not complete because the default playtest subreddit already has an installation of this app (`EADDRINUSE` on playtest connection server and duplicate-install warning). `devvit publish --public --bump minor` succeeded and submitted v0.108.0 for Reddit review.
+
+---
 
 **August 28, 2026 (v0.104.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. `devvit playtest` and `devvit publish` could not run because the Devvit CLI is not authenticated in this environment (`devvit whoami` returns "Not currently logged in"). Content update added 10 new international NPCs and 5 new random events. Version numbers synced to v0.104.0.
 
@@ -153,4 +157,4 @@ All previously reported bugs have been fixed. TypeScript compilation passes with
 - Run `npm run dev` to start local development server
 - Run `npm run deploy` to upload to Devvit
 - Run `npm run launch` to publish after verification
-**August 31, 2026 (v0.105.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. `devvit playtest` launched successfully and `devvit publish --public --bump minor` submitted v0.105.0 for review. 8 new random events added and vehicle maintenance system expanded.
+**August 31, 2026 (v0.107.0)**: No new code bugs. `npm run type-check` and `npm run build` passed. `devvit playtest` launched successfully and `devvit publish --public --bump minor` submitted v0.107.0 for review. 8 new random events added and vehicle maintenance system expanded.

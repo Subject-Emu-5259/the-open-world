@@ -1,5 +1,5 @@
 // THE OPEN WORLD - Main Game Engine
-// Version: 0.105.0
+// Version: 0.108.0
 
 import { TimeEngine, getWeather } from './time-engine.js';
 import { JOB_MARKET } from './economy-engine.js';
@@ -467,81 +467,82 @@ export class GameEngine {
   }
 
   help(): GameAction {
-    return { 
-      success: true, 
-      message: `\ud83c\udfae **THE OPEN WORLD - Commands**
-${'\\u2500'.repeat(50)}
+    return {
+      success: true,
+      message: `🎮 **THE OPEN WORLD — Commands**
+${'—'.repeat(50)}
 
-**\\ud83d\\udccd Movement**
-\\u2022 travel [city] - Move to another city
-\\u2022 explore - Look around your current area
-\\u2022 goto [district] - Move to a city district
+**🗺️ Movement**
+• travel [city] — Move to another city
+• explore — Look around your current area
+• goto [district] — Move to a city district
 
-**\\ud83d\\udcbc Work & Money**
-\\u2022 apply - See job listings
-\\u2022 apply [job] - Apply for a specific job
-\\u2022 work - Work a shift
-\\u2022 bank - Check your bank balance
-\\u2022 deposit [amount] - Move cash to the bank
-\\u2022 withdraw [amount] - Take cash from the bank
+**💼 Work & Money**
+• apply — See job listings
+• apply [job] — Apply for a specific job
+• work — Work a shift
+• bank — Check your bank balance
+• deposit [amount] — Move cash to the bank
+• withdraw [amount] — Take cash from the bank
 
-**\\ud83c\\udfe0 Property & Wealth**
-\\u2022 real-estate - View listings in your city
-\\u2022 buy property [name] [cash|mortgage] - Buy a property
-   - If you have the full price, it pays cash automatically.
-   - Add \\"cash\\" to pay outright. Add \\"mortgage\\" to finance with 20% down.
-\\u2022 sell property [name] - Sell a property
-\\u2022 properties - View your owned properties
-\\u2022 renovate property [name] - Upgrade a property (costs money)
-\\u2022 invest - See investment options
-\\u2022 investments - View your portfolio
+**🏠 Property & Wealth**
+• real-estate — View listings in your city
+• buy property [name] [cash|mortgage] — Buy a property
+   • If you have the full price, it pays cash automatically.
+   • Add "cash" to pay outright. Add "mortgage" to finance with 20% down.
+• sell property [name] — Sell a property
+• properties — View your owned properties
+• renovate property [name] — Upgrade a property (costs money)
+• invest — See investment options
+• investments — View your portfolio
 
-**\\ud83d\\ude97 Vehicles & Racing**
-\\u2022 vehicles - Your garage
-\\u2022 buy vehicle [type] - Purchase a vehicle
-\\u2022 sell vehicle [name] - Sell a vehicle
-\\2022 fuel [name] - Refuel vehicle
-2022 register [name] - Register + inspect vehicle
-2022 maintain [name] - Basic maintenance
-2022 customize [name] [mod] - Install mods (tint, paint, rims, spoiler, stereo, exhaust, suspension, turbo)
-\\u2022 repair vehicle [name] - Full repair
-\\u2022 race - List race tracks
-\\u2022 race [track] - Enter a race
-\\2022 tow [name] - Emergency tow for immobilized vehicle
-2022 race season - Start the World Street Series
-\\u2022 race standings - Championship standings
+**🚗 Vehicles & Racing**
+• vehicles — Your garage
+• buy vehicle [type] — Purchase a vehicle
+• sell vehicle [name] — Sell a vehicle
+• inspect [name] — Check vehicle condition
+• fuel [name] — Refuel vehicle
+• register [name] — Register and inspect vehicle
+• maintain [name] — Basic maintenance
+• repair vehicle [name] — Full repair
+• customize [name] [mod] — Install mods (tint, paint, rims, spoiler, stereo, exhaust, suspension, turbo)
+• tow [name] — Emergency tow for immobilized vehicle
+• race — List race tracks
+• race [track] — Enter a race
+• race season — Start the World Street Series
+• race standings — Championship standings
 
-**\\ud83d\\udc65 Social & Relationships**
-\\u2022 people - See who's nearby
-\\u2022 talk [name] - Chat with an NPC
-\\u2022 greet [name] - Greet an NPC
-\\u2022 contacts - View saved contacts
-\\u2022 assist [name] - Help an NPC
-\\u2022 factions - View your factions
-\\u2022 influence - View faction power
-\\u2022 support [id] - Help your faction
-\\u2022 sabotage [id] - Attack a rival faction
-\\u2022 chat [id] - Enter a group chat
-\\u2022 email - Check your inbox
-\\u2022 text [name] [message] - Send an SMS
-\\u2022 quests - View active quests
+**👥 Social & Relationships**
+• people — See who's nearby
+• talk [name] — Chat with an NPC
+• greet [name] — Greet an NPC
+• contacts — View saved contacts
+• assist [name] — Help an NPC
+• factions — View your factions
+• influence — View faction power
+• support [id] — Help your faction
+• sabotage [id] — Attack a rival faction
+• chat [id] — Enter a group chat
+• email — Check your inbox
+• text [name] [message] — Send an SMS
+• quests — View active quests
 
-**\\ud83c\\udf93 Education & Self**
-\\u2022 enroll [school_id] [course_id] - Start a course
-\\u2022 study hours [n] - Study for N hours
-\\u2022 gym - Work out ($15)
+**🎓 Education & Self**
+• enroll [school_id] [course_id] — Start a course
+• study hours [n] — Study for N hours
+• gym — Work out ($15)
 
-**\\ud83d\\udcd6 Info & Time**
-\\u2022 status - Your full life snapshot
-\\u2022 help - Show this list
-\\u2022 sleep - Rest 8 hours
-\\u2022 event - See active events
+**📖 Info & Time**
+• status — Your full life snapshot
+• help — Show this list
+• sleep — Rest 8 hours
+• event — See active events
 
-**\\ud83d\\udca1 Quick Tips**
-\\u2022 Weather affects how much certain jobs pay.
-\\u2022 Sleep restores energy.
-\\u2022 Explore to find new NPCs and random events.
-\\u2022 If a property is confusing: try \\"buy property Wicker Park Duplex\\".` 
+**💡 Quick Tips**
+• Weather affects how much certain jobs pay.
+• Sleep restores energy.
+• Explore to find new NPCs and random events.
+• If a property is confusing: try "buy property Wicker Park Duplex".`
     };
   }
 

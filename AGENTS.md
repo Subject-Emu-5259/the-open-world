@@ -1,7 +1,7 @@
 # THE OPEN WORLD — Development Agent Context
 
 **Project**: Text-based life simulation game on Reddit Devvit
-**Version**: 0.104.2
+**Version**: 0.108.0
 **Last Updated**: August 28, 2026
 
 ---

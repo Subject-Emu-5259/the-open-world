@@ -416,6 +416,13 @@ export class SocialEngine {
       { id: 'npc_332', name: 'Noah Fisher', role: 'riverside_fisherman', district: 'south_bank', city: 'london', age: 61, gender: 'male', personality: ['stoic', 'generous'], description: 'Fishes the Thames at dawn and sells surplus catch to neighbors at cost.', firstName: 'Noah', lastName: 'Fisher' },
       { id: 'npc_333', name: 'Yuna Park', role: 'lantern_shop_owner', district: 'asakusa', city: 'tokyo', age: 40, gender: 'female', personality: ['serene', 'crafty'], description: 'Sells handmade paper lanterns in a quiet Asakusa side street and offers tea to curious visitors.', firstName: 'Yuna', lastName: 'Park' },
 
+      // v0.108.0 — Global City Characters
+      { id: 'npc_334', name: 'Noura El-Sayed', role: 'perfume_blender', district: 'downtown_dubai', city: 'dubai', age: 34, gender: 'female', personality: ['refined', 'intuitive'], description: 'Blends custom attar for clients in a Downtown Dubai atelier and reads moods by scent.', firstName: 'Noura', lastName: 'El-Sayed' },
+      { id: 'npc_335', name: 'Takeshi Mori', role: 'sumo_trainer', district: 'ryogoku', city: 'tokyo', age: 56, gender: 'male', personality: ['disciplined', 'kind'], description: 'Trains young sumo wrestlers in Ryogoku and shares stories of old tournament rivalries.', firstName: 'Takeshi', lastName: 'Mori' },
+      { id: 'npc_336', name: 'Isabelle Fontaine', role: 'cabaret_director', district: 'montmartre', city: 'paris', age: 41, gender: 'female', personality: ['dramatic', 'witty'], description: 'Directs a small Montmartre cabaret and casts locals in late-night revues.', firstName: 'Isabelle', lastName: 'Fontaine' },
+      { id: 'npc_337', name: 'Jamal Wright', role: 'street_basketball_coach', district: 'regent_park', city: 'toronto', age: 33, gender: 'male', personality: ['motivational', 'tough_love'], description: 'Runs pickup leagues in Regent Park and connects young players to scouts.', firstName: 'Jamal', lastName: 'Wright' },
+      { id: 'npc_338', name: 'Keira Thompson', role: 'harbour_kayak_guide', district: 'manly', city: 'sydney', age: 27, gender: 'female', personality: ['adventurous', 'knowledgeable'], description: 'Leads kayak tours past Manly’s headland and names the local penguin colony.', firstName: 'Keira', lastName: 'Thompson' },
+
 
     ];
 

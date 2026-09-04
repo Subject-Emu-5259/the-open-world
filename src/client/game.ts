@@ -632,7 +632,16 @@ function renderUpdatesScreen() {
       
               <div class="updates-container">
         <div class="update-item">
-          <span class="update-version">v0.105.0</span>
+          <span class="update-version">v0.108.0</span>
+          <span class="update-date">September 4, 2026</span>
+          <ul>
+            <li>🌍 <strong>5 New International NPCs</strong> — Added npc_334–npc_338 across Dubai, Tokyo, Paris, London, and Sydney.</li>
+            <li>🎲 <strong>6 New City-Life Random Events</strong> — Fresh encounters: Rooftop Silent Disco, Community Tool Library, Street Piano Serenade, Free Fitness Class, Night Market Fortune Teller, and Lost Drone Rescue.</li>
+            <li>🔁 <strong>Version Sync</strong> — All project files bumped to v0.108.0 and verified type-check/build.</li>
+          </ul>
+        </div>
+        <div class="update-item">
+          <span class="update-version">v0.107.0</span>
           <span class="update-date">August 31, 2026</span>
           <ul>
             <li>🚗 <strong>Deeper Vehicle Ownership</strong> — Vehicles now have fuel, registration, inspections, and visual modifications. Commands: fuel [name], register, inspect [name], customize [name] [mod], emergency/tow.</li>

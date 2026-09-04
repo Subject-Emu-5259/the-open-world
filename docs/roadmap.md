@@ -1,4 +1,6 @@
 # THE OPEN WORLD — Roadmap
+- **September 4, 2026 (v0.108.0)**: Added 5 new international NPCs across Dubai, Tokyo, Paris, London, and Sydney (npc_334–npc_338 in `src/server/social-engine.ts`). Added 5 new city-life random events to `src/server/storyline-engine.ts`: Beach Bonfire Invitation, Street Poet Dedication, Vintage Camera Find, Community Fridge Restock, and Open Air Jazz Quartet. `npm run type-check` and `npm run build` passed. `devvit publish --public --bump minor` submitted v0.108.0 for Reddit review.
+
 - **August 31, 2026 (v0.105.0)**: Expanded vehicle maintenance with a fuel system, registration/renewal, visual/performance customization, impound risk, and emergency towing commands. Added 8 new city-life random events — Parking Ticket, Charity Fundraiser, Protest March, Food Truck Discovery, Tech Demo Booth, Lost Pet Poster, Rooftop Party Invite, and Free Sample Day. `npm run type-check` and `npm run build` passed. `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
 
 
@@ -28,6 +30,7 @@
 ## Project Status
 
 - **August 31, 2026**: v0.105.0 — Vehicle Maintenance Expansion + 8 New Random Events. Added fuel, registration, customization, impound/towing, and new city encounters. Type-check/build passed; `devvit publish --public --bump minor` submitted for review.
+- **September 4, 2026**: v0.108.0 — Global NPC & Random Event Expansion. Added 5 new international NPCs (npc_334–npc_338) across Dubai, Tokyo, Paris, London, and Sydney, and 5 new city-life random events. Type-check/build passed; `devvit publish --public --bump minor` submitted v0.108.0 for Reddit review.
 - **August 28, 2026**: v0.104.2 — Cash Property Purchases + Help Clarification. Fixed the real-estate buy command to support outright cash buys and explained cash vs. mortgage in help.
 - **August 28, 2026**: v0.104.2 — International NPC Expansion + City-Life Encounters. Added 10 new international NPCs and 5 new random events. `npm run type-check` passed, `npm run build` passed. `devvit publish --public --bump minor` pending fresh Reddit OAuth login in this environment.
 - **Current Focus**: Expanding global city content (NPCs, events, districts)
@@ -35,6 +38,7 @@
 
 ## Validation Notes
 - **August 31, 2026**: `npm run type-check` passed, `npm run build` passed. Expanded `src/server/vehicle-service.ts` with fuel, registration, customization, immobilization, and towing. Added 8 new random events to `src/server/storyline-engine.ts`. `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
+- **September 4, 2026**: `npm run type-check` passed, `npm run build` passed. Added 5 new international NPCs to `social-engine.ts` (npc_334–npc_338) across Dubai, Tokyo, Paris, London, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.108.0`. `devvit publish --public --bump minor` submitted v0.108.0 for Reddit review.
 - **August 24, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_314–npc_323) covering Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.99.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 21, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_304–npc_313) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.98.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.
 - **August 17, 2026**: `npm run type-check` passed, `npm run build` passed. Added 10 new international NPCs to `social-engine.ts` (npc_294–npc_303) covering London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Added 5 new city-life random events to `storyline-engine.ts`. Bumped version files to `v0.97.0`. `devvit playtest` and `devvit publish --public --bump minor` were not executed because the Devvit CLI is not authenticated to Reddit in this environment; a fresh Reddit OAuth login is required.

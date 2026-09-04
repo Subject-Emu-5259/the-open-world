@@ -1,4 +1,23 @@
-## v0.105.0 — Vehicle Maintenance Expansion + City Events
+## v0.108.0 — Global City Characters + City Encounters
+
+**September 4, 2026**
+
+### Added
+- Added 5 new international NPCs to `src/server/social-engine.ts` (npc_334–npc_338):
+  - Noura El-Sayed (Dubai), Takeshi Mori (Tokyo), Isabelle Moreau (Paris), Jamal Williams (London), Keira O’Brien (Sydney).
+- Added 5 new city-life random events to `src/server/storyline-engine.ts`:
+  Beach Bonfire Invitation, Street Poet Dedication, Vintage Camera Find, Community Fridge Restock, Open Air Jazz Quartet.
+
+### Changed
+- Updated `src/shared/version.ts`, `package.json`, `src/server/index.ts`, and `src/server/game-engine.ts` to v0.108.0.
+- Added v0.108.0 release notes to `docs/RELEASE-NOTES-v0.108.0.md` and Reddit update draft to `docs/REDDIT-UPDATE-v0.108.0.md`.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.108.0 for Reddit review.
+
+## v0.107.0 — Vehicle Maintenance Expansion + City Events
 
 **August 31, 2026**
 
@@ -18,7 +37,7 @@
 ### Validation
 - `npm run type-check` passed.
 - `npm run build` passed.
-- `devvit publish --public --bump minor` submitted v0.105.0 for Reddit review.
+- `devvit publish --public --bump minor` submitted v0.107.0 for Reddit review.
 
 ## v0.104.2 — Cash Property Purchases + Help Overhaul
 
@@ -1635,7 +1654,7 @@ Fetched: August 25, 2026
 *Last Updated: May 23, 2026*
 *Current Version: 0.56.0*
 
-## v0.105.0 — August 31, 2026
+## v0.107.0 — August 31, 2026
 
 ### 🛠️ Vehicle Maintenance Expansion
 - Added fuel system to all vehicles with tank size and consumption rates.

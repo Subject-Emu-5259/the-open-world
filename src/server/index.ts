@@ -8,7 +8,7 @@ import { generateNPCReply, type GameTimeContext } from "./ai-npc-provider.js";
 import type { NPCState } from "./social-engine.js";
 import type { Player, Relationship } from "../shared/types.js";
 
-console.log("[server] THE OPEN WORLD module loaded - v0.105.0 - STATELESS MODE");
+console.log("[server] THE OPEN WORLD module loaded - v0.108.0 - STATELESS MODE");
 
 // Single game engine instance (stateless - client sends state).
 // Client ships full player state on every request, so a singleton is safe for

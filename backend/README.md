@@ -72,7 +72,7 @@ this backend's config — Dre's keys never appear here, in any form.**
 
 | Variable | Required | Default | Meaning |
 |---|---|---|---|
-| `DATABASE_URL` | **yes** | — | Postgres connection string. The server **refuses to boot** without it (a deploy that silently boots against the wrong database is a data-integrity failure). Set in the Render dashboard from the Supabase project's direct connection string — never committed to the repo. |
+| `DATABASE_URL` | **yes** | — | Postgres connection string. The server **refuses to boot** without it (a deploy that silently boots against the wrong database is a data-integrity failure). Set in the Render dashboard from the Supabase project's Session pooler connection string — never committed to the repo. |
 | `PORT` | no | `3101` | Port to listen on. Render injects its own — never set it on Render. |
 | `HOST` | no | `0.0.0.0` | Bind host. |
 | `TOW_SESSION_DAYS` | no | `30` | Session lifetime in days. |
@@ -210,16 +210,20 @@ set in Render, never files.
 Supabase Dashboard: New project → name `tow-pc` → organization
 OpenStudio (same org as the KOVA LIVE project) → region US West
 (near the Render service in Oregon) → Free plan → set a database
-password. Then Project Settings → Database → copy the **DIRECT**
-connection string (port 5432, not the 6543 pooler — the boot
-migration needs a direct connection). Keep it out of the repo.
+password. Then Project Settings → Database → copy the **SESSION
+POOLER** connection string (port 5432, host
+aws-0-us-west-1.pooler.supabase.com). NOT the 6543 transaction
+pooler (it breaks the boot migration's session semantics) and
+NOT the direct db.\<ref\> host — direct is IPv6-only and Render
+has no IPv6 route, so the migration fails with ENETUNREACH on
+it (proven 2026-11-14, first deploy). Keep it out of the repo.
 
 **Step 2 — create the Blueprint + wire the database.** In the
 Render Dashboard: New → Blueprint → pick the repo → Render reads
 `backend/render.yaml` and shows the one resource it will create
 (web service `tow-pc-backend`). Confirm, then set the
-`DATABASE_URL` env var on the service from the Supabase direct
-connection string (dashboard; `sync: false` in the Blueprint
+`DATABASE_URL` env var on the service from the Supabase Session
+pooler connection string (dashboard; `sync: false` in the Blueprint
 keeps it from being overwritten on later syncs). Render builds
 the Docker image (Node 22), runs the migration against Supabase,
 and starts the server. First build takes a few minutes.
@@ -229,7 +233,7 @@ and starts the server. First build takes a few minutes.
 `{"status":"ok","game":"The Open World","version":"0.108.29","edition":"pc","db":"ok","timestamp":"…"}`.
 A `503` with `"db":"error"` means the database link failed — check
 the `DATABASE_URL` env var on the service (it must be the Supabase
-direct connection string, with the right password).
+Session pooler connection string, port 5432, with the right password).
 
 **Step 4 — point the PC client at it.** The client reads its API
 base from the build-time `TOW_PC_API_BASE` or the runtime

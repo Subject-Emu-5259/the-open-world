@@ -7,8 +7,13 @@
 # slot, so the TOW database is a free Supabase project ("tow-pc")
 # and this blueprint only creates the web service. DATABASE_URL is
 # set in the Render dashboard (sync: false) from the Supabase
-# project's DIRECT connection string — it is never committed to
-# the repo. The Docker CMD runs the migration (001_init.sql,
+# project's SESSION POOLER connection string (port 5432) — it is
+# never committed to the repo. NOTE: use the Session pooler, NOT
+# the direct db.<ref> host and NOT the 6543 transaction pooler.
+# The direct host is IPv6-only and Render has no IPv6 route, so
+# the boot migration fails with ENETUNREACH on it (proven
+# 2026-11-14, first deploy). The Session pooler is IPv4 and keeps
+# session semantics, which the migration needs. The Docker CMD runs the migration (001_init.sql,
 # idempotent) before serving, so the first deploy creates the
 # schema on the Supabase database.
 #
@@ -43,10 +48,13 @@ services:
     envVars:
       # Render injects PORT automatically — never set it here.
       # DATABASE_URL is set in the dashboard from the Supabase
-      # project's DIRECT connection string (port 5432, not the
-      # 6543 pooler — the boot migration needs a direct
-      # connection). sync: false keeps dashboard edits from being
-      # overwritten on the next Blueprint sync.
+      # project's SESSION POOLER connection string (port 5432,
+      # host aws-0-us-west-1.pooler.supabase.com — NOT the 6543
+      # transaction pooler, and NOT the direct db.<ref> host:
+      # direct is IPv6-only and Render has no IPv6 route, so the
+      # boot migration fails with ENETUNREACH on it). sync: false
+      # keeps dashboard edits from being overwritten on the next
+      # Blueprint sync.
       - key: DATABASE_URL
         sync: false
       # TLS to Supabase Postgres is ON by default in the code

@@ -72,7 +72,7 @@ this backend's config — Dre's keys never appear here, in any form.**
 
 | Variable | Required | Default | Meaning |
 |---|---|---|---|
-| `DATABASE_URL` | **yes** | — | Postgres connection string. The server **refuses to boot** without it (a deploy that silently boots against the wrong database is a data-integrity failure). On Render, the Blueprint wires this from the database automatically. |
+| `DATABASE_URL` | **yes** | — | Postgres connection string. The server **refuses to boot** without it (a deploy that silently boots against the wrong database is a data-integrity failure). Set in the Render dashboard from the Supabase project's direct connection string — never committed to the repo. |
 | `PORT` | no | `3101` | Port to listen on. Render injects its own — never set it on Render. |
 | `HOST` | no | `0.0.0.0` | Bind host. |
 | `TOW_SESSION_DAYS` | no | `30` | Session lifetime in days. |
@@ -201,45 +201,51 @@ answer with the full header list. The Reddit path is untouched.
 
 ## Deploy (Dre-executable)
 
-**Step 0 — the repo (Dre, one time).** Render deploys from a Git
-repo, and the TOW tree (`~/workspace/the-open-world-original/`) is
-not a git repo today. Before anything below can run, the tree must
-be pushed to GitHub (new repo, e.g. `the-open-world` — the repo
-name is Dre's call; the Blueprint only needs the repo to exist).
-Creating the repo + pushing is an account action, so it is Dre's
-step (or Melo's in Dre's session on his word). The tree contains
-no secrets — the only credentials are env vars set in Render, never
-files — so pushing it is safe.
+**Step 0 — the repo (done 2026-11-14).** The tree is pushed to
+https://github.com/Subject-Emu-5259/the-open-world (public).
+The tree contains no secrets — the only credentials are env vars
+set in Render, never files.
 
-**Step 1 — create the Blueprint.** In the Render Dashboard: New →
-Blueprint → pick the repo → Render reads `backend/render.yaml`
-and shows the two resources it will create (web service
-`tow-pc-backend` + database `tow-pc-db`). Confirm. Render builds
-the Docker image (Node 22), runs the migration, and starts the
-server. First build takes a few minutes.
+**Step 1 — create the Supabase project (one time).** In the
+Supabase Dashboard: New project → name `tow-pc` → organization
+OpenStudio (same org as the KOVA LIVE project) → region US West
+(near the Render service in Oregon) → Free plan → set a database
+password. Then Project Settings → Database → copy the **DIRECT**
+connection string (port 5432, not the 6543 pooler — the boot
+migration needs a direct connection). Keep it out of the repo.
 
-**Step 2 — verify.** Open `https://tow-pc-backend.onrender.com/health`
+**Step 2 — create the Blueprint + wire the database.** In the
+Render Dashboard: New → Blueprint → pick the repo → Render reads
+`backend/render.yaml` and shows the one resource it will create
+(web service `tow-pc-backend`). Confirm, then set the
+`DATABASE_URL` env var on the service from the Supabase direct
+connection string (dashboard; `sync: false` in the Blueprint
+keeps it from being overwritten on later syncs). Render builds
+the Docker image (Node 22), runs the migration against Supabase,
+and starts the server. First build takes a few minutes.
+
+**Step 3 — verify.** Open `https://tow-pc-backend.onrender.com/health`
 (or the URL Render assigned). Expect:
 `{"status":"ok","game":"The Open World","version":"0.108.29","edition":"pc","db":"ok","timestamp":"…"}`.
 A `503` with `"db":"error"` means the database link failed — check
-the `DATABASE_URL` env var on the service (the Blueprint wires it
-automatically; a hand-created service needs it set by hand).
+the `DATABASE_URL` env var on the service (it must be the Supabase
+direct connection string, with the right password).
 
-**Step 3 — point the PC client at it.** The client reads its API
+**Step 4 — point the PC client at it.** The client reads its API
 base from the build-time `TOW_PC_API_BASE` or the runtime
 `window.__TOW_PC_CONFIG__.apiBase` (phase 3's Electron shell sets
 the runtime value). Set it to the Render URL (no trailing slash).
 The client derives the WebSocket URL from the same base
 (`https://…` → `wss://…`).
 
-**Step 4 — upgrade before day 30 (if staying on free).** The free
-Postgres **expires 30 days after creation** (see the cost table).
-If the backend is serving real players by then, upgrade the
-database to `basic-256mb` in the dashboard **before** the expiry
-— after the 14-day grace period Render deletes it with all data.
-The web service can stay free longer (it just sleeps), but a
-sleeping backend means a ~1 minute cold start for the first player
-after 15 idle minutes.
+**Step 5 — know the free-tier limits.** The free Supabase project
+**pauses after 7 days with no database activity** — the game goes
+down until someone unpauses it in the Supabase dashboard (data is
+kept; restore within a year). Regular play keeps it awake. Before
+real players arrive, upgrade Supabase to Pro ($25/mo, never
+pauses). The free web service sleeps after 15 idle minutes — a
+~1 minute cold start for the first player after a quiet stretch;
+Starter ($7/mo) makes it always-on.
 
 **Migration step.** The migration (`backend/migrations/001_init.sql`)
 runs automatically on every boot (idempotent — every statement is
@@ -256,24 +262,29 @@ read 2026-11-14/15 — crawled 2026-11-15 01:49 UTC) plus Render's
 pricing page as quoted by multiple independent trackers checked
 Oct–Nov 2026 (all agree on the paid figures; Render's pricing page
 itself did not surface a direct fetch, so re-check it at deploy
-time — prices change). All figures USD/month, before tax.
+time — prices change). Supabase figures from supabase.com/pricing
+as quoted by multiple independent trackers checked Sept–Nov 2026
+(all agree: 2 active projects, 500 MB database, pause after 7 days
+idle, Pro $25/mo). All figures USD/month, before tax.
 
 | | Free (Blueprint default) | Cheapest paid |
 |---|---|---|
 | **Workspace** | Hobby $0 (1 seat, 25 services, 5 GB bandwidth, 500 build min/mo) | Hobby $0 — no workspace upgrade needed |
 | **Web service** | $0 — 0.1 CPU / 512 MB. **Spins down after 15 min idle** (~1 min cold start). 750 free instance hours/month per workspace (spun-down services consume none; run out and Render suspends all free web services until next month). | Starter $7/mo — 0.5 CPU / 512 MB, **always-on**, no sleep, no hour cap |
-| **Postgres** | $0 — 256 MB RAM, 1 GB storage, one per workspace, no backups, no connection pooling. **Expires 30 days after creation**; 14-day grace to upgrade, then Render **deletes it with all data**. | Basic-256mb $6/mo compute + $0.30/GB storage. Basic's default disk is 15 GB → $4.50/mo storage → **$10.50/mo all-in** for the database |
-| **Total** | **$0/mo** (prove the deploy; do not put real players on it — Render's own docs say "Do not use them for production applications") | **$17.50/mo** ($7 web + $10.50 database) on the $0 Hobby workspace — or $13/mo quoting compute only, before the $4.50 disk |
-| **Next steps up** | — | Standard web $25/mo (1 CPU / 2 GB); Basic-1gb Postgres $19/mo compute |
+| **Postgres (Supabase)** | $0 — 500 MB database, 2 active projects per org, 50,000 monthly active users, 5 GB egress. **Pauses after 7 days with no database activity** — the game goes down until someone unpauses it in the Supabase dashboard (data is kept, restorable within a year). No backups. | Pro $25/mo per project — never pauses, 8 GB database, daily backups |
+| **Total** | **$0/mo** (Render web free + Supabase free — prove the deploy; do not put real players on it until the paid pair below is in place) | **$32/mo** ($7 web Starter + $25 Supabase Pro) on the $0 Hobby workspace |
+| **Next steps up** | — | Standard web $25/mo (1 CPU / 2 GB) |
 
 Bandwidth past the included 5 GB is $0.15/GB; build minutes past
 500/mo are $5 per 1,000. Neither should bite at launch (the game
 is text; a command is a few KB).
 
 **Recommendation:** deploy free to prove it, then move to the
-$17.50/mo paid pair before real players arrive — the free database
-expiring mid-launch would delete every PC save. The upgrade is a
-dashboard plan change on each service, not a redeploy.
+$32/mo paid pair before real players arrive — the free database
+pausing mid-launch would take the game down until someone
+unpauses it (the data itself is safe, unlike Render's free
+database, which deleted everything after 30 days). The upgrades
+are dashboard plan changes, not redeploys.
 
 ## Node / Electron call
 

@@ -1,17 +1,23 @@
 # THE OPEN WORLD — PC hosted backend, Render Blueprint (TOW PC phase 2).
 #
 # Deploys the hosted backend (pc-backend.ts) as a Docker web service
-# + a managed Postgres database, from the repo this file lives in.
-# Apply it from the Render Dashboard: New -> Blueprint -> pick the
-# repo -> Render creates both resources from this file. Nothing in
-# this file spends money by itself — the plans below are the FREE
-# tier (see the cost notes). Upgrading either service to a paid plan
-# is a dashboard change Dre makes when he is ready (see
-# backend/README.md "What it costs").
+# from the repo this file lives in. The database lives on SUPABASE,
+# not Render: Render allows ONE free Postgres per workspace and
+# dispatch-hq-db (Dispatch HQ's live database) already holds that
+# slot, so the TOW database is a free Supabase project ("tow-pc")
+# and this blueprint only creates the web service. DATABASE_URL is
+# set in the Render dashboard (sync: false) from the Supabase
+# project's DIRECT connection string — it is never committed to
+# the repo. The Docker CMD runs the migration (001_init.sql,
+# idempotent) before serving, so the first deploy creates the
+# schema on the Supabase database.
 #
-# PREREQUISITE: Render deploys from a Git repo, and the TOW tree is
-# not a git repo today. Before this blueprint can run, the tree must
-# be pushed to GitHub (backend/README.md step 0 — a Dre step).
+# Apply it from the Render Dashboard: New -> Blueprint -> pick the
+# repo -> Render creates the service from this file. Nothing in
+# this file spends money by itself — the plan below is the FREE
+# tier (see the cost notes). Upgrading the web service to a paid
+# plan is a dashboard change Dre makes when he is ready (see
+# backend/README.md "What it costs").
 #
 # Shape mirrors Dispatch HQ's Render deploy (Dockerfile at the repo
 # root there, Node 22 image, migrate-then-serve CMD). The Dockerfile
@@ -36,25 +42,13 @@ services:
     healthCheckPath: /health
     envVars:
       # Render injects PORT automatically — never set it here.
+      # DATABASE_URL is set in the dashboard from the Supabase
+      # project's DIRECT connection string (port 5432, not the
+      # 6543 pooler — the boot migration needs a direct
+      # connection). sync: false keeps dashboard edits from being
+      # overwritten on the next Blueprint sync.
       - key: DATABASE_URL
-        fromDatabase:
-          name: tow-pc-db
-          property: connectionString
-      # TLS to Render Postgres is ON by default in the code
+        sync: false
+      # TLS to Supabase Postgres is ON by default in the code
       # (TOW_PG_SSL unset = on). No other env vars are required.
       # Optional: TOW_SESSION_DAYS (default 30).
-
-databases:
-  - name: tow-pc-db
-    # Free plan: $0, 1 GB storage, ONE per workspace — and it
-    # EXPIRES 30 days after creation (14-day grace, then Render
-    # deletes it with all data). Free is for proving the deploy;
-    # any real players need the paid plan below. Upgrade in the
-    # dashboard BEFORE day 30 or the saves are gone.
-    plan: free
-    region: oregon
-    # Paid alternative (change `plan` to this when ready):
-    #   plan: basic-256mb   # $6/mo compute + $0.30/GB storage
-    #   (Basic's default disk is 15 GB -> $4.50/mo storage, so the
-    #   paid database is $10.50/mo all-in. See README for the table.)
-    postgresMajorVersion: 16

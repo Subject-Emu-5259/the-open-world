@@ -1,0 +1,28 @@
+{
+  "author": "De'Andrew Harris",
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "description": "The Open World — desktop app (Electron) for macOS, Windows, and Linux. Bundles the full PC game client; accounts, saves, and PC multiplayer run on the hosted backend. Native (electron-updater) + bundled-version update channels.",
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.8.3"
+  },
+  "main": "dist/main.js",
+  "name": "@the-open-world/desktop",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "build:client": "node scripts/stage-pc.mjs",
+    "package": "npm run build:client && npm run build && electron-builder --mac",
+    "package:linux": "npm run build:client && npm run build && electron-builder --linux",
+    "package:mac": "npm run build:client && npm run build && electron-builder --mac --universal",
+    "package:win": "npm run build:client && npm run build && electron-builder --win",
+    "publish:desktop": "bash scripts/build-release.sh",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit"
+  },
+  "version": "0.1.0"
+}

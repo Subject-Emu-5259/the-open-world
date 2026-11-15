@@ -1,0 +1,6 @@
+# TOW PC backend image — keep the build context small. node_modules
+# is reinstalled inside the image (npm ci); dist/ is rebuilt there.
+node_modules
+dist
+.git
+*.log

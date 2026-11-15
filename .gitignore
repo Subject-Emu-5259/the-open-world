@@ -1,0 +1,14 @@
+# TOW — dependencies, build outputs, logs, secrets. Never commit these.
+node_modules/
+dist/
+desktop/dist/
+desktop/release/
+desktop/node_modules/
+desktop/client-dist/
+desktop/build/icon.png
+desktop/build/icon.ico
+desktop/build/icon.icns
+*.log
+.env
+.env.*
+.taste-skill/

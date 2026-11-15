@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <title>THE OPEN WORLD — Life Simulation</title>
+  <link rel="stylesheet" href="game.css" />
+  <style>
+    /* Critical: Make game fill entire viewport from the start */
+    html, body {
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+    .app {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+    }
+  </style>
+</head>
+<body class="app">
+  <!-- Game renders here -->
+  <div id="game-root"></div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,1973 @@
+# THE OPEN WORLD — Update Logs
+
+**Current: v0.108.29, live in both subs since November 12, 2026.** Entries below cover v0.108.1–v0.108.29 (newest first, matching the rest of this file). Sources: the in-game What's New cards (`renderUpdatesScreen` in `src/client/game.ts`), the updates index (`src/shared/updates-index.ts`, 72 entries), and the Daily/Weekly Briefs. Dates are the What's New card dates; live-install dates are given where the briefs record them — individual install dates for v0.108.13–v0.108.26 are not recorded in the briefs (they shipped in the Oct 27–Nov 2 run; v0.108.27 was live Nov 2, v0.108.28 live Nov 3). **No `RELEASE-NOTES-v0.108.x.md` files exist for v0.108.1–v0.108.29** — v0.108.0 is the last version with a release-notes file. v0.108.4–v0.108.7 have no What's New cards and are not in the updates index; see the v0.108.4–v0.108.7 entry for why.
+
+## v0.108.29 — Invest All + Mail by Number + Outcome Logging
+
+**November 12, 2026** (submitted ~13:18 CT, live in both subs ~14:15 CT)
+
+### Added / Fixed
+- `invest all` works now: `invest all into [name]`, `invest all [name]`, or `invest [name] all` invests all available cash (minimums still apply).
+- `mail read [n]` opens the nth item in the order `mail` lists them (1 = first); `read mail [n]` works the same. Reading by id still works.
+- Outcome logging: the server records what enroll, study, invest, exam, graduate, and sleep actually did (enrolled course, hours advanced, positions opened and their values) as `[server] Outcome` lines, so progression can be confirmed from server logs. Stale rejections are never logged.
+
+### Validation
+- Harness 0.108.29 66/66 PASS, including the full TOW-001 close path (enroll → study → exam → graduation). `npm run type-check` and `npm run build` passed. Submitted for UNLISTED review via the 0.15.0 CLI.
+- **Open:** the first live `[server] Outcome` line was still unconfirmed as of the Nov 13 brief (zero Outcome lines in a 1,114-line pull despite post-.29 invest commands) — TOW-001 stays open pending a live playtest. See `docs/bugs.md`.
+
+## v0.108.28 — Mail Lists Your Mail
+
+**November 2, 2026** (live in both subs November 3, 2026)
+
+### Fixed / Added
+- `mail` finally lists every item — id, kind, sender, subject, read/unread state — grouped by kind (letters, bills, notices, packages) with accurate unread counts; `mail [kind]` filters to one kind. `mail read [id]` opens one item in full and marks it read. The email inbox (`emails`, read, compose, delete) is unchanged; mail and email read the same items.
+- Quick bar: Mail joins the bar (21 buttons: Status, Home, Work, Sleep, Explore, Talk, Goals, Journal, Quests, Skills, Achievements, Bank, Property, Businesses, Investments, Vehicles, People, Phone, Mail, Factions, Help).
+
+## v0.108.27 — Update Logs Index, Organized
+
+**November 2, 2026** (live in both subs November 2, 2026)
+
+### Changed
+- "Jump to a version" shows the latest 10 versions plus a "Show all versions" toggle; the expanded view groups versions by family (v0.108.x, v0.107.x, v0.104.x, …) with a header per family, newest first. The old flat wall (which put v0.101.0 after v0.99.3) is gone. No changelog content changed. The index itself became `src/shared/updates-index.ts`, shared by the client renderer and the node harness.
+
+## v0.108.26 — Deeper Work + Emergency Tracks
+
+**November 2, 2026**
+
+### Added / Fixed
+- Deeper working activities: `task` / `task complete`, `mentor [name]`, `meeting`, `breakroom`, `report`, `cover [name]` — each once per game-day, refusing cleanly without a job, while incarcerated, or short on energy.
+- Emergency-track activities: police `patrol`, fire `drill`, EMS `respond` (2h, −10 energy, +$30, +10 skill XP each, once per game-day); all three tracks get `training` and `ridealong`. On emergency tracks, `report` files an incident report. Cadet and every rung above qualifies.
+- Deeper shifts: one-shot `weekend` (+15% pay, Sat/Sun only), `split` (normal pay, less energy, +3 happiness), `on-call` (+10% pay, stress instead of energy); `shift prefer [shift|none]` sets a persistent preference. Three night shifts in a row bring night-shift fatigue.
+- FIX: entry jobs are visible in `apply` again (listings used to sort highest-rank-first and cut off at 15, hiding entry jobs like Police Cadet). Listings now show entry jobs first.
+- Quick bar: Home and Sleep join the bar (20 buttons).
+
+## v0.108.25 — Leaderboard Revamp + Avok Branding
+
+**November 2, 2026**
+
+### Added / Fixed
+- Leaderboard revamp — five boards: `leaderboard [lifetime|weekly|monthly|wealth|fame]`, each top 10 + your rank (bare `leaderboard` is still lifetime XP). Weekly/monthly rank XP gained in that real week/month; wealth ranks net worth; fame ranks your fame score. Every entry is a real recorded player; empty boards say so.
+- FIX: menus too large for the Reddit frame — main menu and pause menu now fit the compact/inline frame (viewport-constrained height, internal scrolling, tighter padding). Expanded/full-screen menus unchanged.
+- Avok Interactive branding: publisher mark, credit, and "Copyright © 2026 Avok Interactive. All Rights Reserved." on the loading screen, main menu footer, and a new About screen (main menu → About; also the `about` command). Studio surfaces only.
+
+## v0.108.24 — IDs, Records, Transit, Weather, Careers
+
+**November 2, 2026**
+
+### Added / Fixed
+- Help wording cleanup across all 12 sections (same commands, tighter words; 289 bullets kept).
+- Identification: `id` shows what you hold; `id [card|license|passport]` buys one (card $35, license $75, passport $150). IDs are perks only, never gates (fee/fuel/fare discounts).
+- Criminal records: `record` shows tier, numbered entries, fines, open cases, and what it means for new applications; `lawyer expunge [n]` removes a minor entry for $500 after 12 clean game-months.
+- Transit: `transit [city]` compares bus/train/flight fares and times; book with `travel [city] by [bus|train|airport]`; `stations` lists your city's stations; `transit pass` ($30/week) takes 20% off routed bus/drive fares.
+- Weather: foggy, snowy, windy, humid now occur by season; `weather` shows effects, `forecast` gives a 3-day outlook; severe weather adds +1h to routed travel.
+- Emergency careers: full ladders (Police Cadet→Chief, Fire Probationary→Fire Chief, EMT→Director) via `careers [police|fire|ems]`; `advance` moves you up when you meet the next rung's gates.
+- Time & 24-hour life: `time` / `day` show clock, period, what's open; `wait [hours]` passes 1–8 hours; night-band sleep recovers better.
+- News categories: `news [celebrity|crime|stocks|sports|politics|city|world]` filters the paper from real state only.
+- Social media: `post [visit|work|milestone|home]`, `follow` / `unfollow` / `following`; `social` leads with your posts and followed posts.
+- Phone messages: viewing `messages` marks shown texts read; `read message [id]`, `threads`, `thread [name]`, `delete message [id]`.
+- Pro sports & college careers: four fictional leagues with `tryout [sport]` (salaries $42k–$120k/yr by rank); `tryout college [sport]` (enrollment + GPA ≥ 2.0); `contract`, `season`, `college` tracking.
+
+## v0.108.23 — Travel Journal, Rentals, Home Life
+
+**November 2, 2026**
+
+### Added / Changed
+- Travel expansion: `trips` journals every trip (totals, fares, visits per city, most-visited city); `journey [city]` previews a trip before you pay; `souvenir [city]` buys a $25 keepsake, once per city, tracked in `souvenirs` (27 to collect).
+- Properties expansion: `tenants` shows occupancy, tenant name, rent, lease status per property; `open house [property]` ($50, 2h) guarantees next month occupied at full rent; `lease [property]` signs a 3-month lease at 90% rent; `break lease [property]` ends one early for $100.
+- Living your home: `myhome` home screen (residence, comfort tier, household, last sleep's recovery, today's routines); `morning` and `evening` daily routines at home (once each per game-day, need a property in your city); `household` lists who lives with you.
+- Help bodies presented as cards (command token distinct from description) in both themes, compact and expanded. No help text cut, no command dropped.
+
+## v0.108.22 — Save-System Hardening
+
+**November 2, 2026**
+
+### Fixed
+- The "not applied" banner could lie: the command path now returns its server stamp and write sequence, adopted before autosaving; an autosave re-sync says "your last command is safe" when the server copy IS that command's save, and a stale hit from another session names it.
+- Commands can no longer silently overwrite each other: sends serialize (input locks while a command and its autosave settle) and every save carries a write sequence the server enforces.
+- Leaderboard and challenges actually record now (store-call shape fixes; contributions increment atomically; recording no longer depends on the save succeeding).
+- A server outage can no longer eat your whole save: storage errors are distinct from "no save" at every step; creating into an occupied slot asks to confirm first (old save backed up on the server before any confirmed overwrite).
+- Continue resumes your newest slot even when the menu probe times out; "Use server copy" confirms first, backs up your device copy, and loads the newest server slot.
+- Switching apps no longer manufactures a stale rejection (hidden-tab flush is local-only; returning re-fetches the server stamp).
+- Trades keep their 90-day save lifetime, bump the write sequence, leave the sender a one-shot notice, and record both players on the leaderboard.
+- Folded stock lines reprice from the live market price; saves prefer server stamps at load time (a device clock ahead can no longer let stale local content win; a clock behind shows a skew note).
+- Hardening: shared 512KB body limit on every route; challenge/username-index/trade keys now expire; save slots validated; no-command requests return an explicit no-player shape; the slot scan returns the newest save.
+
+## v0.108.21 — Named Save Failures, Dividends, Companies
+
+**November 1, 2026**
+
+### Added / Fixed
+- FIX: "Server save failed" no longer hides behind one generic warning — saves fail by name (stale copy, unreachable server, server storage, oversize save), each with its own message, automatic retry on transient failures, and "Retry save" / "Use server copy" buttons. A stale command is re-run once on the fresh copy instead of being lost.
+- FIX: investment positions fold instead of duplicating — buying more of an asset you own adds to that one line; old doubled lines fold into one on load, totals preserved. Partial sells work on the merged position.
+- Texts & voicemails persist through save → quit → reload; new `voicemails` list (listing marks them listened).
+- Stock dividends: every stock holding pays 0.25% per game-month, itemized in the monthly tick, paid into cash as taxable income; see `dividends`.
+- Found & run your own company: `found [name]` ($5,000 cash-only), `mycompanies`, `company hire/fire/close` (max 5 employees, $100/mo wage each); monthly revenue scales with headcount and performance; two consecutive months over $2,000 in debt closes the company.
+- The market index reprices what you own: in-flight listings show index-adjusted prices; owned properties reprice each monthly tick with a tick line per move and a `repricing` screen.
+- Six thin cities filled in — Las Vegas, Seattle, Phoenix, Philadelphia, Detroit, Charlotte each gain 4 new residents (24 total).
+- Unpaid fees escalate fairly: warnings first (at +3 and +4 months, each announced), action only at +5 months (exactly one asset seized, cheapest first, never your primary residence; or, only with no seizable asset, a short bounded 3-day arrest with no record). `pay fees all`, partial payments, and `fees plan` (3 installments) stay open at every stage.
+- News ticker redesign: continuous scrolling marquee cycling the full 100+ headline pool, every headline traced to real game-state fact; `ticker local / world / off` still toggles it. Ticker label now reads "Local news" / "World news".
+- Help and What's New reorganized: help is 12 sections by system with a section index (`help [section]`, `help [word]`); What's New opens with a version index. No command dropped, no help text cut, every older entry's content preserved.
+- FIX: leaderboard and challenge writes, plus honest messages — the not-ranked nudge appears only when the board loaded and you genuinely have no rank; an empty board says "No ranked players yet".
+
+## v0.108.20 — The Mega-Update: A Living World
+
+**November 1, 2026**
+
+### Added / Fixed
+- FIX (P0): bought businesses and all other progress could vanish after leaving and coming back — saves now keep the newest copy on every slot, and a stale save can no longer overwrite a newer one. Continue resumes your newest slot, not slot 1.
+- FIX (P0): property buying works in the starting city now — West Memphis listings were visible but unbuyable. Display and buy use the same listings everywhere; `buy property` accepts any casing and bracket-wrapped names.
+- New systems: IRS Taxes (`tax`, `file taxes`, `tax plan`); Court & Police (`cases`, `lawyer defend`, `police`); College Life (one new course per school, `degrees`, `campus`); Family (`propose`, `family`, `welcome child`, `family activity`); Government Tiers (`government state/federal`, `civic`); Calendar & Years (`calendar`, `years` — one clock from 2024, aging each year crossing); Gigs & Overtime (`gigs`, `gig`, `overtime`); Money & Bank (savings goals, `loans`, `loan pay`); Life Hard Mode (opt-in, `hardmode`, `bills`); Living Expenses (`living`); Character & Starts (four new backgrounds, optional trait, start-city select for all 27 cities, `name` rename); Leaderboard (main-menu row, rank on `status`); Legacy (`retire`, `legacy`); Community Challenges (`challenge`); Newspaper (`news` daily feed from real state); Seasons & Holidays; Player Trading (`trade offer/list/accept/decline/cancel`); Deeper Working (`workplace`, `shift`, `coworkers`, `lunch`); Deeper Citizen (`citizens`, `volunteer`); Fame & Wealth (`fame`, galas at 50+); Companies (`companies`, `company [name]`); World Stock (`stocks`, `buy stock`, `sell stock`, `index`); Business Staff (`hire/fire/staff/raise`); Dialogue Topics (`topics`, `ask [topic]` — template-only); Greetings (`greet [name] [tone]`); Mail & Delivery (`mail`, `packages`, `track`, `send package`, `claim package`, courier jobs, `pay bill`); Citizen Services (`services`, `permits`, `fees`, `benefits`, `register voter`, `records`, `utilities`); Routines (`stores`, `shop`, `stroll`, `errands`, `chores`, `selfcare`); Housing Depth (`housing`, `mortgage`, `pay mortgage`, `set home`, `move`, `housing market` — foreclosure at 6 consecutive missed payments); Will & Estate (`will`, `will heir`, `will bequeath` — executes only on retire; no death mechanic); Insurance (`insurance`, `insure`, `claim`); Offices: Mayor, Governor, President (file, campaign, election, 48-month terms — the game's own roster people, no real politicians' names); Careers & College Linkage (`careers` six ladders, mapped rungs refuse without their cert); More Colleges (Toronto City, Dubai City, + three community colleges); Academics: GPA, Exams, Graduations (`gpa`, `exam`, `graduate` — exam gates graduation, GPA < 2.0 blocks new enrollments); Better Citizen Names (per-country pools, seeded per city); News Ticker (`ticker local/world/off`).
+- FIX: West Memphis has people now — 8 new residents across Broadway, Mississippi Park, and Meadowlake.
+- FIX: mail reads work the natural way — `read [id]` opens a message, and the inbox survives leaving and coming back.
+- FIX: `view` works now — `view inbox/properties/vehicles/investments/status/schools/real-estate/bank/government` open their screens by name.
+
+## v0.108.19 — Life & World Expansion
+
+**November 1, 2026**
+
+### Added
+- Bonds & Milestones: relationships climb to Partner at 90; `milestones` shows every bond's tier and distance to the next; `celebrate [name]` spends an evening with someone you know ($50, +8 relationship).
+- Home Life: `furnish [property] [item]` fills homes with furniture (chair $150 to art $1,500); higher comfort tiers make sleep at home recover better.
+- Home Cooking: `cook [meal]` turns cash into energy, happiness, and cooking XP (soup, pasta, Sunday roast, City Feast).
+- World Events Calendar: `events` shows this game-week's events across all 27 cities; `attend [event]` joins one where you are ($10 entry, appearance pay).
+- Road Trips: `roadtrip [city]` drives your own car instead of a ticket ($15 fuel, needs condition 30%+, grants driving XP).
+- Passport & World Journey: `passport` stamps every city visited and pays one-time milestone rewards at 5, 10, 15, 20, and all 27 cities.
+
+## v0.108.18 — Conversation, Navigation, Menus, Help Audit
+
+**November 1, 2026**
+
+### Added / Fixed
+- Commands work mid-conversation, even typed — a real command typed while talking to an NPC runs instead of sending as chat. Only non-command text still chats.
+- Conversation replies cleaned up: NPC replies always show the speaker's name header, including after re-renders; the broken nested-quote reply line is fixed.
+- `travel to [city]` works — the travel parser no longer chokes on "to"; same tolerance for `goto`.
+- West Memphis has homes now — starter home, duplex, and lot, priced below Memphis levels.
+- City names, not city codes — every player-facing string that leaked internal city ids now shows proper display names ("West Memphis, AR").
+- Proper city navigation: `districts` lists your city's neighborhoods, `where` shows where you are, `goto` accepts district names, `explore [district]` explores a named district.
+- Nearby people and places: `people` entries carry role, relationship, quests, district; new `nearby` view shows people AND places with what you can do at each.
+- Smoother play: unknown commands suggest the nearest real command; natural phrasing ("check bank", "go to Memphis") reaches the right command; travel/explore/conversation-end outputs point at the next step.
+- Menus rebuilt to a presented standard (true-black-flat): Game Menu, Settings, What's New, main menu, landing — label + description per item, real hierarchy. No items added, removed, or reordered. Menu text centered in Game Menu and main menu.
+- Schools catalog: new `schools` command lists every school with its id and every course with hours and cost, so `enroll` no longer demands ids you can't discover.
+- Mail you can actually open: bare `emails` lists the inbox instead of printing usage; `inbox` works as an alias; help documents read, compose, delete.
+- Help audited against every command — everything the game accepts is documented, and every documented command was proven working with real output.
+
+## v0.108.17 — Shortcuts Mid-Conversation + Go Home
+
+**November 1, 2026**
+
+### Added / Fixed
+- Quick selections work mid-conversation — tapping a shortcut while talking to an NPC runs the game command instead of sending its label as chat text. The conversation ends when you jump to a command; typed chat still talks to the NPC.
+- Pause menu simplified — Quick selections section removed from the Game Menu; shortcuts live in the quick bar only. The menu is back to its five core items.
+- `go home` command (`home` alias) returns you to your home city: your first property's city if you own one, else West Memphis. Same-city home costs nothing; other cities use normal travel fares.
+- Help rewritten to match the game — documents the quick bar (all 18 shortcuts, in order), the five-item pause menu, `go home`, and every newer system. Every command help lists was checked against the parser.
+- All 18 shortcuts verified, twice each — every quick-bar button proven in normal play and mid-conversation, with real command output.
+
+## v0.108.16 — Quick Bar Scrolls + Reordered
+
+**November 1, 2026**
+
+### Fixed / Changed
+- The quick-selections row scrolls horizontally now (visible scrollbar, touch swipe, mouse-wheel in full-screen view), so every shortcut — including People, Phone, and Factions — is reachable instead of cut off at the right edge.
+- Quick selections reordered in the quick bar and the full-screen menu: character first, then daily verbs, goals and progress, money and assets, the social world, Help last. Same buttons, same commands — order only.
+
+## v0.108.15 — Property Upgrades, Businesses, Goals, Story Journal
+
+**November 1, 2026**
+
+### Added
+- Property upgrades: renovate (or upgrade) any owned property through 5 named levels, Refreshed to Fully Renovated; each level costs money and raises rent (rent still only pays on occupied units).
+- Business ownership: buy a food truck, barbershop, corner store, laundromat, coffee cart, or auto shop ($2,500–$12,000) for modest monthly income ($180–$750/mo net) paid in the monthly tick. Sell at 70%.
+- Daily goals: three fresh objectives every game-day with $20–$50 rewards that pay out automatically; see `goals`.
+- Vehicle upgrades: engine, transmission, and aero performance tiers (3 levels each, priced off your vehicle's value); each tier cuts breakdown risk and adds value.
+- NPC depth + revamp: gifts and 2-hour hangouts raise relationships and unlock perks at 25, 50, and 75; `profile [name]` gives a full dossier (schedule, mood, quests, perks).
+- Story journal: `journal` shows active quests, six story arcs computed from what you've actually done, and a dated log of quests started and achievements unlocked. No invented lore — everything comes from your save.
+- Government & law: `laws` shows your city's law book and fine schedule, `court` shows standing and outstanding fines, `pay fine` settles them (each settled fine cools heat), `government` gathers officials, openings, and civic standing.
+- Job system rebuilt: listings grouped by tier with per-shift pay; `career` tracks tenure, skill, and exactly what your next promotion needs; `promote` grants +15% pay (15 shifts + skill level 3, max 3 per job). Existing jobs and progress carry over untouched.
+- New in-game UI: the true-black-flat direction runs across the game screen, header, stats, conversation, and menus in both themes; the HUD shows bank balance next to cash; the quick bar adds Goals, Journal, and Businesses.
+
+## v0.108.14 — Full-Screen Menu Widened + More Shortcuts
+
+**November 1, 2026**
+
+### Added / Changed
+- Full-screen Game Menu widened to a proper wide panel instead of a narrow column, so expanded mode actually uses the full screen.
+- Ten more quick selections in the expanded menu and the expanded quick bar: Bank, Property, Investments, Vehicles, Quests, Achievements, Skills, People, Phone, and Factions. They open screens the game already has — no new systems, no balance changes.
+- Compact view unchanged — the narrow menu and quick bar stay exactly as they are; the wider layout only appears in full-screen mode, which stays optional and never auto-expands.
+- Staged November 1 evening under a ship gate (no publish until Dre's explicit yes); submitted after his go. Individual submit date not recorded in the briefs.
+
+## v0.108.13 — Update Logs Redesigned + Theme Toggle Fixed
+
+**November 1, 2026** (submitted November 1 evening)
+
+### Fixed / Changed
+- Update Logs redesigned: each version reads as its own separated section with a clear header and breathing room (true-black-flat), instead of one continuous wall of text. Content untouched.
+- Theme toggle fixed: dark and light mode apply the instant you change them, and light mode restyles the whole game instead of only parts of it. (Two causes: the change only applied on footer Apply and Back discarded it; hardcoded dark surfaces made even Apply look dark.)
+- Settings row fixed: the Full-screen view row in Settings lays out like its neighbors in both compact and full-screen views. (Dre-reported: the row wrapped into a narrow stacked column in expanded view while other rows rendered fine.)
+
+## v0.108.12 — Fix-All Batch: Achievements, Saves, Economy, Journeys
+
+**November 1, 2026** (live in both subs ~20:09 CT)
+
+### Fixed / Added
+- Achievements fixed: progress achievements (travel, networking, and more) can actually unlock now (the check iterated the full achievement list instead of a hardcoded 30-id list), unlocks announce in-game the moment they happen, and World Traveler correctly asks for all 27 cities (was 28).
+- Save integrity: a failed server save warns you instead of silently pretending it worked; Load Game shows your server saves; deleting a save actually deletes it (server slot listing + delete; Redis errors propagate instead of being swallowed).
+- Travel + economy: travel costs real fares from route data (bus, drive, flight); bank balances earn 0.5% interest per game-month; rent follows occupancy (85% deterministic) instead of paying out on empty units.
+- Loading, menus, settings: the loading screen follows the real save check (with error states instead of a fake 2.4s timer); settings persist (including your full-screen preference); the dead audio toggles are gone; What's New is one tap away from the main menu (new button, main + in-game menus).
+- Play-session measurement (Devvit Journeys): anonymous session milestones (first work, first property, first investment…) so updates can follow what players actually do. No names or personal details are ever sent. **Gates beyond code: the server-side allowlist and journey-map review are still pending — metrics are NOT live.** See `docs/roadmap.md` and `docs/bugs.md`.
+- Also in the batch: per-request engine state (singleton async race fix), creation labels from real backgrounds, prison-sleep copy fix, talk via name resolution, HTML escaping, `/api/npc-reply` removed, job fallback label, weather cache prune, Settings Back fix, dead-code sweep.
+
+### Validation
+- Harnesses 18/18, 45/45, 36/36; `npm run type-check` and `npm run build` passed.
+
+## v0.108.11 — Optional Full-Screen View
+
+**November 1, 2026** (submitted and live in both subs November 1 evening)
+
+### Added
+- Full-screen view (optional): a new full-screen button in the game header (and in Settings) opens the game in a larger view. Always your choice — compact view stays the default, nothing auto-expands, and you can exit back any time. The expanded layout actually uses the full screen instead of stretching the compact one.
+
+## v0.108.10 — Dialogue Engine
+
+**October 25, 2026** (submitted ~21:07 CT, installed in both subs — verified October 26 morning)
+
+### Added
+- Dialogue engine: NPCs now have distinct voices drawn from their job, traits, and neighborhood, remember what you told them (jobs, likes, promises, favors), follow up on open questions when you meet again, and react by mood, not just a relationship number. Conversations and memories belong to your game only and never carry into another player's game. AI-powered replies switch on once the developer adds the Optra key in the app settings; until then the game keeps its existing local replies.
+- **Correction (November 1, not in the original entry):** the Optra domain exception (`api.optracloud.com`) was found REJECTED in the Devvit portal, as were the Hugging Face, Groq, and OpenRouter domains — so even with a key set, no LLM dialogue path can work. Dialogue is template-only as a platform fact until Reddit approves an exception. The What's New line promising Optra "once the developer adds the key" is stale; a future What's New entry should correct it (history entries are not rewritten).
+
+### Validation
+- Local harnesses 36/36; type-check and build green; secret scan clean.
+
+## v0.108.9 — Simulation Fix Batch
+
+**October 25, 2026** (submitted October 25, 2026)
+
+### Fixed
+- Job hiring checks requirements on every path (including fallback jobs); unknown credentials fail closed instead of being silently skipped.
+- New Paramedic and Nurse Practitioner courses at Memphis Medical Academy.
+- Health is a live stat now: rest restores it, exhaustion and prison labor wear it down, with a low-health warning — no death mechanic.
+- Investments tick at most once per game-day; old saves warn at 20 days idle and now last 90 days (was 30).
+- Ambiguous names ask you to clarify instead of picking the first match; you can't buy a property you already own; districts are validated; moving across town uses fuel and wear; weather stays consistent within a game-day; heat decays on real idle time; storyline losses can't push cash below $0; small stress/happiness movement in work and workouts.
+
+## v0.108.8 — Dashboard Clock Fixed
+
+**October 25, 2026** (submitted October 25, 2026)
+
+### Fixed
+- The header time, date, and weather now actually update after every command. They were painted once when the game screen loaded and never repainted, because the updater looked for element names the screen doesn't use — so the clock looked frozen even while the game clock advanced underneath.
+
+## v0.108.4–v0.108.7 — Identical Re-submissions of v0.108.3 (Publish-Loop Bug)
+
+**October 25, 2026**
+
+### Note
+- These four versions carry **no distinct content**: v0.108.3 was submitted October 25 with a publish-loop bug — the loop's grep missed the quoted version string, so 5 identical versions (v0.108.3, v0.108.4, v0.108.5, v0.108.6, v0.108.7) went into review. Harmless to players (identical builds). **v0.108.5 was briefly installed October 25** (same code as .3, fast approval) before .8–.10 superseded it. They have no What's New cards and are not in the updates index, which jumps from v0.108.3 to v0.108.8. Lesson recorded: the publish loop's grep must match the quoted version string and stop on the first "done".
+
+## v0.108.3 — Money Display + Game Clock Fixed
+
+**October 25, 2026** (submitted October 25, 2026)
+
+### Fixed
+- Money display: cash always shows exactly 2 decimals, and balances are rounded to whole cents on every command and on load, so old saves with long fractional tails (like $677.8846153846154) heal to $677.88. No prices, pay rates, or return rates changed.
+- Game clock: game-time now saves with your progress and restores on load, so working and sleeping actually move the day forward instead of snapping back to 6:00 AM on January 1, 2024. Sleeping while already fully rested now passes 8 hours instead of doing nothing.
+
+## v0.108.2 — Monthly Property Tick + Prison Soft-Lock Fixed
+
+**October 25, 2026** (approved + installed October 25, 2026)
+
+### Added / Fixed
+- Monthly property tick: when game-time crosses into a new month, property values and condition move, rent lands in your cash, and mortgage payments are deducted. If cash is short, a missed payment accrues as arrears instead of driving cash negative. One tick per game-month, so reloading can't double-apply it.
+- Prison soft-lock fixed: getting busted now gives a 3-day sentence instead of locking you in prison forever; prison work shortens your sentence by a day per shift; `lawyer appeal` works while incarcerated. Old soft-locked saves are healed with a 3-day sentence on next login.
+- Save slot fix: playing on slot 2 no longer silently overwrites your slot 1 save.
+- `vehicles` command works — the garage list opens instead of falling through to unknown command.
+- Study-hours validation: `study hours 0` and negative hours are rejected instead of silently studying 1 hour or rewinding time.
+- Re-enroll guard: enrolling while already enrolled is blocked (no double-charge, no lost progress), and graduating can't award the same certification twice.
+
+## v0.108.1 — Enroll Fix + Investments Move
+
+**October 24, 2026** (approved + installed October 25, 2026)
+
+### Fixed
+- Enroll fix: `study hours [n]` now actually advances an enrolled course toward graduation; before, it just re-printed the school list.
+- Investments move now: your portfolio gets one market tick each time you sleep, so values can rise or fall instead of sitting at the purchase price.
+- Help fix: the study example now uses a real school and course (`enroll maestro_college ai_foundation`).
+
+---
+
+## v0.108.0 — Global City Characters + City Encounters
+
+**September 4, 2026**
+
+### Added
+- Added 5 new international NPCs to `src/server/social-engine.ts` (npc_334–npc_338):
+  - Noura El-Sayed (Dubai), Takeshi Mori (Tokyo), Isabelle Moreau (Paris), Jamal Williams (London), Keira O’Brien (Sydney).
+- Added 5 new city-life random events to `src/server/storyline-engine.ts`:
+  Beach Bonfire Invitation, Street Poet Dedication, Vintage Camera Find, Community Fridge Restock, Open Air Jazz Quartet.
+
+### Changed
+- Updated `src/shared/version.ts`, `package.json`, `src/server/index.ts`, and `src/server/game-engine.ts` to v0.108.0.
+- Added v0.108.0 release notes to `docs/RELEASE-NOTES-v0.108.0.md` and Reddit update draft to `docs/REDDIT-UPDATE-v0.108.0.md`.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.108.0 for Reddit review.
+
+## v0.107.0 — Vehicle Maintenance Expansion + City Events
+
+**August 31, 2026**
+
+### Added
+- `VehicleService` now tracks fuel, registration/inspection, modifications, immobilization, and impound risk per vehicle.
+- New vehicle commands: `fuel [name]` (or `refuel`), `register [name]`, `customize [name] [mod]`, `tow [name]` (or `emergency`).
+- Vehicles now consume fuel on travel; refuel at $3.50/gallon. Running out of fuel immobilizes the vehicle.
+- Vehicles can be immobilized by severe breakdowns; use `tow` or `repair vehicle` to restore them.
+- Added visual/performance customization options in `src/server/vehicle-service.ts`: tint, spoiler, exhaust, suspension, paint, rims, turbo, stereo.
+- Added 8 new city-life random events in `src/server/storyline-engine.ts`: Parking Ticket, Charity Fundraiser, Protest March, Food Truck Discovery, Tech Demo Booth, Lost Pet Poster, Rooftop Party Invite, and Free Sample Day.
+
+### Changed
+- `GameEngine.help()` updated to list new vehicle commands under Vehicles & Racing.
+- `GameEngine.buyVehicle()` now initializes fuel capacity, MPG, registration state, and modification arrays.
+- `GameEngine.travelTo()` consumes fuel and can immobilize vehicles on severe breakdowns.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.107.0 for Reddit review.
+
+## v0.104.2 — Cash Property Purchases + Help Overhaul
+
+**August 28, 2026**
+
+### Added
+- `docs/REDDIT-HOW-TO-PLAY-POST.md`: full player-facing quick-start guide for the subreddit.
+- `docs/INGAME-HELP-REFERENCE.md`: mirror of the help text for docs.
+
+### Changed
+- `src/server/game-engine.ts` `help()` output:
+  - Added sections: Movement, Work & Money, Property & Wealth, Vehicles & Racing, Social & Relationships, Education & Self, Info & Time, Quick Tips.
+  - Explains cash vs. mortgage purchasing explicitly.
+  - Added Social & Relationships header that was missing.
+  - Added `assist`, `quests`, `influence`, `support`, `sabotage`, `chat`, `email`.
+- `src/client/game.ts` update log already references v0.104.2 help update.
+- `AGENTS.md` command reference already updated.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
+## v0.104.0 — International Mission Expansion + World Street Series Racing
+
+**August 28, 2026**
+
+### Added
+- **10 International Quests** in `src/server/social-engine.ts` (offered by the v0.103.0 NPCs):
+  - `q_khalid_signature_scent` — Signature Scent (Dubai)
+  - `q_suki_silk_repair` — Silk Thread Rescue (Tokyo)
+  - `q_marcel_midnight_set` — Midnight Set (Paris)
+  - `q_adeyemi_demo_day` — Demo Day Prep (London)
+  - `q_lena_harvest_festival` — Harvest Festival (Berlin)
+  - `q_camila_mural_mystery` — Mural Mystery (Mexico City)
+  - `q_zara_flavor_contest` — Flavor Contest (Sydney)
+  - `q_raj_open_mic` — Open Mic Scout (Toronto)
+  - `q_noah_river_pollution` — South Bank Waters (London)
+  - `q_yuna_lantern_procession` — Lantern Procession (Tokyo)
+- `NPC_QUEST_OFFERS` mapping so NPCs offer their city-specific missions.
+- `quests` command in `src/server/game-engine.ts` to review active quest progress.
+- **5 New International Race Tracks** in `src/server/racing-service.ts`:
+  - Cairo — Pyramids Plateau Run
+  - Rio de Janeiro — Copacabana Coast Sprint
+  - London — Canary Wharf Underground
+  - Mexico City — Azteca Circuit
+  - Mumbai — Marine Drive Night Run
+- `ChampionshipService` and `Championship` types for a multi-race season.
+- `race season` command to start the 5-race World Street Series championship.
+- `race standings` command to check championship points, wins, and next track.
+
+### Changed
+- `src/shared/version.ts` and `package.json` bumped to `0.104.0`.
+- `src/server/game-engine.ts`, `src/server/index.ts`, `src/client/game.ts`, `AGENTS.md`, `docs/roadmap.md`, and `docs/bugs.md` synced to `v0.104.0`.
+- `docs/RELEASE-NOTES-v0.104.0.md` and `docs/REDDIT-UPDATE-v0.104.0.md` created.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` and `devvit publish --public --bump minor` blocked: Devvit CLI is not authenticated (`devvit whoami` returns "Not currently logged in").
+
+---
+
+## v0.103.0 — International NPC Expansion + City-Life Encounters
+
+**August 28, 2026**
+
+### Added
+- 10 new international NPCs in `src/server/social-engine.ts`:
+  - `npc_324` — Khalid Al-Rashid — Deira perfume merchant (Dubai)
+  - `npc_325` — Suki Watanabe — Asakusa vintage kimono dealer (Tokyo)
+  - `npc_326` — Marcel Durand — Saint-Germain jazz club owner (Paris)
+  - `npc_327` — Adeyemi Okonkwo — Shoreditch tech-bootcamp instructor (London)
+  - `npc_328` — Lena Hoffmann — Tempelhofer Feld urban farmer (Berlin)
+  - `npc_329` — Camila Espinoza — Coyoacán mural tour guide (Mexico City)
+  - `npc_330` — Zara Chen — The Rocks ice-cream vendor (Sydney)
+  - `npc_331` — Raj Malhotra — Distillery District comedy-club booker (Toronto)
+  - `npc_332` — Noah Fisher — South Bank fisherman (London)
+  - `npc_333` — Yuna Park — Asakusa lantern shop owner (Tokyo)
+- 5 new random events in `src/server/storyline-engine.ts`:
+  - Lost Tourist
+  - Pop-Up Job Fair
+  - Celebrity Sighting
+  - Street Chess Match
+  - Sudden Summer Storm
+
+### Changed
+- `src/shared/version.ts` and `package.json` bumped to `0.103.0`.
+- `src/server/game-engine.ts`, `src/server/index.ts`, `src/client/game.ts`, `AGENTS.md`, `docs/roadmap.md`, and `docs/bugs.md` synced to `v0.103.0`.
+- `docs/RELEASE-NOTES-v0.103.0.md` and `docs/REDDIT-UPDATE-v0.103.0.md` created.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` and `devvit publish --public --bump minor` blocked: Devvit CLI is not authenticated (`devvit whoami` returns "Not currently logged in").
+
+## v0.102.0 — Serverless LLM NPC Brain + Save Flow Rebuild
+Fetched: August 25, 2026
+
+### Fixed
+- NPC conversation loop where NPCs repeated the same greeting/name-ask lines.
+- Save identity key now uses `userId ?? username ?? loid ?? player` for stability.
+- Server-side save is compressed, expires after 30 days, and writes before the response returns.
+- Client flush on tab close/refresh uses `navigator.sendBeacon` as a backup to the per-command auto-save.
+- `relationships` command added so players can inspect their NPC standings.
+
+### Added
+- `src/server/llm-provider.ts`: Hugging Face preferred, with OpenRouter, Groq, and Gemini fallbacks.
+- API keys configured through Devvit global settings (`hfApiKey`, `openrouterApiKey`, `groqApiKey`, `geminiApiKey`).
+- LLM prompt includes NPC identity, city/district, time, weather, relationship, and recent memory.
+- Automatic fallback to the local template generator when no LLM key is set or all providers fail.
+- `POST /api/npc-reply` route added to `src/server/index.ts` for direct NPC reply queries.
+- Environment model overrides: `HF_NPC_MODEL`, `OPENROUTER_NPC_MODEL`, `GROQ_NPC_MODEL`, `GEMINI_NPC_MODEL`.
+
+
+### Changed
+- `src/server/ai-npc-provider.ts`: calls `fetchNPCReply` first, then falls back to local templates; farewell handled locally for clean exits.
+- `src/server/game-engine.ts`: stable save key helper; relationship sync from saved state into NPC objects; name flag initialization at conversation start.
+- `src/server/index.ts`: uses `redisCompressed`, 30-day expiration, stable user key.
+- `src/server/conversation-engine.ts`: improved memory recording and learned-name handling.
+- `src/client/game.ts`: `sendBeacon` flush, version log updated.
+- `src/shared/version.ts` and `package.json` bumped to `0.102.0`.
+- `devvit.json`: added `permissions.http` for LLM domains and `settings.global` for API keys.
+- `src/server/index.ts`: added `/api/npc-reply` route using current server time context.
+
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
+## Added
+- `src/server/llm-provider.ts`: serverless LLM bridge (Hugging Face preferred, with OpenRouter, Groq, and Gemini fallbacks).
+- `src/server/ai-npc-provider.ts`: now tries the LLM bridge first and gracefully falls back to the local template pipeline.
+- Environment overrides for LLM models: `HF_NPC_MODEL`, `OPENROUTER_NPC_MODEL`, `GROQ_NPC_MODEL`, `GEMINI_NPC_MODEL`.
+
+### Fixed
+- Save identity now uses `userId → username → loid → player` priority, so progress binds to the Reddit account instead of a volatile display name.
+- `navigator.sendBeacon` fires on `beforeunload` and `visibilitychange` to flush progress to the server before the tab dies.
+- `loadState` now restores each NPC's relationship value from the saved player record.
+- NPC name recognition runs in the LLM parser and the local fallback; name loops are eliminated.
+
+### Changed
+- `src/server/index.ts`: `redisCompressed` import, `saveKey()` helper, 30-day Redis expiration, `serverSavePlayer` / `serverLoadPlayer` helpers.
+- `src/server/game-engine.ts`: added `relationships` command, patched type-strict relationship casts, and seeded `knows_name`/`known_name` on first talk when the player already has a name.
+- `src/client/game.ts`: beacon flush, v0.102.0 update-log entry.
+- `src/shared/version.ts`, `package.json` bumped to `0.102.0`.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+
+---
+
+## v0.101.0 — NPC Memory & Save Persistence Overhaul
+Fetched: August 25, 2026
+
+### Fixed
+- NPCs forgot everything between messages because `relationships` was stored as a `Map`, which does not JSON-serialize to Redis.
+- Converted `relationships` to a plain `Record<string, Relationship>` so NPC memory, flags, and relationship value survive every save/load.
+- `knows_name` flag and conversation memory now persist, fixing the "Name's Marcus. What's yours?" loop.
+- `assist [name]` and quest reward relationship changes updated to use the plain-object record.
+- Full player state (including `currentConversation`) now serializes into the server-side auto-save.
+- server-side authoritative auto-save after every command in POST /api/init; synchronous navigator.sendBeacon flush on tab close.
+
+### Added
+- local memory-aware NPC reply generator in src/server/ai-npc-provider.ts; natural name extraction from 'I'm...', 'I am...', 'call me...', and 'my name is...'.
+
+### Changed
+- `src/server/game-engine.ts`: `relationships` is now `{}`; `initPlayer`, `loadState`, `getPlayer`, `talk`, `continueConversation`, and `helpNPC` all use bracket notation.
+- `src/server/storyline-engine.ts`: quest reward relationship update uses `Record<string, Relationship>`.
+- `src/shared/version.ts`, `package.json`, and in-file headers bumped to `0.101.0`.
+- `src/client/game.ts` update-log screen updated.
+- `docs/RELEASE-NOTES-v0.101.0.md` and `docs/REDDIT-UPDATE-v0.101.0.md` created.
+- POST /api/init persistence; conversation-engine tryAI uses new AI bridge and records learnedName; client beforeunload beacon; shared/types.ts Player.name optional; docs and in-game log updated.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump minor` submitted v0.101.0 for review.
+
+---
+
+## v0.99.3 — NPC Relationship Memory Fix + Save Serialization Hardening
+Fetched: August 25, 2026
+
+### Fixed
+- `player.relationships` are now stored as a plain JSON-safe `Record<string, Relationship>` instead of a JavaScript `Map`.
+- Relationship objects (value, flags, memory, metAt, lastInteracted) are preserved through every Redis save/load loop.
+- NPCs now remember their last greeting, the player's name, and recent conversation history across commands and page reloads.
+- `helpNPC` and quest reward paths were updated to use the new relationship record shape.
+- Removed stale `Version: 0.96.0` comment from `game-engine.ts`.
+- Bumped version metadata to v0.99.3.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- Publish pending Devvit OAuth completion.
+
+---
+
+## v0.99.2 — Save System & NPC Conversation Patch
+Fetched: August 25, 2026
+
+### Added / Changed
+- Rebuilt save flow with server-first Redis persistence.
+- `GET /api/init` returns saved player from slot 1; splash shows Continue/New Game.
+- Auto-save after every command and on page unload / visibility change.
+- `localStorage` kept as offline fallback only.
+- Overhauled NPC conversation: NPCs greet first, contextual lines, proper exit words.
+- Fixed `text [name] [message]` to use relationship-aware replies.
+- Fixed `people` to show city-wide NPCs when district data is missing.
+- Bumped version to v0.99.2.
+
+### Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- Devvit publish pending fresh Reddit OAuth login.
+
+---
+
+## v0.99.2 — Server-First Save Flow + NPC Greeting & Farewell Polish
+Fetched: August 25, 2026
+
+### Summary
+Finalized the save authority so progress survives browser refreshes, and removed known NPC conversation traps (silent start, no exit, wrong relationship lookup).
+
+### Changes
+- **Client boot flow (`src/client/game.ts`)** – now starts with `/api/init` and continues an existing player instead of always creating a new one.
+- **Auto-save after every command** – `clientSave(slot, player)` is called after every server response.
+- **Unload flush** – `beforeunload` pushes the latest player state to the server before the page closes.
+- **New Game clears server slot** – explicit `/api/clear-save/1` so a restart is clean.
+- **Save errors are logged** – in-game activity feed shows `Save failed` instead of silently swallowing.
+- **NPC greets first** – `talk [name]` opens with `generateGreeting()` from the NPC.
+- **Farewell tokens release conversation lock** – mapped `bye/goodbye/leave/exit/later/im out`.
+- **text command fix** – `relationships` object handling corrected.
+- **people command robust** – returns city NPCs even when district data is sparse.
+- **Dead file removed** – `src/server/server.ts` duplicate.
+- **Version bump** – `v0.99.2` across shared version and docs.
+
+### Fixed Issues
+- Players losing progress on refresh / reload.
+- NPCs not greeting first / feeling bot-like.
+- Conversation lock never clearing on goodbye.
+
+---
+
+## v0.99.2 — Server-Side Save Fix + NPC Conversation Polish
+Fetched: August 25, 2026
+
+### Fixed
+- Save flow is now server-first: every command triggers a Redis save to slot 1, and `/api/init` returns the existing player state for a Continue option.
+- `beforeunload` flushes current state to the server so reloads do not lose progress.
+- New Game path explicitly clears the server-side save slot and resets in-memory state.
+- NPCs greet the player first when using `talk [name]` via `conversationEngine.generateGreeting()`.
+- Conversation lock is cleared by `bye`, `leave`, `exit`, `later`, `im out`, `goodbye`, preventing commands from being swallowed.
+- `people` returns all city NPCs when district data is sparse.
+- `text [name]` handles relationship objects correctly.
+- Dead duplicate `src/server/server.ts` removed.
+
+### Changed
+- `src/shared/version.ts` bumped to v0.99.2.
+- `docs/RELEASE-NOTES-v0.99.2.md` and `docs/REDDIT-UPDATE-v0.99.2.md` created.
+
+### Files touched
+- `src/client/game.ts`, `src/server/index.ts`, `src/server/game-engine.ts`, `src/server/social-engine.ts`, `src/server/conversation-engine.ts`, `src/server/comm-hub.ts`, `src/shared/version.ts`
+
+
+## v0.99.1 — Save System Rebuild + NPC Conversation Overhaul
+Fetched: August 25, 2026
+
+### Fixed
+- Save loss on refresh: Redis slot 1 is now checked on `GET /api/init`; existing saves return the player object.
+- Auto-load at startup: client queries slot 1 and renders Continue when a save is found.
+- Auto-save after every successful command via fire-and-forget `clientSave(1, state.player)` call inside `handleCommand`.
+- Dead duplicate `src/server/server.ts` removed; no more conflicting legacy endpoints.
+- NPCs now speak first: `greet [name]` returns a contextual greeting from `conversationEngine.generateGreeting()`.
+- `talk [name]` is fully wired to the conversation engine and updates returned `player` state.
+- Conversation lock cleared by `farewell`/`bye`/`goodbye`, preventing commands from being swallowed.
+- `text [npc] [message]` fixed to use `commHub.getContacts()` instead of the non-existent `.get()` method.
+
+### Changed
+- Save flow now uses explicit slot `1` for the primary save.
+
+### Files touched
+- `src/client/game.ts`, `src/server/index.ts`, `src/server/game-engine.ts`, `src/server/conversation-engine.ts`, `src/server/comm-hub.ts`
+
+
+## v0.99.1 - Save & Conversation Rebuild (2026-08-24)
+- **Save system**: server-side Redis as authoritative store (slot 1 auto-save), localStorage as offline fallback, automatic save detection on splash screen, auto-save after every command/window unload.
+- **NPC conversation**: NPCs now respond automatically when `talk` starts, greeting the player based on relationship/time/state; conversations can be exited with `bye`, `end`, `leave`, or `exit`.
+- **Social fixes**: `people` command falls back to city-wide NPC list when district match is empty; `text` command reads relationship state properly (object not Map).
+- **Dead code**: removed unused `src/server/server.ts` duplicate handler.
+- **Build/type-check**: both pass.
+
+## Version: v0.99.0 — August 24, 2026
+
+### ✅ New in v0.99.0
+- **Global NPC Expansion**: added 10 new international NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include Harajuku designer, Notting Hill bookshop owner, Seine boat captain, Berlin museum curator, Dubai falconer, Mexico City mezcal sommelier, Toronto graffiti artist, Sydney Opera House stagehand, Akihabara arcade technician, and Paris antique map seller.
+- **New City Encounters**: added 5 fresh random events — Pop-Up Street Gallery, Language Exchange Picnic, Vintage Record Fair, Rooftop Herb Garden, and Impromptu Dance Parade — that reward creativity, charisma, happiness, intelligence, money, community reputation, or stress relief depending on player choice.
+- **Version sync**: all project files aligned to `v0.99.0` with `src/shared/version.ts` as the single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_314–npc_323) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.99.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.99.0`.
+- `package.json` — version bumped to `0.99.0`.
+- `src/client/game.ts` — added v0.99.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.99.0 entry added.
+- `AGENTS.md` — version and last-updated bumped.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
+## Version: v0.98.0 — August 21, 2026
+
+### ✅ New in v0.98.0
+- **Global NPC Expansion**: added 10 new international NPCs across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include sushi apprentice, jazz archivist, macaron baker, desert botanist, Kreuzberg curator, lucha mask maker, Kensington barista, Bondi surf rescuer, bonsai teacher, and Deira spice merchant.
+- **New City Encounters**: added 5 fresh random events — Sandstorm Shortcut, Rooftop Yoga Class, Underground Comedy Night, Book Club on the Train, and Midnight Dog Walker Meetup — that reward fitness, charisma, happiness, intelligence, money, community reputation, or stress relief depending on player choice.
+- **Version sync**: all project files aligned to `v0.98.0` with `src/shared/version.ts` as the single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_304–npc_313) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.98.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.98.0`.
+- `package.json` — version bumped to `0.98.0`.
+- `src/client/game.ts` — added v0.98.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.98.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
+## Version: v0.97.0 — August 17, 2026
+
+### ✅ New in v0.97.0
+- **Global NPC Expansion**: added 10 new international NPCs across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include plant shop owner, chess hustler, tea ceremony teacher, capoeira instructor, Afrobeat promoter, ukiyo-e printmaker, opera house usher, pizza al taglio chef, perfume blender, and bonsai master.
+- **New City Encounters**: added 5 fresh random events — Rooftop Beehive Discovery, Lost Interview Invitation, Neighbor's Moving Sale, Street Piano Duet, and Late-Night Food Truck Discovery — that reward charisma, happiness, money, intelligence, community reputation, or stress relief depending on player choice.
+- **Version sync**: all project files aligned to `v0.97.0` with `src/shared/version.ts` as the single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_294–npc_303) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.97.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.97.0`.
+- `package.json` — version bumped to `0.97.0`.
+- `src/client/game.ts` — added v0.97.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.97.0 entry added.
+- `AGENTS.md` — version and last-updated bumped.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
+## Version: v0.96.0 — August 14, 2026
+
+### ✅ New in v0.96.0
+- **More International NPCs**: added 10 new NPCs across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include street poet, retro game shop owner, bookbinder, documentary filmmaker, private chef, art collector, jazz saxophonist, harbour tour guide, street artist, and cocktail bartender.
+- **More City-Life Random Events**: added 5 fresh random events — Rooftop Garden Invitation, City-Wide Scavenger Hunt, Street Magician Disappearing Act, Vintage Polaroid Swap, and Midnight Ramen Queue — that reward charisma, intelligence, happiness, reputation, or money depending on player choice.
+- **Version sync**: all project files aligned to `v0.96.0` with `src/shared/version.ts` as the single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_284–npc_293) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.96.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.96.0`.
+- `package.json` — version bumped to `0.96.0`.
+- `src/client/game.ts` — added v0.96.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.96.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
+## Version: v0.95.0 — August 13, 2026
+
+### ✅ New in v0.95.0
+- **International NPC Expansion**: added 10 new NPCs across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Roles include jazz club manager, pub landlord, pastry chef, graffiti curator, yacht broker, lucha libre trainer, tech startup founder, surf instructor, Vespa mechanic, and ramen critic.
+- **New City-Life Random Events**: added 5 fresh random events — Airport Upgrade Offer, Train Seat Swap, Local Sports Rivalry, Famous Food Queue, and Street Photographer — that reward charisma, happiness, money, intelligence, or stress changes depending on player choice.
+- **Version sync**: all project files aligned to `v0.95.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — Added 10 new NPC definitions (npc_274–npc_283) tied to valid international districts.
+- `src/server/storyline-engine.ts` — Added the v0.95.0 random-events block.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.95.0`.
+- `package.json` — version bumped to `0.95.0`.
+- `src/client/game.ts` — added v0.95.0 update entry.
+- `docs/roadmap.md` — status, last-updated, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.95.0 entry added.
+- `docs/bugs.md` — validation note added; deployment blocked pending Devvit re-authentication.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` requires Devvit CLI authentication; current session is not logged in.
+- `devvit publish --public --bump minor` not executed because the Devvit CLI session expired and needs a fresh Reddit OAuth login.
+
+---
+
+
+## Version: v0.94.0 — August 12, 2026
+
+### ✅ New in v0.94.0
+- **Expanded Property Types**: added five new property archetypes — `luxury_penthouse`, `vacation_rental`, `warehouse`, `farmland`, and `offshore_villa` — each with type-specific maintenance, rental income, appreciation, and condition decay.
+- **10 New Property Listings**: added across New York, Los Angeles, Dubai, Paris, Miami, Houston, Phoenix, Memphis, Atlanta, and Sydney, including trophy penthouses, seasonal vacation rentals, logistics warehouses, desert farmland, and waterfront villas.
+- **Property Renovation System**: new `renovate property [name]` command upgrades owned properties up to Level 5, restoring condition to 100%, raising current value, and increasing monthly rental income.
+- **Version sync**: all project files aligned to `v0.94.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/property-engine.ts` — added new `PropertyType` variants, `PROPERTIES_EXPANSION` listings, type-specific economics helper, renovation method, and updated appreciation logic.
+- `src/server/game-engine.ts` — wired `renovate property [name]` command, updated property help text.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.94.0`.
+- `package.json` — version bumped to `0.94.0`.
+- `src/client/game.ts` — added v0.94.0 update entry.
+- `docs/roadmap.md` — status, last updated, validation notes, and phase list updated.
+- `docs/UPDATE-LOGS.md` — v0.94.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched a local playtest build.
+- `devvit publish --public --bump minor` submitted `v0.94.0` for review.
+
+---
+
+## Version: v0.93.0 — August 11, 2026
+
+### ✅ New in v0.93.0
+- **International NPC Expansion**: added 10 new NPCs across Tokyo (Asakusa, Harajuku), London (Chelsea), Paris (Le Marais), Berlin (Friedrichshain), Dubai (JBR), Mexico City (Roma), Toronto (Kensington), and Sydney (Newtown).
+- **Global City Random Events**: added 5 fresh random events — Night Market Discovery, Subway Serenade, Lost Tourist, Historic Building Tour, and Free Street Haircut.
+- **Version sync**: all project files aligned to `v0.93.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — added 10 new international NPCs.
+- `src/server/storyline-engine.ts` — added 5 new global random events.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.93.0`.
+- `src/client/game.ts` — added v0.93.0 update entry.
+- `docs/roadmap.md` — status, last updated, and validation notes updated.
+- `docs/UPDATE-LOGS.md` — v0.93.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched a local playtest build.
+- `devvit publish --public --bump minor` submitted `v0.93.0` for review.
+
+---
+
+## Version: v0.92.0 — August 10, 2026
+
+### ✅ New in v0.92.0
+- **Domestic Real Estate Expansion**: property listings added for Atlanta, Nashville, Chicago, New York, Los Angeles, Miami, Houston, Dallas, and Phoenix.
+- **Dynamic Travel Descriptions**: `travelTo` now includes time-of-day atmospheric details.
+- **Vehicle Racing System**: added `race` and `race [track]` commands with 8 tracks across domestic and international cities, entry fees, performance-based payouts, vehicle wear, and police heat from underground street races.
+- **Driving Skill Integration**: races award driving skill XP; vehicle type and condition affect performance.
+- **Version sync**: all project files aligned to `v0.92.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/property-engine.ts` — expanded domestic property listings.
+- `src/server/racing-service.ts` — new racing tracks, payout calculation, wear, and heat mechanics.
+- `src/server/game-engine.ts` — wired `race` / `races` commands; improved `travelTo` arrival descriptions; updated help text.
+- `src/server/vehicle-service.ts` — added `applyWear` helper for race mileage.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.92.0`.
+- `package.json` — version bumped to `0.92.0`.
+- `src/client/game.ts` — added v0.92.0 update entry.
+- `docs/roadmap.md` — status and validation notes updated.
+- `docs/UPDATE-LOGS.md` — v0.92.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched a local playtest build.
+- `devvit publish --public --bump minor` submitted `v0.92.0` for review.
+
+---
+
+## Version: v0.91.0 — August 8, 2026
+
+### ✅ New in v0.91.0
+- **New Achievements**: added Peak Fitness (100 fitness), Renaissance Person (3 skills at level 50), and Trophy Hunter (10 achievements unlocked).
+- **New Random Events**: added 5 fresh city-life events — Impromptu Block Party, Unexpected Rainstorm, Street Chess Match, Hidden Bookstore Sale, and Rooftop Movie Night.
+- **Travel Fix**: removed the duplicate police checkpoint encounter triggered when a player with high heat arrives in a new city.
+- **Version sync**: all project files aligned to `v0.91.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/achievements.ts` — added `peak_fitness`, `skill_master`, and `trophy_hunter` achievements; added helper methods for skill level and unlocked counts.
+- `src/server/game-engine.ts` — removed duplicate police checkpoint block; expanded `checkAllAchievements` list to include new medals.
+- `src/server/storyline-engine.ts` — added 5 new v0.91.0 random events.
+- `src/client/game.ts` — added v0.91.0 update entry.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.91.0`.
+- `package.json` — version bumped to `0.91.0`.
+- `docs/roadmap.md` — status and validation notes updated.
+- `docs/UPDATE-LOGS.md` — v0.91.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched a local playtest build (v0.90.0.2 revision due to existing installed app).
+- `devvit publish --public --version=0.91.0` submitted `v0.91.0` for review.
+
+---
+
+
+## Version: v0.90.0 — August 7, 2026
+
+### ✅ New in v0.90.0
+- **International NPC Expansion**: added 10 new international NPCs across Berlin, Paris, Tokyo, Dubai, Mexico City, Toronto, and Sydney, including a ballet instructor, wine merchant, capsule hotel concierge, and superyacht broker.
+- **New Random Events**: added 5 city-life events — Sunrise Yoga Class, Bookstore Reading, Vintage Car Parade, Community Cleanup, and Late-Night Food Truck.
+- **Version sync**: all project files aligned to `v0.90.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — added 10 international NPCs (npc_254–npc_263).
+- `src/server/storyline-engine.ts` — added 5 new random events.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.90.0`.
+- `package.json` — version bumped to `0.90.0`.
+- `src/client/game.ts` — added v0.90.0 update entry.
+- `docs/roadmap.md` — status and validation notes updated.
+- `docs/UPDATE-LOGS.md` — v0.90.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched local `0.90.0.1` build.
+- `devvit publish --public --bump minor` submitted `v0.90.0` for review.
+
+---
+
+
+## Version: v0.89.1 — August 6, 2026
+
+### ✅ New in v0.89.1
+- **Inline Scroll Trap Fix**: both `default` and `game` post entrypoints now set `"inline": false` in `devvit.json`, so the game opens directly in Expanded Mode and avoids disallowed inline scrolling.
+- **Menu Post-Create Stability**: `/internal/menu/post-create` now checks a Redis-backed idempotency key (`menu_post:{subreddit}:{username}`) before calling `reddit.submitCustomPost`. If the moderator already created a post recently, it navigates to the existing post instead of spawning a duplicate; the error toast wording was also softened.
+- **Version sync**: bumped to `v0.89.1` across `src/shared/version.ts`, `package.json`, `docs/roadmap.md`, `docs/bugs.md`, `docs/UPDATE-LOGS.md`, `src/client/game.ts`, and `src/server/game-engine.ts`.
+
+### 📁 Files Changed
+- `devvit.json` — set `default` and `game` post entrypoints to `"inline": false`.
+- `src/server/index.ts` — added Redis idempotency check on menu post-create; improved error handling.
+- `src/shared/version.ts` — `GAME_VERSION` bumped to `0.89.1`.
+- `package.json` — version bumped to `0.89.1`.
+- `src/client/game.ts` — added v0.89.1 update entry; update-version for latest release uses `${GAME_VERSION}` and older v0.89.0 entry is now hardcoded.
+- `src/server/game-engine.ts` — version comment updated to `0.89.1`.
+- `docs/roadmap.md` — status and validation notes updated.
+- `docs/bugs.md` — v0.89.1 bug/validation entry added.
+- `docs/UPDATE-LOGS.md` — v0.89.1 entry added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit publish --public --bump patch` submitted `v0.89.1` for review.
+
+---
+
+
+## Version: v0.89.0 — August 6, 2026
+
+### ✅ New in v0.89.0
+- **International NPC Expansion**: added 10 new international NPCs across Dubai, Tokyo, Paris, Berlin, Mexico City, London, Toronto, and Sydney, including roles like spice merchant, robotics engineer, street magician, curator, luchador agent, pub owner, hockey scout, surf instructor, grime DJ, and ramen apprentice.
+- **Travel Atmosphere**: added unique arrival descriptions for 13 previously missing domestic cities — West Memphis, Little Rock, Southaven, New Orleans, Miami, Charlotte, Detroit, Philadelphia, Las Vegas, Houston, Dallas, Phoenix, and Seattle.
+- **New Random Events**: added 5 fresh city-life events — Street Busker, Lost Tourist, Community Garden Invite, Free Sample Frenzy, and Rooftop Party Invite.
+- **New Travel Achievements**: `Global Citizen` (visit 5 international cities) and `Passport Collector` (visit all 8 international cities) now track progress and unlock automatically.
+- **Achievement Logic Fix**: corrected the international city list in `achievements.ts` to include Mexico City and Toronto, replacing the non-existent Singapore reference.
+- **Version sync**: all project files aligned to `v0.89.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — added 10 international NPCs (npc_244–npc_253).
+- `src/server/game-engine.ts` — expanded travel arrival descriptions for all missing domestic cities and added progress updates for new travel achievements.
+- `src/server/storyline-engine.ts` — added 5 new random life events.
+- `src/server/achievements.ts` — added `global_citizen` and `passport_collector` achievements, updated international city list.
+- `src/client/game.ts` — added v0.89.0 update entry.
+- `src/shared/version.ts` — GAME_VERSION bumped to `0.89.0`.
+- `package.json` — version bumped to `0.89.0`.
+- `docs/roadmap.md` — status updated to v0.89.0.
+- `docs/UPDATE-LOGS.md` — v0.89.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched local `v0.89.0.1` build.
+- `devvit publish --public --bump minor` submitted v0.89.0 for review.
+
+---
+
+
+## Version: v0.88.0 — August 5, 2026
+
+### ✅ New in v0.88.0
+- **Expanded Crime Consequences**: criminal records now block high-tier job applications, parole prevents hiring, heat triggers police checkpoints while traveling, NPCs can witness crimes and lose trust, and the new `laylow` command lets you reduce heat.
+- **New Random Events**: added 5 fresh events — Spontaneous Karaoke Contest, Shady Dealer Offer, Lost Wallet, Talent Scout, and Inspiration Strike.
+- **New Achievements**: medals for City Angel, Busted, Most Wanted, and Underground Legend.
+- **Version sync**: all project files aligned to `v0.88.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/game-engine.ts` — expanded `commitCrime`, `travelTo`, `applyForJob`, added `decayHeat`, `applyCrimeConsequences`, `record`, and `layLow` methods, wired new commands, updated achievement check list.
+- `src/server/storyline-engine.ts` — added 5 random life events.
+- `src/server/achievements.ts` — added 4 new achievements and check conditions.
+- `src/client/game.ts` — added v0.88.0 update entry.
+- `src/shared/version.ts` — GAME_VERSION bumped to `0.88.0`.
+- `package.json` — version bumped to `0.88.0`.
+- `docs/roadmap.md` — status updated to v0.88.0.
+- `docs/UPDATE-LOGS.md` — v0.88.0 entry added.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched local `v0.88.0` build.
+- `devvit publish --public --bump minor` submitted v0.88.0 for review.
+
+---
+
+
+## Version: v0.87.0 — August 4, 2026
+
+### ✅ New in v0.87.0
+- **International NPC Expansion**: added 10 new international NPCs across Sydney, Paris, Mexico City, Dubai, Toronto, and London, including roles like sommelier, marine activist, luchador trainer, gold merchant, and art curator.
+- **More Random Events**: added 6 new global random events — Pop-Up Job Fair, Celebrity Sighting, Flash Flood Warning, Language Exchange, Influencer Giveaway, and Neighborhood Watch.
+- **Version sync**: all project files aligned to `v0.87.0` with `src/shared/version.ts` as single source of truth.
+
+### 📁 Files Changed
+- `src/server/social-engine.ts` — added 10 international NPCs (npc_234–npc_243).
+- `src/server/storyline-engine.ts` — added 6 random life events.
+- `src/shared/version.ts` — GAME_VERSION bumped to `0.87.0`.
+- `src/server/game-engine.ts` — version comment synced.
+- `package.json` — version bumped to `0.87.0`.
+- `docs/roadmap.md` — status updated to v0.87.0.
+- `docs/bugs.md` — validation note added.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched local `v0.87.0` build.
+- `devvit publish --public --bump minor` submitted v0.87.0 for review.
+
+---
+
+
+## Version: v0.86.0 — August 3, 2026
+
+### ✅ New in v0.86.0
+- **Expanded Vehicle Maintenance**: new `service`, `inspect`, `maintain`, and `repair vehicle` flows with oil, tires, brakes, tune-up, and wash services, plus breakdown risk and mileage-based depreciation.
+- **New Random Events**: added 8 fresh global events including mystery deliveries, street markets, stray puppies, power blackouts, and more.
+- **Version sync**: all project files now aligned to `v0.86.0` with `src/shared/version.ts` as single source of truth.
+
+### ✅ Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched local `v0.86.0` build.
+
+---
+
+---
+
+## Validation Run — July 27, 2026
+
+## Version: v0.85.0
+
+### ✅ New in v0.85.0
+- **Single source of truth**: created `src/shared/version.ts` with `GAME_VERSION`; imported by both server and client.
+- **Auto-sync menu version**: the main menu footer and update screen now read from `GAME_VERSION`, so no manual template edits are needed on version bumps.
+- **Build bundle verified**: `public/game.js` contains the correct `0.85.0` string after minification.
+- **Devvit review submitted**: `v0.85.0` pushed for public review.
+
+### 📁 Files Changed
+- `src/shared/version.ts` (new)
+- `src/server/game-engine.ts` — now imports `GAME_VERSION` from shared.
+- `src/client/game.ts` — menu footer and update screen use `${GAME_VERSION}`.
+- `devvit.json` — removed explicit `version` field (Devvit derives from package).
+- `docs/roadmap.md` — updated status/milestones.
+- `AGENTS.md` — updated current version.
+
+### 🧪 Validation
+- `npm run type-check` passed.
+- `npm run build` passed.
+- `devvit playtest` launched v0.85.0 bundle successfully.
+
+---
+
+## Version 0.83.0 — July 27, 2026
+### Added
+- 💬 **Deeper NPC Dialogue**:
+  - Added `apology` and `rumor` conversation intents.
+  - NPCs now react to player state (job title, certifications, health, stress, criminal record).
+  - Conversation continuity: NPCs reference the last topic when you greet them again.
+- 🏆 **Achievement Additions**:
+  - **Scholar** — earn your first certification or license.
+  - **Master Worker** — complete 100 work shifts.
+  - **Veteran** — survive 365 in-game days.
+  - **Continental** — visit 3 international cities.
+  - **First Introduction** — meet your first NPC.
+  - **Socialite** — meet 10 unique NPCs.
+  - **City Hopper** — meet NPCs in 5 different cities.
+- 🌆 **Domestic NPC Expansion**: Added 8 new NPCs across Seattle, Las Vegas, Phoenix, Detroit, Philadelphia, Charlotte, Dallas, and Houston.
+- 🗣️ **City-Specific Domestic Greetings**: Added local flavor to `talk`/`greet` flows and the conversation engine for domestic cities.
+- 🤝 **First-Meet Tracking**: `talk [name]` now records unique first meetings and feeds the new social achievements.
+
+### Fixed
+- 🛠️ Escaped an apostrophe in Barbara Banker\'s NPC description that caused a TypeScript parse error.
+- 🛠️ Removed duplicate `apology`/`rumor` cases in conversation response switch.
+- 🛠️ Cleaned duplicate city-greeting branches in `social-engine.ts`.
+
+### Validation
+- ✅ `npm run type-check` passes.
+- ✅ `npm run build` completes successfully.
+- ✅ `devvit playtest` launches a local `v0.83.0.x` build.
+- ✅ `devvit publish --public --bump minor` submitted `v0.83.0` for Devvit review; pending approval.
+
+---
+
+## Validation Run — June 30, 2026
+## Version 0.81.0 — July 26, 2026
+### Added
+- 🌍 **International NPC Expansion**: Added 8 new NPCs across Toronto, Sydney, Mexico City, Berlin, Dubai, and Paris.
+- 🎬 **City Event Expansion**: Added random events for New York, Atlanta, and Nashville.
+
+### Fixed
+- 🛠️ None — type-check and build remained clean.
+
+### Validation
+- ✅ `npm run type-check` passes.
+- ✅ `npm run build` completes successfully.
+- ✅ `devvit playtest` launches a local `v0.81.0.x` playtest build.
+
+---
+
+### Verified
+- ✅ `npm run type-check` passes.
+- ✅ `npm run build` completes successfully.
+- ✅ `devvit playtest` launches a local `v0.80.0.3` playtest build.
+- ✅ Browser automation successfully reached the main game interface and verified the `status` command output.
+
+### Notes
+- The prior `Begin Life` playtest blocker no longer reproduced during this run.
+
+---
+
+## Validation Run — June 29, 2026
+### Verified
+- ✅ `npm run type-check` passes.
+- ✅ `npm run build` completes successfully.
+- ✅ `devvit playtest` starts and publishes a local `v0.80.0.2` playtest build.
+
+### Blocked
+- ⚠️ Browser automation could not activate the `Begin Life` button on the character creation screen, so core command testing is still pending.
+
+---
+
+## Version 0.80.0 — June 28, 2026
+### Fixed
+- 🛠️ **Server Persistence Fix**:
+  - Switched `/api/save` and `/api/load` back to the proper Devvit Redis client import.
+  - Fixed TypeScript errors in `src/server/index.ts`.
+- ✅ **Validation Pass**:
+  - Confirmed `npm run type-check` passes.
+  - Confirmed `npm run build` completes successfully.
+  - Confirmed `devvit playtest` starts and publishes a local v0.80.0.1 playtest build.
+
+---
+
+## Version 0.79.0 — June 20, 2026
+### Added
+- 💾 **Save System Overhaul (Server-Side)**: 
+  - Transitioned from `localStorage` to server-side Redis persistence.
+  - Implemented `/api/save` and `/api/load` endpoints.
+  - Fixed critical issue where updates wiped all player saves.
+- 🚨 **Enhanced Crime System**:
+  - **Criminal Records**: Players now have a persistent criminal record.
+  - **Parole System**: Implemented parole logic; committing crimes while on parole increases arrest risk and heat.
+  - **Legal Defense**: Added `lawyer` command to clean records and appeal sentences.
+- 🗣️ **Dynamic Dialogue Depth**:
+  - Updated `ConversationEngine` to use player state (charisma, wealth, criminal rep) for NPC reactions.
+  - NPCs now comment on the player's fame, wealth, or notoriety during greetings and small talk.
+- 🔄 **Playtest Release Sync**: Updated the project to the current published release version.
+- 🧪 **Validation Pass**: Verified type-check, build output, and Devvit playtest installation.
+
+---
+## Version 0.78.0 — June 19, 2026
+### Added
+- 🌍 **International NPC Expansion**:
+  - **London**: Added 5 new unique NPCs including a Savile Row tailor and a Camden pub owner.
+  - **Tokyo**: Added 5 new unique NPCs including an Omakase master and a pro gamer.
+- 🚨 **Enhanced Crime System**:
+  - **Crime Command**: Integrated `crime [type]` command.
+  - **Risk-Reward Logic**: Added specific outcomes for pickpocketing, shoplifting, and heists.
+  - **Police Encounters**: Implemented `handlePoliceEncounter` to trigger arrests based on the current `heat` level.
+- 🔄 **Version Sync**: Unified version to v0.78.0 project-wide.
+
+---
+
+## Version 0.78.0 — June 16, 2026
+### Added
+- 🌍 **Global Immersion Update**:
+  - **High-Profile NPCs**: Added 5 new influential characters to international hubs (London, Tokyo, Paris, Dubai, Berlin) including an aristocrat, a tech CEO, and a luxury tycoon.
+  - **Dynamic Travel**: Enhanced the `travel` command with randomized, atmospheric arrival descriptions for 14 global cities to increase immersion.
+- 🔄 **Version Sync**: Unified version to v0.78.0 project-wide.
+
+---
+
+## Version 0.76.0 — June 16, 2026
+### Added
+- 🚨 **Crime System Overhaul**:
+  - **Police Heat**: Introduced `heat` mechanic. High heat increases arrest risk and attracts more police attention.
+  - **Close Calls**: Added "Close Call" outcomes where players narrowly escape capture but suffer stress or financial loss.
+  - **Legal Defense**: High-wealth players can now hire lawyers to reduce prison sentences after an arrest.
+- ⚡ **Random Life Crisis Events**:
+  - Added high-impact global events: **Unexpected Bill**, **Family Emergency**, and **Opportunity of a Lifetime**.
+  - Crisis events force players to make difficult financial or emotional choices.
+- 🔄 **Version Sync**: Unified version to v0.76.0 project-wide.
+
+---
+
+## Version 0.75.0 — June 6, 2026
+### Added
+- 🌍 **Global NPC & Event Expansion**:
+  - **New NPCs**: Added **Lars Fischer** (Berlin), **Yuki "Neon" Tanaka** (Tokyo), and **Isabella Costa** (Sydney).
+  - **New International Events**: Introduced **The Bauhaus Workshop** (Berlin), **Akihabara Tech Expo** (Tokyo), and **Great Barrier Reef VR** (Sydney).
+  - **Regional Events**: Added **Southland Racing** and **Big River Crossing Walk** for West Memphis.
+- 🗣️ **Dialogue Engine Enhancement**:
+  - **City-Specific Flavor**: Implemented `applyCityFlavor` to add authentic Memphis/West Memphis slang (mane, junt, on god) to local NPCs.
+- 🔄 **Version Sync**: Unified version to v0.76.0 project-wide.
+
+---
+
+## Version 0.74.0 — June 5, 2026
+### Added
+- 🎓 **Career & Specialization Overhaul**:
+  - **New Schools**: Added **London School of Economics**, **Tokyo Institute of Technology**, **Le Cordon Bleu** (Paris), and **University of Sydney**.
+  - **Specialized Courses**: Introduced advanced certifications including Global Policy, Robotics & Automation, Master of French Cuisine, and Marine Biology.
+  - **Elite Careers**: Added high-tier job listings in London, Tokyo, Paris, and Sydney requiring these new certifications.
+- 🔄 **Version Sync**: Unified version to v0.74.0 project-wide.
+
+---
+
+## Version 0.73.0 — June 4, 2026
+### Added
+- **Global Event Expansion**: Added 10+ new random events for international hubs including London (Afternoon Tea), Tokyo (Karaoke Face-off), Paris (Fashion Week & Seine Boat Tour), Dubai (Gold Souk Bargain), Toronto (Hockey Night), and Sydney (Surf Lessons).
+- **Atmospheric Travel**: Enhanced the `travel` command with unique, city-specific arrival messages and flavor text for all 14 major global hubs.
+
+### Changed
+- **Version Sync**: Unified all system references to v0.73.0.
+
+---
+
+## Version 0.72.0 — June 3, 2026
+### Added
+- **Faction Achievements**: Added 'Faction Leader' and 'Master Saboteur' achievements.
+- **Real Estate Achievements**: Added 'Real Estate Tycoon' for owning properties in 5+ cities.
+- **Faction Events**: Added new random events for faction bribes and rival confrontations.
+
+### Changed
+- **Version Sync**: Unified all system references to v0.72.0.
+
+---
+
+## Version 0.71.0 — June 2, 2026
+### Added
+- **NPC Expansion**: Added new city-specific greetings for Toronto, Mexico City, Sydney, and Dubai.
+- **Mid-South Events**: New random life moments for Memphis (Beale Street, St. Jude) and West Memphis (Southland, Big River Crossing).
+- **Dialogue Variety**: Improved response variety for NPC interactions.
+
+### Changed
+- **Version Sync**: Unified all system references to v0.71.0.
+
+### Fixed
+- **Type Safety**: Resolved a TypeScript 'any' type error in the faction sabotage logic.
+
+---
+
+## Version 0.70.0 — June 1, 2026
+### Added
+- **Faction Wars System**: New mechanics for influence, support, and sabotage.
+- **Influence Tracking**: Factions now have power levels (0-100%) in their HQ cities.
+- **Rivalries**: Factions now have explicitly defined rivals (e.g., Wall Street vs. Berlin Underground).
+- **Commands**: Added `influence`, `support [id]`, and `sabotage [id]` to the game engine.
+
+### Changed
+- **Version Sync**: Unified all system references to v0.70.0.
+- **UI Update**: Updated update log and credits in the client interface.
+
+### Fixed
+- **Stability**: Cleaned up unused imports in the main game engine.
+
+---
+
+## Version 0.69.0 — May 31, 2026
+### Added
+- 🌍 **Global Content Expansion**:
+  - Added new random events for **Toronto** (Kensington Market Tasting, Distillery District Photo-Op).
+  - Added **Mexico City** Taco Tour event.
+  - Added **Berlin** Wall History event.
+  - Added **Sydney** Opera House Performance event.
+- 🔄 **Version Sync**: Unified version to v0.69.0 across engine, client, and documentation.
+
+---
+
+## Version 0.68.0 — May 30, 2026
+### Added
+- 🌍 **Global Expansion**:
+  - Added new city-specific random events for **London**, **Tokyo**, and **Dubai**.
+  - Encounter buskers in Covent Garden, discover hidden ramen shops in Shinjuku, or join a desert safari in Dubai.
+- 🏡 **Luxury Real Estate**:
+  - Expanded the property market with high-end international listings.
+  - New properties in **London** (Kensington), **Tokyo** (Shinjuku), **Paris** (Montmartre), **Dubai** (Palm Jumeirah), and **Berlin** (Kreuzberg).
+- 🔄 **Version Sync**: Unified version to v0.68.0 across engine, client, and documentation.
+
+---
+
+## Version 0.67.0 — May 28, 2026
+### Added
+- 🌍 **Global Mission Expansion**:
+  - Added unique random events for all international hubs:
+    - **London**: Shoreditch Mural debate.
+    - **Tokyo**: Akihabara Arcade challenge.
+    - **Paris**: Montmartre portrait session.
+    - **Dubai**: Exclusive Marina Yacht party.
+    - **Mexico City**: Zocalo Lucha Libre celebration.
+    - **Sydney**: Bondi Beach rescue mission.
+- 💬 **Social Depth Expansion**:
+  - Added city-specific greetings for all international hubs.
+  - Added 10+ new role-specific dialogue sets for international NPCs (Bankers, Tech Founders, Opera Singers, etc.).
+  - Improved personality-based dialogue modifiers for better immersion.
+
+### Fixed
+- Fixed minor text alignment in the Update Log overlay.
+
+---
+
+## Version 0.66.0 — May 27, 2026
+### Added
+- 🌍 **International NPC Expansion**:
+  - Added 6 new unique NPCs to international hubs:
+    - **Otto "Techno" Schmidt** & **Helga Von Art** (Berlin)
+    - **Carlos "Lucha" Libre** & **Maria "Agave" Santos** (Mexico City)
+    - **Faisal Bin Zayed** & **Zara Hadid** (Dubai)
+- 🛡️ **New Factions**:
+  - **Berlin Underground**: Techno DJs, club owners, and street artists.
+  - **Dubai Elite**: High-stakes movers and luxury tycoons of Dubai.
+- 💬 **Enhanced Dialogue Engine**:
+  - Added city-specific greetings (e.g., "Hallo" in Berlin, "Bonjour" in Paris).
+  - Relationship-based responses (NPCs react differently if they like or dislike you).
+
+### Changed
+- **Version Sync**: Unified version to v0.66.0 across engine, client, and documentation.
+
+---
+
+## Version 0.65.0 — May 26, 2026
+### Added
+- 🚩 **Crime Expansion**:
+  - New crime types: **Scam** (Cybercrime) and **Grand Theft Auto**.
+  - Success rates for Scam now benefit from higher **Intelligence**.
+  - Success rates for Grand Theft Auto now benefit from the **Driving** skill level.
+- 🚨 **Criminal Records System**:
+  - Arrest history is now tracked in the player's permanent record.
+  - Criminal Record (total arrests) is now displayed in the `status` command output for players with a history.
+
+### Changed
+- **Version Sync**: Unified version to v0.65.0 across engine, client, and documentation.
+
+---
+
+## Version 0.64.0 — May 25, 2026
+### Fixed
+- **Commands Updated**: The in-game `help` command has been fully overhauled.
+  - Added new `Social & Comms` category to expose `contacts`, `search`, `factions`, `chat`, and `email` features to players.
+  - Added new `Education & Self` category featuring `enroll` and `study hours`.
+- **Bug Fix**: Added `enroll`, `email`, `emails`, `factions`, and `chat` to the global command dispatcher so players can actually execute them.
+- **Synced**: GAME_VERSION updated to v0.64.0.
+
+---
+
+## Version 0.63.0 — May 25, 2026
+### Added
+- 🎓 **Professional Schools & Education**:
+  - **School Engine**: New system for academic institutions and certifications.
+  - **Schools**: Added **Maestro College**, **Memphis Medical Academy**, and **NYU Stern School of Business**.
+  - **Courses**: Enroll in certifications like AI Foundations, Full-Stack Dev, Nursing (RN), and MBA.
+  - **Career Specialization**: Graduation from major degree programs unlocks specific specializations (e.g., AI Software Engineer).
+- 🛡️ **Faction Group Chats**:
+  - **Social Engine Factions**: Formally defined **901 Music Scene**, **Wall Street Elites**, and **West Memphis Locals**.
+  - **Group Chat Integration**: Automatically added to faction group chats upon reaching reputation milestones.
+  - **Chat Simulation**: Active group chats now trigger random messages from faction members in your notifications.
+- 🔄 **Unified Job Engine**: Integrated `jobs-database.ts` with `GameEngine` for more consistent career requirements and pay scales.
+
+### Changed
+- **Work System**: Updated pay calculation to use hourly rates from the comprehensive job database.
+- **Apply Logic**: Jobs now display specific certification requirements (Degrees/Licenses).
+
+---
+
+## Version 0.62.0 — May 25, 2026
+### Added
+- 📱 **Phone OS v2.0 Overhaul**:
+  - **Contacts App**: NPCs are now automatically saved to your contacts after interaction.
+  - **Search Functionality**: Search across all emails and SMS messages.
+  - **Attachments Support**: Infrastructure added for sending/receiving money and items via comms.
+  - **Drafts & Starred**: Save progress on messages and highlight important threads.
+- 🎬 **Dynamic Event Expansion**:
+  - Added 8+ new location-specific random events.
+  - **Manhattan**: The Wall Street Whisper (investment tip).
+  - **Shibuya**: Crossing Photo-Op (reputation gain).
+  - **Kreuzberg**: Underground Techno Invite (rave event).
+  - **Hollywood**: A Glimpse of Hollywood (celebrity encounter).
+  - **Dubai**: High-Rise Scammer (intelligence test).
+  - **Miami**: Tropical Downpour (weather event).
+  - **London**: Lost Tourist (community rep).
+  - **Orange Mound**: BBQ Smoke Aroma (happiness/energy boost).
+- 🔄 **Smart Event Filtering**: Random events now accurately target the player's current city and district.
+
+### Changed
+- Refactored `CommHub` and `StorylineEngine` for better performance and scalability.
+- Updated `GameEngine` with new `contacts` and `search` commands.
+
+---
+
+## Version 0.61.0 — May 25, 2026
+### Added
+- 🌍 **International NPC Expansion**: Added 5 new unique NPCs to major international hubs:
+  - **Maple Mike** (Toronto): Busker in Kensington Market.
+  - **Captain Cook** (Sydney): Harbour tour guide in Darling Harbour.
+  - **Phoebe Posh** (London): Personal shopper in Mayfair.
+  - **Sato San** (Tokyo): Retro arcade owner in Akihabara.
+  - **Madame Leclair** (Paris): Rare bookseller in the Latin Quarter.
+- 👥 Expanded total NPC roster to **125 unique characters**.
+
+### Changed
+- Updated internal version synchronization across engine, client, and documentation.
+
+---
+
+## Version 0.60.0 — May 24, 2026
+### Critical Stability & Version Sync
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: Unified project versioning to v0.60.0 for deployment stability.
+
+---
+
+## Version 0.58.6 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.58.6
+
+---
+
+## Version 0.58.4 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.58.4
+
+---
+
+## Version 0.58.3 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.58.3
+
+---
+
+## Version 0.58.1 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.58.1
+
+---
+
+## Version 0.58.0 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.58.0
+
+---
+
+## Version 0.57.2 — May 24, 2026
+### Critical Stability Hotfix
+- **CRITICAL FIX**: Resolved server-side crashes in Achievement Engine causing "blank bubbles".
+- **DATA FIX**: Added defensive type casting for player stats to prevent `toFixed` errors.
+- **SYNC**: GAME_VERSION updated to v0.57.2
+
+---
+
+## Version 0.57.1 — May 24, 2026
+### Chat & Stability Patch
+- **CRITICAL FIX**: Resolved "blank bubble" bug in conversations.
+- **SENDER FIX**: Fixed missing NPC names in chat responses.
+- **SKILL FIX**: Restored job-to-skill mapping in Economy Engine.
+- **UI FIX**: Repaired broken newline escapes in system messages.
+- **Synced**: GAME_VERSION updated to v0.57.1
+- **Synced**: docs/roadmap.md updated to v0.57.1
+
+---
+
+## Version 0.57.0 — May 24, 2026
+
+### 📈 SKILL PROGRESSION OVERHAUL
+- **New Skills System**: Introduced a granular skills system including `tech`, `driving`, `cooking`, `craftsmanship`, `finance`, `combat`, and `stealth`.
+- **XP & Levelling**: Each skill now tracks XP and levels independently.
+- **Action Integration**: `work`, `study`, and `gym` commands now award skill-specific XP.
+- **Skills Command**: Added `/skills` command to view progress with visual progress bars.
+- **Bug Fixes**: Resolved critical TypeScript errors in the Banking System (missing methods).
+- **Synced**: GAME_VERSION updated to v0.57.0
+- **Synced**: docs/roadmap.md updated to v0.57.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.56.0 — May 23, 2026
+
+### 🏦 BANKING SYSTEM
+- **Secure Savings**: Players can now keep their money in the bank to avoid losing it during crimes or events.
+- **Deposit/Withdraw**: Added `deposit` and `withdraw` commands with "all" keyword support.
+- **Bank Status**: Added `bank` command to view detailed financial breakdown.
+- **Net Worth Tracking**: Bank balance now fully integrates into net worth calculations.
+- **Synced**: GAME_VERSION updated to v0.56.0
+- **Synced**: docs/roadmap.md updated to v0.56.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.55.0 — May 22, 2026
+
+### 🛠️ VEHICLE MAINTENANCE & PARTS
+- **Condition System**: Vehicles now have condition and mileage tracking.
+- **Wear & Tear**: Travel now reduces vehicle condition based on distance.
+- **Maintenance Command**: Added `maintain` command for affordable tune-ups (+15% condition).
+- **Repair Command**: Expanded `repair vehicle` command for full condition restoration.
+- **Dynamic Pricing**: Resell value now scales with vehicle condition.
+- **Synced**: GAME_VERSION updated to v0.55.0
+- **Synced**: docs/roadmap.md version updated to v0.55.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.54.0 — May 21, 2026
+
+### 📱 PHONE & EMAIL SYSTEM OVERHAUL
+- **Email System**: Implemented fully functional `email` command for sending and receiving messages.
+- **Dynamic Content**: Added more variety to NPC text messages based on relationships and current player status.
+- **Notifications**: Refined the notification system for incoming communications.
+- **Synced**: GAME_VERSION updated to v0.55.0
+- **Synced**: docs/roadmap.md version updated to v0.55.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.53.0 — May 21, 2026
+
+### 🏆 ACHIEVEMENT SYSTEM INTEGRATION
+- **Achievement Engine**: Integrated a full achievement tracking system with 36 unique milestones.
+- **Progress Persistence**: Achievement progress and unlocks are now persisted in the stateless player data.
+- **Milestone Checks**: Real-time checking for wealth, travel, social, and life milestones.
+- **Achievement Menu**: New `achievements` command to view progress and unlocked rewards.
+
+### 👥 GLOBAL SOCIAL EXPANSION
+- **New International NPCs**: Added 5 new NPCs in London, Tokyo, Paris, Berlin, and Dubai (Fashion Photographer, Pop Idol, Boulanger, Nightclub Owner, Concierge).
+- **Social Integration**: NPCs added to specific international districts with unique personalities.
+
+### 🛠️ ENGINE OPTIMIZATION & BUG FIXES
+- **Type Safety**: Resolved several critical TypeScript errors in `game-engine.ts` and `economy-engine.ts`.
+- **Command Dispatcher**: Refactored `processCommand` for better event handling and achievement synchronization.
+- **Storyline Engine**: Added general `processChoice` and `status` methods for better event interactions.
+- **Synced**: GAME_VERSION updated to v0.53.0
+- **Synced**: docs/roadmap.md version updated to v0.53.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.52.0 — May 19, 2026
+
+### 🌍 GLOBAL CRIME & CONSEQUENCES
+- **Crime System**: Added `crime` command with options for pickpocket, shoplift, robbery, and heist.
+- **Risk & Reward**: Success chances depend on city crime rate, intelligence, and fitness.
+- **Consequences**: Criminal activities now affect reputation (social and criminal).
+- **Prison System Integration**: Caught criminals are now sentenced to prison using the existing incarceration system.
+- **Synced**: GAME_VERSION updated to v0.52.0
+- **Synced**: docs/roadmap.md version updated to v0.52.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.51.0 — May 18, 2026
+
+### 🌍 GLOBAL EXPANSION & UNIQUE LOCATIONS
+- **Specific International Districts**: Added unique districts for Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney.
+- **District Metadata**: Each new district includes specific descriptions, job types, and rent costs.
+- **New NPCs**: Added 6 new international NPCs (Sofia Rossi, Hiroshi Yamamoto, Fatima Zahra, Sebastian Vogel, Isabella Morelo, Marcus Sterling).
+- **NPC Updates**: Relocated existing international NPCs to their respective new districts.
+- **Synced**: GAME_VERSION updated to v0.51.0
+- **Synced**: docs/roadmap.md version updated to v0.51.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.50.0 — May 17, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.50.0 submitted for review (minor bump)
+- **Synced**: GAME_VERSION updated to v0.50.0
+- **Synced**: docs/roadmap.md version updated to v0.50.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+- **Status**: Pending Review
+
+---
+
+## Version 0.49.0 — May 12, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.49.0 submitted for review (minor bump)
+- **Synced**: GAME_VERSION updated to v0.49.0
+- **Synced**: docs/roadmap.md version updated to v0.49.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+- **Status**: Pending Review
+
+---
+
+## Version 0.48.0 — May 11, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.48.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.48.0
+- **Synced**: AGENTS.md version updated to v0.48.0
+- **Synced**: docs/roadmap.md version updated to v0.48.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+- **Status**: Pending Review
+
+# THE OPEN WORLD — UPDATE LOGS
+
+---
+
+## Version 0.47.0 — May 10, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.47.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.47.0
+- **Synced**: AGENTS.md version updated to v0.47.0
+- **Synced**: docs/roadmap.md version updated to v0.47.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.46.0 — May 9, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.46.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.46.0
+- **Synced**: AGENTS.md version updated to v0.46.0
+- **Synced**: docs/roadmap.md version updated to v0.46.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.45.0 — May 8, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.45.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.45.0
+- **Synced**: AGENTS.md version updated to v0.45.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.44.0 — May 7, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.44.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.44.0
+- **Synced**: docs/roadmap.md version updated to v0.44.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.43.0 — May 6, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.43.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.43.0
+- **Synced**: docs/roadmap.md version updated to v0.43.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.41.0 — May 4, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.41.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.41.0
+- **Synced**: AGENTS.md version updated to v0.41.0
+- **Synced**: docs/roadmap.md version updated to v0.41.0
+- **TypeScript**: All checks passing ✅
+- **Build**: Successful ✅
+
+---
+
+## Version 0.36.0 — May 4, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.36.0 submitted for review
+- **Synced**: GAME_VERSION updated to v0.36.0
+- **TypeScript**: All checks passing
+- **Build**: Successful
+
+---
+
+## Version 0.35.0 — May 4, 2026
+
+### 🎨 UI/UX Polish & Fullscreen Fix
+- **Redesigned Landing/Splash Screen**: Modern look with deep animated backdrop and glassmorphism logo.
+- **Redesigned Main Menu**: Polished UI with sleek buttons and subtle glowing effects.
+- **Fullscreen Issue Fixed**: Removed non-functional fullscreen buttons/logic since Reddit's iframe blocks it.
+
+---
+
+
+
+## Version 0.34.0 — May 4, 2026
+
+### 🔄 Version Bump After Deploy
+- **Deployed**: v0.35.0 submitted for review
+- **Synced**: GAME_VERSION and client menu version updated to v0.35.0
+- **TypeScript**: All checks passing
+- **Build**: Successful
+
+---
+
+## Version 0.31.4 — April 16, 2026
+
+### 🎮 REDDIT API POST CREATION
+- **CRITICAL FIX**: Menu now uses `reddit.submitCustomPost()` API
+- Creates actual game post when "Start a New Life" is clicked
+- Navigates user to the new post automatically
+
+---
+
+## Version 0.31.3 — April 16, 2026
+
+### 🐛 BUG FIX - Menu Post Creation
+- **CRITICAL FIX**: Added `/internal/menu/post-create` endpoint
+- Fixed "Start a New Life" menu button not working
+
+---
+
+## Version 0.31.2 — April 16, 2026
+
+### 🐛 BUG FIX - Content-Length Header
+- **CRITICAL FIX**: Changed internal endpoints to return 204 No Content
+- Fixed Content-Length header issue during installation
+- App can now be installed on subreddits
+
+---
+
+## Version 0.31.1 — April 16, 2026
+
+### 🐛 BUG FIX - Installation Endpoint
+- **CRITICAL FIX**: Added `/internal/on-app-install` endpoint
+- **CRITICAL FIX**: Added `/internal/on-app-uninstall` endpoint
+- App can now be installed on subreddits successfully
+- Fixed HTTP 404 error during installation
+
+---
+
+## Version 0.31.0 — April 16, 2026
+
+### 👥 NPC WORLD EXPANSION
+- **33 NEW NPCs** added across 10 cities
+- **Nashville** (4): Johnny Ray, Patsy Monroe, Doc Holliday, Sweet Lou
+- **Atlanta** (4): King Carter, Auntie Pearl, DJ Hurricane, Coach Brenda
+- **New Orleans** (4): Big Daddy Gumbo, Voodoo Mama, Professor Longhair Jr, Nana Bee
+- **New York** (5): Tony The Tie, Jade Kim, Brooklyn B, Dr. Maya Patel, Big Sal
+- **Los Angeles** (4): Vinny Vibe, Sunshine Starr, Dr. Feelgood, Mama Rosa
+- **Chicago** (4): Gino The Giant, Queen Latifah Jr, Old Man Winter, Coach Iron Mike
+- **Miami** (3): Carlos Cruz, Abuela Lucia, DJ Heatwave
+- **Houston** (3): Big Tex, Mama Tran, Dr. Freeman
+- **Dallas** (2): J.R. Sterling, Cowboy Cliff
+- **Total NPCs**: 75 (up from 42)
+
+### 🎮 LAUNCH READY
+- Game approved for public release
+- Subreddit created: r/THE_OPEN_WORLD
+- Ready for launch announcement
+
+---
+
+## Version 0.30.0 — April 16, 2026
+
+### 🔄 Minor Version Bump
+- **Deployed**: v0.30.0 submitted for review
+- **TypeScript**: All checks passing
+- **Playtest**: Verified working
+
+---
+
+## Version 0.29.0 — April 16, 2026
+
+### 📋 Version Sync & Minor Polish
+- **Synced versions** — GAME_VERSION and client menu version updated to v0.29.0
+- **TypeScript checks** — All passing
+- **Playtest verified** — Game runs successfully
+
+---
+
+## Version 0.28.0 — April 16, 2026
+
+### 🏗️ STATELESS ARCHITECTURE
+- **CRITICAL FIX**: Game state now persists between requests
+- Client maintains `state.player` and sends it with every request
+- Server processes commands and returns updated state
+- No server-side session storage needed
+
+### 🐛 Bug Fixes
+- Fixed job not persisting after `apply` command
+- Fixed `work` command not finding job
+- Proper Map serialization for relationships
+
+---
+
+## Version 0.22.0 — April 16, 2026
+
+### 🏗️ STATELESS ARCHITECTURE
+- **CRITICAL FIX**: Game state now persists between requests
+- Client maintains `state.player` and sends it with every request
+- Server processes commands and returns updated state
+- No server-side session storage needed
+
+### 🐛 Bug Fixes
+- Fixed job not persisting after `apply` command
+- Fixed `work` command not finding job
+- Proper Map serialization for relationships
+
+---
+
+## Version 0.18.0 — April 16, 2026
+
+### 🎉 ALL SYSTEMS WIRED
+- **NPC System**: Talk to 42 NPCs with `talk [name]`, see who's around with `people`
+- **Property System**: Buy/sell properties with `real-estate`, `buy property`, `sell property`
+- **Investment System**: Stocks, bonds, crypto with `invest`, `investments`
+- **Vehicle System**: Buy/sell vehicles with `vehicles`, `buy vehicle`, `sell vehicle`
+- **Storyline Events**: Random events trigger during explore/work
+
+### 🎭 Background System
+- 6 backgrounds: Working Class, Student, Corporate, Hustler, Creative, Unemployed
+- Each background has unique starting money and stat bonuses
+- Background selection during character creation now works
+
+### 💾 Save System Fixed
+- Delete button now functional (calls API)
+- Load screen fetches actual saves from server
+- Saves load player state correctly
+
+### 🔧 Bug Fixes
+- Fixed new game flow (character creation shows for new players)
+- Fixed type imports for Property, Investment
+- Added firstName/lastName/description to NPCState
+- Removed duplicate 'help' case in command dispatcher
+
+---
+
+## Version 0.15.0 — April 15, 2026
+
+### 🔧 WORK SYSTEM FIXED
+- **CRITICAL FIX**: Work command now properly calculates pay
+- Jobs store hourly wage correctly
+- `apply Software Developer` → `work` now works!
+
+### 📋 Job System
+- Jobs show hourly pay rates
+- Apply for jobs with `apply [job name]`
+- Work earns money based on hourly wage × 8 hours
+- Weather affects work productivity
+
+### 💾 Save System
+- Delete button added to save slots
+- Save/Load infrastructure ready
+- `src/server/save-system.ts` created
+
+### 📱 UI Updates
+- Delete button on Load Game screen
+- Game menu overlay (Resume, Save, Settings, Quit)
+- Fullscreen toggle button
+
+---
+
+## Version 0.14.1 — April 15, 2026
+
+### ⏰ Time Progression System
+- `nextday` / `tomorrow` - Jump to next day (6 AM)
+- `wait [hours]` - Skip hours
+- `morning` / `afternoon` / `evening` / `night` - Time jumps
+- Actions auto-advance time (work +8hrs, explore +1hr, etc.)
+
+### 🚗 Travel System
+- Travel to any city with `travel [city]`
+- City descriptions adapt to current location
+- 28+ cities worldwide
+
+---
+
+## Version 0.13.0 — April 15, 2026
+
+### 📱 Phone System Commands
+- `phone` - Phone summary
+- `phone messages` - Read SMS
+- `phone email` - Check inbox
+- `phone calls` - Call history
+- `text [name] [message]` - Send SMS
+- `call [name]` - Make calls
+
+---
+
+## Version 0.11.0 — April 15, 2026
+
+### 📱 Phone System Working!
+- All phone commands now functional
+- SMS with NPC replies
+- Voicemail system
+- Social media posts
+
+---
+
+## Version 0.8.0 — April 15, 2026
+
+### 📱 Immersive Phone System
+- 14 phone apps (Messages, Mail, Phone, SocialHub, Browser, etc.)
+- Natural conversation input
+- NPC relationship system
+
+---
+
+## Version 0.5.0 — April 15, 2026
+
+### 🎮 Crime System & Achievements
+- Pickpocket, shoplift, burglary, robbery, heist
+- 30+ achievements
+- Natural Language Processing
+
+---
+
+## Version 0.1.0 — April 14, 2026
+
+### 🎮 Initial Release
+- 42 NPCs with schedules
+- Job system, vehicles, weather
+- Character creation
+
+---
+
+## Upcoming Features
+
+- [ ] Multi-save slots
+- [ ] Prison system for crime
+- [ ] More NPCs for international cities
+- [ ] Leaderboards
+
+---
+
+## Known Issues
+
+1. **Fullscreen in iframe**: Reddit's sandbox prevents true fullscreen
+2. **Load Game**: Coming soon
+
+---
+
+*Last Updated: May 23, 2026*
+*Current Version: 0.56.0*
+
+## v0.107.0 — August 31, 2026
+
+### 🛠️ Vehicle Maintenance Expansion
+- Added fuel system to all vehicles with tank size and consumption rates.
+- Added `fuel [name]` / `refuel [name]` command to top off tanks.
+- Added `register` command to handle vehicle registration and annual renewal.
+- Added `customize [name] [mod]` command for visual and performance modifications.
+- Impound risk rises when vehicles are unregistered, in critical condition, or illegally modified.
+- Added `emergency / tow [name]` command to recover immobilized vehicles.
+
+### 🌆 New City-Life Random Events
+- **Parking Ticket**: Pay the fine or risk reputation hit.
+- **Charity Fundraiser**: Donate money or hours to boost community standing.
+- **Protest March**: Join, watch, or detour around a peaceful protest.
+- **Food Truck Discovery**: Try samples or grab a meal.
+- **Tech Demo Booth**: Beta test or early-invest in a startup.
+- **Lost Pet Poster**: Search for the pet and claim a reward.
+- **Rooftop Party Invite**: Attend for social points or sell the wristband.
+- **Free Sample Day**: Stock up on free groceries and tell friends.
+
+### 🔁 Version Sync
+- Bumped version across `package.json`, `src/shared/version.ts`, `src/server/game-engine.ts`, and client update log.

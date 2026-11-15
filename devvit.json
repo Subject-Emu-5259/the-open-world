@@ -1,0 +1,111 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "the-open-world",
+  "post": {
+    "dir": "public",
+    "entrypoints": {
+      "default": {
+        "inline": false,
+        "entry": "game.html"
+      },
+      "game": {
+        "inline": false,
+        "entry": "game.html"
+      }
+    }
+  },
+  "server": {
+    "dir": "dist/server",
+    "entry": "index.js"
+  },
+  "permissions": {
+    "http": {
+      "enable": true,
+      "domains": [
+        "api-inference.huggingface.co",
+        "openrouter.ai",
+        "api.groq.com",
+        "generativelanguage.googleapis.com",
+        "api.optracloud.com"
+      ]
+    },
+    "redis": true,
+    "journeys": true
+  },
+  "settings": {
+    "global": {
+      "hfApiKey": {
+        "type": "string",
+        "label": "Hugging Face API Key",
+        "isSecret": true
+      },
+      "hfModel": {
+        "type": "string",
+        "label": "Hugging Face Model",
+        "defaultValue": "HuggingFaceH4/zephyr-7b-beta"
+      },
+      "openrouterApiKey": {
+        "type": "string",
+        "label": "OpenRouter API Key",
+        "isSecret": true
+      },
+      "openrouterModel": {
+        "type": "string",
+        "label": "OpenRouter Model",
+        "defaultValue": "huggingfaceh4/zephyr-7b-beta:free"
+      },
+      "groqApiKey": {
+        "type": "string",
+        "label": "Groq API Key",
+        "isSecret": true
+      },
+      "groqModel": {
+        "type": "string",
+        "label": "Groq Model",
+        "defaultValue": "llama3-8b-8192"
+      },
+      "geminiApiKey": {
+        "type": "string",
+        "label": "Google Gemini API Key",
+        "isSecret": true
+      },
+      "geminiModel": {
+        "type": "string",
+        "label": "Gemini Model",
+        "defaultValue": "gemini-1.5-flash-latest"
+      },
+      "optraApiKey": {
+        "type": "string",
+        "label": "Optra API Key",
+        "isSecret": true
+      },
+      "optraBaseUrl": {
+        "type": "string",
+        "label": "Optra Base URL",
+        "defaultValue": "https://api.optracloud.com/v1"
+      },
+      "optraModel": {
+        "type": "string",
+        "label": "Optra Model (model name from your Optra dashboard)"
+      }
+    }
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Start a New Life",
+        "description": "Begin your journey in THE OPEN WORLD - an immersive global life simulation game",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/post-create"
+      }
+    ]
+  },
+  "triggers": {
+    "onAppInstall": "/internal/on-app-install"
+  },
+  "scripts": {
+    "dev": "node --experimental-strip-types ./tools/build.ts --watch",
+    "build": "node --experimental-strip-types ./tools/build.ts --minify"
+  }
+}

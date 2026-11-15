@@ -1,0 +1,809 @@
+# Item-10 baseline: What's New entry blocks as they stood BEFORE the
+# v0.108.21 item-10 redesign (index + collapsed cards). Each block below is
+# the verbatim entry div text (leading/trailing whitespace trimmed,
+# inner content untouched). Entries are <div class="update-item"> blocks
+# plus TOP-LEVEL <div class="update-card"> blocks (the five oldest tail
+# entries use update-card; nested cards inside an item belong to that
+# item's block). The item-10 harness compares every history entry
+# against this file byte-for-byte in document order; the
+# current-version (.21) entry is allowed ONLY added lines, never edits.
+
+===== VERSION v0.108.21 =====
+<div class="update-item">
+          <span class="update-version">v0.108.21</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>💾 <strong>FIX: "Server save failed" no longer hides behind one generic warning.</strong> Saves now fail by name — stale copy, unreachable server, server storage, or oversize save — each with its own message, an automatic retry on transient failures, and two buttons on the warning itself: "Retry save" and "Use server copy". A device clock that drifts from server time can no longer block your saves, and a stale command is re-run once on the fresh copy instead of being lost. A rejected write still never overwrites a newer save.</li>
+            <li>📈 <strong>FIX: investment positions fold, they don't duplicate.</strong> Buying more of an asset you already own adds to that one line (invested, shares, and value summed; totals unchanged by the merge itself). Old doubled screens — two Bitcoin lines, two Ethereum lines — fold into one line automatically on load, with totals preserved exactly. Partial sells ("sell investment [name] [amount]") now work on the merged position; selling all removes the single line. World-stock positions fold the same way.</li>
+            <li>📬 <strong>Texts &amp; voicemails persist now.</strong> SMS and voicemails survive save → quit → reload exactly like mail — same ids, no duplicates on reload. New: "voicemails" lists them (sender, transcript, listened state); listing them marks them listened — the list IS the listen action.</li>
+            <li>📈 <strong>Stock dividends</strong> — every stock holding pays 0.25% per game-month on its computed price × shares, itemized in the monthly tick and paid into cash as taxable income. See "dividends" for each holding's monthly amount, last payout, and next-payout note; "investments" and "stock [name]" show the terms too. Mid-month buys qualify at the next tick; sold shares stop paying the month after sale. No margin, no shorting, no options — that exclusion stands.</li>
+            <li>🏢 <strong>Found &amp; run your own company</strong> — the arc completes: own a small business, climb inside a company, now found one. "found [name]" ($5,000 cash-only; "found [name] in [industry]" for a specific industry) sets HQ in your current city. "mycompanies" shows your companies; "company hire/fire/close [company] [npc]" runs them (max 5 employees, $100/mo wage each). Monthly revenue scales with headcount and performance (Thriving/Steady/Struggling), expenses are wages + $100 overhead, losses first drain cash then become company debt — and two consecutive months over $2,000 in debt closes the company (employees released, debt dies with it, founding cost lost). Voluntary close costs nothing and pays nothing.</li>
+            <li>🏠 <strong>The market index reprices what you own now, transparently.</strong> In-flight listings on "real-estate" show index-adjusted prices (catalog × today's index) and buys charge exactly the price shown. Owned properties reprice each monthly tick by their city's index move — and EVERY move gets its own tick line (old price, new price, index move, city) plus a "repricing" screen listing each property's last move. Flat-index months produce no line. Mortgages, rent, and condition never move with a repricing; selling realizes the repriced value.</li>
+            <li>👥 <strong>Six thin cities filled in</strong> — Las Vegas, Seattle, Phoenix, Philadelphia, Detroit, and Charlotte each gain 4 new residents (24 total), so "people" there returns a real group instead of one person. All are ordinary fictional people in real districts, and every city in the all-27 sweep stays non-empty.</li>
+            <li>⚖️ <strong>Unpaid fees escalate fairly — warnings first, always announced.</strong> Annual fees ($40/registered vehicle, $25/property) still gain the $10 late fee past 2 months; then a warning at +3 months and a FINAL warning at +4 (each a notice + tick line naming the exact amount, the deadline, and the ways out), and only at +5 months does the city act: exactly ONE asset seized (cheapest vehicle first, else cheapest property that is not your primary residence; its value is applied to the debt, never more than owed; the next seizure waits 2 months) — or, only when you hold no seizable asset, a short bounded 3-day arrest with no criminal record, no arrests count, and no parole tail. Your job, primary residence, businesses, and bank balance are never seized. At every stage: "pay fees all" clears it, "pay fees [amount]" (ANY partial payment restarts the warning clock from that month), or "fees plan" (3 monthly installments, ladder frozen while active, a missed installment breaks it with NO penalty fee). While serving a fee arrest, "fees", "pay fees", and "withdraw" stay open so you can pay your way out immediately. See "fees" for your stage, next deadline, what would be seized first, and the ways out.</li>
+            <li>📰 <strong>News ticker redesign: it scrolls now.</strong> The strip between the stats HUD and the chat area is a continuous scrolling marquee (hover to pause) cycling the FULL pool of 100+ generated headlines — world events, per-city economy + patrol, stock moves, market indices, your businesses, properties, holdings, job, office, and court activity, milestones, season + next holiday, the weekly challenge goal, current-city weather, and the community top 3 — every headline traced to a real game-state fact, never invented. "ticker local / world / off" still toggles it, and the mode still persists through save/load. (The scrolling itself is a visual: judge it in play.)</li>
+            <li>📰 <strong>Ticker label fix:</strong> the strip label now reads "Local news" / "World news" (capitalized, full phrase) instead of bare LOCAL / WORLD, and the switch confirmation and status output use the same wording. The underlying local/world behavior is unchanged.</li>
+            <li>📖 <strong>PRESENTATION FIX: Help and What's New reorganized.</strong> Help is now 12 sections by system (Getting Started, Money &amp; Bank, Work &amp; Careers, Home &amp; Property, Life &amp; Family, World &amp; Travel, Government &amp; Law, Business &amp; Companies, Education &amp; Self, Community &amp; Social, Info &amp; Time, Dialogue) with a section index at the top — "help [section]" jumps straight to one section, "help [word]" filters to matching commands, and bare "help" still shows everything. No command was dropped and no help text was cut. What's New now opens with a version index that jumps to any version; the latest entry is fully shown and older entries are collapsed cards. Every older entry's content is preserved exactly as written — only the structure changed.</li>
+            <li>🏆 <strong>FIX: leaderboard and challenge writes, plus honest messages.</strong> Leaderboard and challenge recording runs after every successfully saved command — and because saves themselves failed, those writes were silently skipped too; the save fix restores them, and a recording failure now shows up in the server log instead of vanishing silently. The Leaderboard screen no longer pairs "board unavailable" with "you are not ranked yet — play a command": the not-ranked nudge appears ONLY when the board loaded and you genuinely have no rank, an empty board says "No ranked players yet", and an unavailable challenge says so explicitly instead of showing a zero total.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.20 =====
+<div class="update-item">
+          <span class="update-version">v0.108.20</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>🛠️ <strong>FIX (P0): bought businesses (and all other progress) could vanish after leaving and coming back — saves now keep the newest copy, on every slot, and a stale save can no longer overwrite a newer one.</strong> If your device holds a fresher save than the server, the game recovers it and tells you so; Continue resumes your newest slot, not slot 1; and a delayed or stale write is rejected instead of clobbering your progress.</li>
+            <li>🏠 <strong>FIX (P0): property buying works in the starting city now — West Memphis listings were visible but unbuyable because the buy list never included them.</strong> Display and buy now use the same listings everywhere; "buy property" also accepts any casing ("Mortgage"/"CASH"), bracket-wrapped names copied from help, and prefers your current city's listing on ties. Down payments stay cash-only — and every affordability error now says so, shows your bank balance, and points at "withdraw" to move bank money to cash.</li>
+            <li>🧾 <strong>IRS Taxes</strong> — "tax" shows your standing, "file taxes" pays in full, "tax plan" splits it into 3 monthly installments (no interest; a missed installment breaks the plan with a 5% penalty). Standard deduction $12,000; 10%/15%/25% brackets; late penalties past the deadline.</li>
+            <li>⚖️ <strong>Court &amp; Police</strong> — every citation opens a case ("cases", "case [id]"); "lawyer defend [id]" contests one for $250 (dismissed, reduced, or upheld). "police" shows heat, investigations, and patrol level; investigations open at heat 50/80 and close below 30.</li>
+            <li>🎓 <strong>College Life</strong> — one new course per school, plus "degrees" (credentials + next-credential hint) and "campus" life: study groups and club socials.</li>
+            <li>💍 <strong>Family</strong> — "propose [name]" at Partner tier, "family", "welcome child [name]", and "family activity [movie|picnic|dinner]". Anniversaries and birthdays land every year crossing.</li>
+            <li>🏛️ <strong>Government Tiers</strong> — "government state" and "government federal" surface real state and federal openings; "civic" shows your civic title from community reputation.</li>
+            <li>📅 <strong>Calendar &amp; Years</strong> — one clock from 2024: "calendar" (season, age + life stage, next holiday, tax deadline) and "years" (year-by-year earned/spent/cities/shifts/achievements). You start at 18 and age each year crossing.</li>
+            <li>🛵 <strong>Gigs &amp; Overtime</strong> — "gigs" and "gig [delivery|rideshare|freelance]" side work, plus "overtime" (1.5× pay, counts for tenure) and "overtime [hours]" (1–4 hrs per call, caps 4/day and 12/week, taxed like work pay). Work-milestone titles appear in "career".</li>
+            <li>💰 <strong>Money &amp; Bank</strong> — "savings" goals (trackers in your bank balance, 0.5%/month), "savings deposit", "loans" (credit 50–100 sets your cap up to $6,000, 2%/month), "loan pay". Credit moves only with loan/tax-plan payment behavior.</li>
+            <li>🧱 <strong>Life Hard Mode (opt-in, off by default)</strong> — "hardmode on/off", "bills", "bills pay". Living costs at 1.5× plus asset lines; shortfalls become hard debt (never arrest, never seizure).</li>
+            <li>🏠 <strong>Living Expenses</strong> — "living" (alias "expenses") breaks down housing, food, utilities, and transport every month, scaled by your city's economy, with a 2-tick grace period, shortfall forgiveness in normal mode, and warnings before you run dry.</li>
+            <li>🎭 <strong>Character &amp; Starts</strong> — four new backgrounds, an optional trait at creation (Hustle pays +20% gig pay), a start-city select covering all 27 cities, and "name [first name]" renames. "go home" now heads to your primary residence first, then your first property's city, then your start city.</li>
+            <li>🏆 <strong>Leaderboard</strong> — a new main-menu Leaderboard row (top 10 by lifetime XP + your rank + this week's challenge), plus your rank line on "status".</li>
+            <li>🕊️ <strong>Legacy</strong> — "retire" previews, "retire confirm" archives a life and starts fresh (keeping only your legacy), "legacy" shows past lives and the next bonus (up to +$500).</li>
+            <li>🏆 <strong>Community Challenges</strong> — one shared goal per game-week per community ("challenge"); hit the participation threshold and collect +$75 at the rollover.</li>
+            <li>📰 <strong>Newspaper</strong> — "news" is a dated daily feed built only from real state: world events, your investments, milestones, and the week's challenge.</li>
+            <li>🎄 <strong>Seasons &amp; Holidays</strong> — real-calendar holidays and season starts; holiday weeks label events and pay +5 happiness and +$25 on attendance. Summer prefers beach/outdoor events, winter prefers markets/fairs.</li>
+            <li>🤝 <strong>Player Trading</strong> — "trade offer/list/accept/decline/cancel" for inventory items (price 0 = gift). Offers expire in 7 days, max 3 open, 1 completed trade per hour, item value cap $5,000 — and accepts re-validate the live save so nothing duplicates.</li>
+            <li>🏢 <strong>Deeper Working</strong> — "workplace" (today's deterministic event: team lunch, deadline week, review day, quiet day), "shift [morning|evening|night]" (evening +10%, night +20% with stress), "coworkers", and "lunch [name]" with a coworker.</li>
+            <li>🏙️ <strong>Deeper Citizen</strong> — "citizens" shows who's actually scheduled in your district right now, plus crowd activity and district needs as words; "volunteer" gives back (+5 community reputation).</li>
+            <li>⭐ <strong>Fame &amp; Wealth</strong> — "fame" scores you from live progress (achievements, wealth tiers, executive tier, passport milestones, challenge payouts). At 50+ galas appear in "events" ($10 entry, +$100 appearance pay, once a week); at 75+ elite circles notice you.</li>
+            <li>🏢 <strong>Companies</strong> — "companies" and "company [name]" turn real jobs-database employers into observable world entities (industry, HQ, size, deterministic monthly performance, revenue figure). Reach executive tier there for a $0–$200/month profit-share.</li>
+            <li>📈 <strong>World Stock</strong> — "stocks", "stock [name]", "buy stock [name] [amount]", "sell stock [name] [amount|all]", "index". Prices recompute deterministically per month (clamped ±5%/month); no margin, no shorting, no dividends yet. Losses are real.</li>
+            <li>👥 <strong>Business Staff</strong> — "hire/fire/staff/raise": hire roster NPCs at your businesses (slots by type), pay proportional wages in the tick, manage morale (paid on time +5, short −15, quit at 0). Staffed income = base × (1 + 0.3 × staff) × morale multiplier − wages.</li>
+            <li>💬 <strong>Dialogue Topics (template-only)</strong> — mid-conversation "topics" and "ask [topic]" (tier-gated from real NPC data, mood/trait variants, memory callbacks from your own history only, +2 relationship per topic capped at +10 per conversation). No AI replies are promised anywhere — the dialogue path stays template-only.</li>
+            <li>👋 <strong>Greetings</strong> — "greet [name] [warm|respectful|playful|cool]" with deterministic lines keyed by time, tier, mood, district activity, and shared memory. Effects apply at most once per NPC per game-day (repeats show "already greeted today").</li>
+            <li>🏙️ <strong>FIX: West Memphis has people now — the starting city finally has residents to meet, talk to, and befriend.</strong> Eight new residents across Broadway, Mississippi Park, and Meadowlake.</li>
+            <li>📬 <strong>FIX: Mail reads work the natural way now — "read [id]" opens a message, and your inbox survives leaving and coming back.</strong> Mail kinds (letter, bill, notice, package) show as icons in "emails".</li>
+            <li>📦 <strong>Mail &amp; Delivery</strong> — "mail", "packages", "track [id]", "send package [npc] [item]" ($5 postage, 1 game-day delivery, +5 relationship on arrival), "claim package [id]" (gifts at relationship tiers 50/75/90), courier jobs ("deliver [id]", $40/$60 by district), and "pay bill [id]" (hard-mode shortfall bills only).</li>
+            <li>🏛️ <strong>Citizen Services</strong> — "services" is the citizen counter: "permits" (business license +5% business income, driver's license $10 roadtrip fuel, food handler +2 cook energy), "fees" ($40/registered vehicle, $25/property per year, "pay fees"), "benefits" ($200/month, means-tested), "register voter" (+5 reputation), "records", "utilities".</li>
+            <li>🛍️ <strong>Routines</strong> — "stores" (shopping districts derived from real district data — no stores, no invention), "shop [good]" (groceries, clothing, household goods as effects; package goods into inventory), "commercial", "stroll [district]", and once-a-day "errands", "chores" (needs a property), and "selfcare" — each with real time, energy, and stat effects.</li>
+            <li>🏠 <strong>Housing Depth</strong> — "housing" (tenure per property: outright, mortgaged with payment/term/arrears, or renting), "mortgage [property]", "pay mortgage [property] [amount]" ($100+ extra cuts balance and term; full payoff clears the loan), "set home [property]" (primary residence — go home heads here first), "move [property]", and "housing market [city?]" (deterministic per-city index). Missed mortgage payments count consecutively: warnings at 3 and 5, foreclosure at 6. No new monthly housing charge — the §32 living line stands; household comfort moves happiness/stress on the tick instead.</li>
+            <li>📜 <strong>Will &amp; Estate</strong> — "will", "will heir [npc|community]", "will bequeath [cash|properties|businesses|vehicles] [heir]". There is NO death mechanic: the will executes only when you retire, distributing the estate (bank + property values + business values + vehicle values) and recording the distribution in your legacy record, with a bonus inside the §14 $500 cap (+$50 per asset class bequeathed, +$50 for a family heir).</li>
+            <li>🛡️ <strong>Insurance</strong> — "insurance", "insure [type] [target?]", "uninsure", "claim [type] [target?]" (health $30/mo, property $25/mo, vehicle $20/mo, business $40/mo; missed premiums lapse + notice). Claims need a verified loss and pay 80% capped (property $500, vehicle $300, business $400); health is a flat $150 benefit + health +10 below 50 health, honestly a benefit, not a reimbursement.</li>
+            <li>💼 <strong>Hourly Overtime</strong> — see Gigs &amp; Overtime above: "overtime [hours]" at 1.5× your hourly rate with hard daily/weekly caps.</li>
+            <li>🏛️ <strong>Offices: Mayor, Governor, President</strong> — the REAL institutions with the REAL process, each office earned through its own full cycle: eligibility gates, "file [office]" (Mayor $250, Governor $1,000, President $5,000), "campaign [rally|canvass|ad]" minimums, deterministic "election" (strictly beat both rivals), 48-month terms with taxed salaries, one "decide [option]" per month, "resign" (no credit), and reelection as a full new cycle. Offices are filled by the game's own roster people — no real politicians' names anywhere. "gov jobs" lists entity jobs (City Hall, State Capitol, Federal Agency, Courts, Legislature) holdable via "apply".</li>
+            <li>💼 <strong>Careers &amp; College Linkage</strong> — "careers" shows six ladders (Retail, Trades, Healthcare support, Tech, Services/hospitality, Finance) from real jobs-database jobs plus seven ladder-gap jobs added in real cities/districts. Mapped rungs refuse without their cert, naming the course and school; elite rungs need GPA ≥ 3.0. "schools" now shows tier, transfer lines, and "leads to" careers per course.</li>
+            <li>🎓 <strong>More Colleges</strong> — Toronto City University and Dubai City University (cities with no school before), plus three community colleges: West Memphis (Broadway), Southaven (Goodman Road), and Little Rock (River Market). Community programs run 60–80 hrs at $600–$3,000 and grant associate credentials; holding a mapped associate enrolls its university program at −25% hours and cost.</li>
+            <li>📝 <strong>Academics: GPA, Exams, Graduations</strong> — GPA starts at 3.0 on enroll and moves with study energy (50+ → +0.05, 20–49 → +0.02, below 20 → −0.05); "gpa" shows GPA + attendance; "exam" scores 40 + GPA×10 + skill×5 (minus 10 below 50% attendance, pass 60, fail → −0.1 GPA + 10 remediation hours); "graduate" pays a held $100 fee. Coursework completion no longer auto-graduates — the exam gates graduation. GPA below 2.0 blocks new enrollments until library study recovers it; GPA ≥ 3.8 graduates with honors.</li>
+            <li>👥 <strong>Better Citizen Names</strong> — newly generated citizens now draw from per-country pools (USA, UK, Japan, France, Germany, UAE, Mexico, Canada, Australia — 30+ first and 30+ last names each), seeded per city so a name never re-rolls, with Japan shown family-first. Existing roster NPCs are byte-identical; no new command.</li>
+            <li>📰 <strong>News Ticker</strong> — a fixed one-line strip between the chat area and the stats HUD, rotating one headline at a time (~8s) from the same newspaper source as "news" — never invented. "ticker local" (default), "ticker world", "ticker off". Empty states are literal, and the mode persists through save/load.</li>
+            <li>👁️ <strong>FIX: "view" works now</strong> — "view inbox", "view properties", "view vehicles", "view investments", "view status", "view schools", "view real-estate", "view bank", and "view government" open their existing screens by name (including mid-conversation). Bare "view" or an unknown thing lists what can be viewed instead of an unknown-command dead end.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.19 =====
+<div class="update-item">
+          <span class="update-version">v0.108.19</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>🌍 <strong>Life and World expansion</strong> — the one big update: everything from v0.108.18 (conversation fixes, navigation, menus, help audit) plus six new pillars below. One update, one post, one bigger world.</li>
+            <li>💞 <strong>Bonds &amp; Milestones</strong> — relationships now climb to Partner at 90, "milestones" shows every bond's tier and distance to the next, and "celebrate [name]" spends an evening with someone you know ($50, +8 relationship).</li>
+            <li>🏠 <strong>Home Life</strong> — "furnish [property] [item]" fills your homes with furniture (chair $150 to art $1,500). Higher comfort tiers make sleep at home recover better — more happiness, less stress.</li>
+            <li>🍳 <strong>Home Cooking</strong> — "cook [meal]" turns cash into energy, happiness, and cooking XP: soup, pasta, Sunday roast, and City Feast for higher-level cooks.</li>
+            <li>🎪 <strong>World Events Calendar</strong> — "events" shows this game-week's events across all 27 cities, drawn from each city's own character. "attend [event]" joins one where you are ($10 entry, appearance pay).</li>
+            <li>🚗 <strong>Road Trips</strong> — "roadtrip [city]" drives your own car instead of a ticket: $15 fuel, needs condition 30%+, grants driving XP, and counts toward your journey.</li>
+            <li>🛂 <strong>Passport &amp; World Journey</strong> — "passport" stamps every city you've visited and pays one-time milestone rewards at 5, 10, 15, 20, and all 27 cities, with a next-stop idea.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.18 =====
+<div class="update-item">
+          <span class="update-version">v0.108.18</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>💬 <strong>Commands work mid-conversation, even typed</strong> — typing a real command (businesses, journal, investments, achievements, skills, bank…) while talking to an NPC now runs the command instead of sending it as chat. Only non-command text still chats with the NPC, and typed chat is untouched.</li>
+            <li>🗣️ <strong>Conversation replies cleaned up</strong> — NPC replies always show the speaker's name header, including after the game screen re-renders, and the broken nested-quote reply line is fixed to one clean quoted line.</li>
+            <li>🗺️ <strong>"travel to [city]" works</strong> — the travel parser no longer chokes on the word "to": "travel to Memphis" and "travel to West Memphis" work exactly like the bare forms. Same tolerance for "goto".</li>
+            <li>🏠 <strong>West Memphis has homes now</strong> — the starting city finally has property listings (a starter home, a duplex, and a lot, priced below Memphis levels), so you can buy at home without traveling elsewhere first.</li>
+            <li>🔤 <strong>City names, not city codes</strong> — swept every player-facing string that leaked internal city ids (west_memphis, littlerock…) — status, laws, government, crime, jobs, schools, real estate, travel errors, and more now all show proper display names like "West Memphis, AR".</li>
+            <li>📖 <strong>Help catches up</strong> — "leave" (exit a conversation) and the "travel to [city]" form are now documented in help.</li>
+            <li>🧭 <strong>Proper city navigation</strong> — "districts" lists your city's neighborhoods, "where" shows where you are, "goto" accepts district names, and "explore [district]" explores a named district. The full loop: travel → districts → goto → explore → go home.</li>
+            <li>👀 <strong>Nearby people and places</strong> — "people" entries now carry role, relationship, quests on offer, and district, and the new "nearby" view shows people AND places (schools, homes for sale, race tracks) with what you can do at each. "talk" already matches partial names and refuses with a list when ambiguous.</li>
+            <li>✨ <strong>Smoother moment-to-moment play</strong> — unknown commands suggest the nearest real command ("Did you mean 'travel'?"), natural phrasing like "check bank" or "go to Memphis" reaches the right command, and travel, explore, and conversation-end outputs point at the sensible next step.</li>
+            <li>🖼️ <strong>Menus rebuilt to a presented standard</strong> — Game Menu, Settings, What's New, main menu, and landing now share the true-black-flat look: every item has a label and a description line, real hierarchy instead of uniform rows, and panels that own their space in fullscreen. No items added, removed, or reordered.</li>
+            <li>🎯 <strong>Menu text centered</strong> — Game Menu titles and item texts (label + description) are centered in both compact and expanded modes, and main-menu items match. Settings rows and What's New body copy stay left-aligned by design.</li>
+            <li>🎓 <strong>Schools catalog</strong> — new "schools" command lists every school with its id and every course with hours and cost, so "enroll" no longer demands ids you can't discover. Bare "enroll" usage now points at it.</li>
+            <li>📧 <strong>Mail you can actually open</strong> — bare "emails" finally lists the inbox (id, sender, subject, unread state) instead of printing usage; the email usage block now lists real syntax only; help documents read, compose, and delete; and "inbox" works as an alias.</li>
+            <li>🔍 <strong>Help audited against every command</strong> — help now documents everything the game actually accepts (schools, mail actions, prison, crime, lawyer, services, messages, search, and more), and every documented command was proven working with real output. Nothing documented is broken; nothing working is undocumented.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.17 =====
+<div class="update-item">
+          <span class="update-version">v0.108.17</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>💬 <strong>Quick selections work mid-conversation</strong> — tapping a shortcut while talking to an NPC now runs the game command (Bank shows the bank, Journal shows the journal) instead of sending its label as chat text. The conversation ends when you jump to a command; typed chat still talks to the NPC as before.</li>
+            <li>📱 <strong>Pause menu simplified</strong> — the Quick selections section is gone from the Game Menu; shortcuts live in the quick bar only. The menu is back to its five core items, keeping the wider full-screen panel.</li>
+            <li>🏠 <strong>"Go home" command</strong> — typing "go home" (or "home") returns you to your home city: your first property's city if you own one, else West Memphis. Same-city home costs nothing; other cities use normal travel fares.</li>
+            <li>📖 <strong>Help rewritten to match the game</strong> — help now documents the quick bar (all 18 shortcuts, in order, scrollable in full-screen view), the five-item pause menu, "go home", and every newer system. Every command help lists was checked against the parser — nothing listed is fake.</li>
+            <li>✅ <strong>All 18 shortcuts verified, twice each</strong> — every quick-bar button was proven in both normal play and mid-conversation, with real command output (not just a parser check).</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.16 =====
+<div class="update-item">
+          <span class="update-version">v0.108.16</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>↔️ <strong>Quick bar scrolls now</strong> — the quick-selections row no longer cuts off at the right edge: it scrolls horizontally with a visible scrollbar, touch swipe, and mouse-wheel support in full-screen view, so every shortcut (including People, Phone, and Factions) is reachable.</li>
+            <li>🔀 <strong>Quick selections reordered</strong> — the shortcuts now read in a sensible order in both the quick bar and the full-screen menu: character first, then daily verbs, goals and progress, money and assets, the social world, with Help last. Same buttons, same commands — order only.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.15 =====
+<div class="update-item">
+          <span class="update-version">v0.108.15</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>🏠 <strong>Property upgrades</strong> — renovate (or upgrade) any owned property through 5 named levels, from Refreshed to Fully Renovated. Each level costs money and raises rent, and rent still only pays on occupied units. Your portfolio now shows each property's level and next upgrade cost.</li>
+            <li>🏪 <strong>Business ownership</strong> — buy a food truck, barbershop, corner store, laundromat, coffee cart, or auto shop ($2,500–$12,000) for modest monthly income ($180–$750/mo net) paid in the monthly tick. Sell at 70% if you need out.</li>
+            <li>🎯 <strong>Daily goals</strong> — three fresh objectives every game-day with $20–$50 rewards that pay out automatically when you complete them. Type "goals" to see today's.</li>
+            <li>🔧 <strong>Vehicle upgrades</strong> — engine, transmission, and aero performance tiers (3 levels each, priced off your vehicle's value). Each tier cuts breakdown risk and adds value, separate from cosmetic mods.</li>
+            <li>👥 <strong>NPC depth + revamp</strong> — gifts (coffee to a thoughtful gift) and 2-hour hangouts raise relationships and unlock perks at 25, 50, and 75. People lists now show relationship levels, greetings show your standing, and "profile [name]" gives a full dossier: schedule, mood, quests, and perks.</li>
+            <li>📖 <strong>Story journal</strong> — "journal" shows your active quests, six story arcs computed from what you've actually done (job, properties, cities, vehicles, businesses, friends), and a dated log of quests started and achievements unlocked. No invented lore — everything shown comes from your save.</li>
+            <li>⚖️ <strong>Government &amp; law</strong> — "laws" shows your city's law book and fine schedule, "court" shows your standing and outstanding fines, "pay fine" settles them (each settled fine cools your heat), and "government" gathers local officials, government openings, and civic standing. Getting cited no longer vanishes without a trace.</li>
+            <li>📈 <strong>Job system rebuilt</strong> — listings are grouped by tier with per-shift pay, "career" tracks your tenure, skill, and exactly what your next promotion needs, and "promote" grants +15% pay (15 shifts + skill level 3, max 3 per job). Existing jobs and progress carry over untouched.</li>
+            <li>🎨 <strong>New in-game UI</strong> — the true-black-flat direction from the Update Logs now runs across the game screen, header, stats, conversation, and menus, in both dark and light themes, with compact and full-screen modes kept distinct. The HUD now shows your bank balance next to cash, and the quick bar adds Goals, Journal, and Businesses.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.14 =====
+<div class="update-item">
+          <span class="update-version">v0.108.14</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>⛶ <strong>Full-screen menu, widened</strong> — the Game Menu in full-screen view is now a proper wide panel instead of a narrow column, so expanded mode actually uses the full screen.</li>
+            <li>⚡ <strong>More quick selections</strong> — ten one-tap shortcuts in the expanded menu and the expanded quick bar: Bank, Property, Investments, Vehicles, Quests, Achievements, Skills, People, Phone, and Factions. They open screens the game already has — nothing new to learn, no balance changes.</li>
+            <li>📱 <strong>Compact view unchanged</strong> — the narrow menu and quick bar stay exactly as they are in the compact view; the wider layout only appears in full-screen mode, which stays optional and never auto-expands.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.13 =====
+<div class="update-item">
+          <span class="update-version">v0.108.13</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>🎨 <strong>Update Logs redesigned</strong> — each version now reads as its own separated section with a clear header and breathing room, instead of one continuous wall of text.</li>
+            <li>🌓 <strong>Theme toggle fixed</strong> — dark and light mode now apply the instant you change them, and light mode restyles the whole game instead of only parts of it.</li>
+            <li>🧩 <strong>Settings row fixed</strong> — the Full-screen view row in Settings now lays out like its neighbors in both compact and full-screen views.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.12 =====
+<div class="update-item">
+          <span class="update-version">v0.108.12</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>🏆 <strong>Achievements fixed</strong> — progress achievements (travel, networking, and more) can actually unlock now, unlocks announce in-game the moment they happen, and World Traveler correctly asks for all 27 cities.</li>
+            <li>💾 <strong>Save integrity</strong> — a failed server save now warns you instead of silently pretending it worked; Load Game shows your server saves, and deleting a save actually deletes it.</li>
+            <li>🚀 <strong>Travel + economy</strong> — travel now costs real fares from route data (bus, drive, flight), bank balances earn 0.5% interest per game-month, and rent follows occupancy instead of paying out on empty units.</li>
+            <li>🌍 <strong>Loading, menus, settings</strong> — the loading screen now follows the real save check (with error states instead of a fake timer), settings actually persist (including your full-screen preference), the dead audio toggles are gone, and this What's New screen is one tap away from the main menu.</li>
+            <li>📊 <strong>Play-session measurement</strong> — the game now reports anonymous session milestones (first work, first property, first investment…) so updates can follow what players actually do. No names or personal details are ever sent.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.11 =====
+<div class="update-item">
+          <span class="update-version">v0.108.11</span>
+          <span class="update-date">November 1, 2026</span>
+          <ul>
+            <li>⛶ <strong>Full-screen view (optional)</strong> — a new full-screen button in the game header (and in Settings) opens the game in a larger view. It's always your choice: the compact view stays the default, nothing auto-expands, and you can exit back any time. The expanded layout actually uses the full screen instead of stretching the compact one.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.10 =====
+<div class="update-item">
+          <span class="update-version">v0.108.10</span>
+          <span class="update-date">October 25, 2026</span>
+          <ul>
+            <li>💬 <strong>Dialogue engine</strong> — NPCs now have distinct voices drawn from their job, traits, and neighborhood, remember what you told them (jobs, likes, promises, favors), follow up on open questions when you meet again, and react by mood, not just a relationship number. Your conversations and memories belong to your game only and never carry into another player's game. AI-powered replies switch on once the developer adds the Optra key in the app settings; until then the game keeps its existing local replies.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.9 =====
+<div class="update-item">
+          <span class="update-version">v0.108.9</span>
+          <span class="update-date">October 25, 2026</span>
+          <ul>
+            <li>🛠️ <strong>Simulation fixes</strong> — job hiring now checks requirements on every path (including fallback jobs) and unknown credentials fail closed instead of being silently skipped; new Paramedic and Nurse Practitioner courses at Memphis Medical Academy; health now moves (rest restores it, exhaustion and prison labor wear it down, with a low-health warning — no death mechanic); investments tick at most once per game-day; old saves warn at 20 days idle and now last 90 days; ambiguous names ask you to clarify instead of picking the first match; you can't buy a property you already own; districts are validated; moving across town uses fuel and wear; weather stays consistent within a game-day; heat decays on real idle time; storyline losses can't push cash below $0; and small stress/happiness movement in work and workouts.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.8 =====
+<div class="update-item">
+          <span class="update-version">v0.108.8</span>
+          <span class="update-date">October 25, 2026</span>
+          <ul>
+            <li>🕐 <strong>Dashboard clock fixed</strong> — the header time, date, and weather now actually update after every command. They were painted once when the game screen loaded and never repainted, because the updater looked for element names the screen doesn't use — so the clock looked frozen even while the game clock advanced underneath.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.3 =====
+<div class="update-item">
+          <span class="update-version">v0.108.3</span>
+          <span class="update-date">October 25, 2026</span>
+          <ul>
+            <li>💰 <strong>Money display fixed</strong> — your cash now always shows exactly 2 decimals, and balances are rounded to whole cents on every command and on load, so old saves with long fractional tails (like $677.8846153846154) heal to $677.88. No prices, pay rates, or return rates changed.</li>
+            <li>🕐 <strong>Game clock fixed</strong> — game-time now saves with your progress and restores on load, so working and sleeping actually move the day forward instead of snapping back to 6:00 AM on January 1, 2024. Sleeping while already fully rested now passes 8 hours instead of doing nothing.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.2 =====
+<div class="update-item">
+          <span class="update-version">v0.108.2</span>
+          <span class="update-date">October 25, 2026</span>
+          <ul>
+            <li>🏠 <strong>Monthly property tick</strong> — when game-time crosses into a new month, property values and condition move, rent lands in your cash, and mortgage payments are deducted. If cash is short, a missed payment accrues as arrears instead of driving your cash negative. One tick per game-month, so reloading can't double-apply it.</li>
+            <li>⛓️ <strong>Prison soft-lock fixed</strong> — getting busted by police now gives a 3-day sentence instead of locking you in prison forever, prison work shortens your sentence by a day per shift, and "lawyer appeal" works while incarcerated. Old soft-locked saves are healed with a 3-day sentence on next login.</li>
+            <li>💾 <strong>Save slot fix</strong> — playing on slot 2 no longer silently overwrites your slot 1 save.</li>
+            <li>🚗 <strong>"vehicles" command works</strong> — the garage list now actually opens instead of falling through to unknown command.</li>
+            <li>📖 <strong>Study-hours validation</strong> — "study hours 0" and negative hours are rejected instead of silently studying 1 hour or rewinding time.</li>
+            <li>🎓 <strong>Re-enroll guard</strong> — enrolling while already enrolled is blocked (no double-charge, no lost progress), and graduating can't award the same certification twice.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.1 =====
+<div class="update-item">
+          <span class="update-version">v0.108.1</span>
+          <span class="update-date">October 24, 2026</span>
+          <ul>
+            <li>🎓 <strong>Enroll fix</strong> — "study hours [n]" now actually advances an enrolled course toward graduation; before, it just re-printed the school list.</li>
+            <li>📈 <strong>Investments move now</strong> — your portfolio gets one market tick each time you sleep, so values can rise or fall instead of sitting at the purchase price.</li>
+            <li>📖 <strong>Help fix</strong> — the study example now uses a real school and course: enroll maestro_college ai_foundation.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.108.0 =====
+<div class="update-item">
+          <span class="update-version">v0.108.0</span>
+          <span class="update-date">September 4, 2026</span>
+          <ul>
+            <li>🌍 <strong>5 New International NPCs</strong> — Added npc_334–npc_338 across Dubai, Tokyo, Paris, London, and Sydney.</li>
+            <li>🎲 <strong>6 New City-Life Random Events</strong> — Fresh encounters: Rooftop Silent Disco, Community Tool Library, Street Piano Serenade, Free Fitness Class, Night Market Fortune Teller, and Lost Drone Rescue.</li>
+            <li>🔁 <strong>Version Sync</strong> — All project files bumped to v0.108.0 and verified type-check/build.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.107.0 =====
+<div class="update-item">
+          <span class="update-version">v0.107.0</span>
+          <span class="update-date">August 31, 2026</span>
+          <ul>
+            <li>🚗 <strong>Deeper Vehicle Ownership</strong> — Vehicles now have fuel, registration, inspections, and visual modifications. Commands: fuel [name], register, inspect [name], customize [name] [mod], emergency/tow.</li>
+            <li>🎲 <strong>New City Encounters</strong> — Eight more random events: Parking Ticket, Charity Fundraiser, Protest March, Food Truck, Tech Demo, Lost Pet Poster, Rooftop Party, and Free Sample Day.</li>
+            <li>🔧 <strong>Vehicle Consequences</strong> — Unregistered or dangerous vehicles can be impounded. Breakdowns scale with condition and maintenance history.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.104.2 =====
+<div class="update-item">
+          <span class="update-version">v0.104.2</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🏠 <strong>Cash Property Purchases</strong> — You can now buy real estate outright. "buy property [name]" defaults to cash when you can afford the full price, and you can add "cash" or "mortgage" to force a payment method.</li>
+            <li>❓ <strong>Help Updated</strong> — The in-game help now explains cash vs. mortgage purchasing.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.104.0 =====
+<div class="update-item">
+          <span class="update-version">v0.104.0</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🌍 <strong>International Mission Expansion</strong> — 10 new quests tied to the v0.103.0 global NPCs. Ask NPCs for "quests" or "work" in Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney.</li>
+            <li>🏁 <strong>World Street Series Racing</strong> — New 'race season' and 'race standings' commands, plus 5 new international tracks. Compete across a 5-race championship with points and earnings.</li>
+            <li>📜 <strong>Quest Log</strong> — New 'quests' command shows active objectives, progress, and rewards.</li>
+            <li>🔁 <strong>Version Sync</strong> — Bumped all project files to v0.104.0 and verified type-check/build.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.103.0 =====
+<div class="update-item">
+          <span class="update-version">v0.103.0</span>
+          <span class="update-date">August 28, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> — Added 10 new global characters across Dubai, Tokyo, Paris, London, Berlin, Mexico City, Toronto, and Sydney.</li>
+            <li>🎲 <strong>New City Encounters</strong> — Five fresh random events: Lost Tourist, Pop-Up Job Fair, Celebrity Sighting, Street Chess Match, and Sudden Summer Storm.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.102.0 =====
+<div class="update-item">
+          <span class="update-version">v0.102.0</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>🤖 <strong>Serverless LLM NPC Brain</strong> — NPCs can now be powered by Hugging Face, OpenRouter, Groq, or Google Gemini free tiers for natural, in-character replies that remember your name and recent conversation.</li>
+            <li>💾 <strong>Save Flow Hardened</strong> — Redis saves use a stable user key, 30-day expiration, and a synchronous server beacon flush on refresh/close so progress is far less likely to vanish.</li>
+            <li>🧠 <strong>NPC Memory Sync</strong> — Singleton social engine now syncs standing from the player's saved relationships; no more "I'm Marcus, who are you?" loops after reload.</li>
+            <li>🐛 <strong>Type-Safe Fixes</strong> — Cleaned up implicit any casts and relationship-record typing caught by the TypeScript build.</li>
+            <li>🛠️ <strong>Fallback Always Works</strong> — If no API key is configured or the LLM call fails, the local reply generator still handles greetings, names, small talk, questions, and farewells.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.99.3 =====
+<div class="update-item">
+          <span class="update-version">v0.99.3</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>🧠 <strong>NPC Memory Fixed</strong> — Relationships now save correctly as JSON, so NPCs remember your name, conversation history, and how they feel about you across commands and reloads.</li>
+            <li>💾 <strong>Save Serialization Hardened</strong> — Server-side Redis save now preserves the full relationship record; no more lost NPC context on refresh.</li>
+            <li>🛠️ <strong>Code Cleanup</strong> — Removed stale version header and unified relationship record usage across game engine and storyline engine.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.101.0 =====
+<div class="update-item">
+          <span class="update-version">v0.101.0</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>💾 <strong>Server-Authoritative Auto-Save</strong> - Every command is saved to Redis before the response returns; a synchronous beacon flush also fires on tab close/refresh.</li>
+            <li>🧠 <strong>NPC Memory Fixed</strong> - Relationships now save as plain records so NPCs remember your name, chat history, and mood between messages and across reloads.</li>
+            <li>🗣️ <strong>No More "What's yours?" Loop</strong> - NPCs recognize "I'm...", "I am...", "call me...", and "my name is..." and stop asking once they know you.</li>
+            <li>🤖 <strong>Local NPC Reply Generator</strong> - New AI-style bridge produces natural greetings, answers, small talk, and farewells from memory and relationship context.</li>
+            <li>🤝 <strong>Assist & Quests</strong> - Relationship changes from helping NPCs and completing quests now persist correctly.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.99.2 =====
+<div class="update-item">
+          <span class="update-version">v0.99.2</span>
+          <span class="update-date">August 25, 2026</span>
+          <ul>
+            <li>💾 <strong>Save System Rebuilt</strong> - Slot 1 auto-saves to server (Redis) every command and on refresh; localStorage is an offline fallback; splash screen auto-detects and resumes your game.</li>
+            <li>💬 <strong>NPC Conversation Rebuilt</strong> - NPCs now greet first when you talk to them, and conversations can be exited with "bye", "end", "leave", or "exit".</li>
+            <li>🛠️ <strong>Social Polish</strong> - "people" shows city-wide NPCs when no-one is in your exact district; "text" reads relationships correctly.</li>
+            <li>📋 <strong>Developer Update</strong> - Patch focuses on save persistence and NPC conversation quality.</li>
+          <li>🛠️ <strong>Save System Rebuilt</strong> - Redis-first persistence; Continue button appears only when a save exists; auto-save after every command; background save on tab close/minimize; server fallback keyed by username + install ID.</li>
+          <li>✅ <strong>/api/init GET now checks Redis</strong> - returns the saved player instead of forcing a fresh start.</li>
+          <li>🗣️ <strong>NPCs now respond</strong> - talk/greet triggers a contextual greeting; NPCs react to relationship, mood, district, time and role.</li>
+          <li>👋 <strong>Conversations can end</strong> - say bye/goodbye/exit/leave/later/im out/ima head out to exit conversation mode.</li>
+          <li>🔧 <strong>text [name] SMS fixed</strong> - relationship object lookup works and gives relationship-aware replies.</li>
+          <li>🧹 <strong>Dead duplicate server.ts removed</strong> - single source of truth in src/server/index.ts.</li>
+          <li>🔁 <strong>Version Sync</strong> - Bumped to v0.99.2 with server-first save flow and NPC greeting polish.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.99.0 =====
+<div class="update-item">
+          <span class="update-version">v0.99.0</span>
+          <span class="update-date">August 24, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet a Harajuku designer, a Notting Hill bookshop owner, a Seine boat captain, and more.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Pop-Up Street Gallery, Language Exchange Picnic, Vintage Record Fair, Rooftop Herb Garden, and Impromptu Dance Parade.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.99.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.98.0 =====
+<div class="update-item">
+          <span class="update-version">v0.98.0</span>
+          <span class="update-date">August 21, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet sushi apprentices, jazz archivists, macaron bakers, and more.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Sandstorm Shortcut, Rooftop Yoga Class, Underground Comedy Night, Book Club on the Train, and Midnight Dog Walker Meetup.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.98.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.97.0 =====
+<div class="update-item">
+          <span class="update-version">v0.97.0</span>
+          <span class="update-date">August 17, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global NPC Expansion</strong> - Added 10 new international characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet spice merchants, bonsai masters, perfume blenders, and opera house ushers.</li>
+            <li>🎲 <strong>New City Encounters</strong> - Five fresh random events: Riverboat Jazz Invitation, Neighborhood Power Outage, Foreign Film Pop-Up, Street Cart Free Sample, and Lost Tourist Needs Directions.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.97.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.96.0 =====
+<div class="update-item">
+          <span class="update-version">v0.96.0</span>
+          <span class="update-date">August 14, 2026</span>
+          <ul>
+            <li>🌍 <strong>More International NPCs</strong> - Added 10 new characters across London, Tokyo, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet street poets, retro game shop owners, art collectors, and harbour tour guides.</li>
+            <li>🎲 <strong>More Random Events</strong> - Five fresh city-life moments: Rooftop Garden Invitation, City-Wide Scavenger Hunt, Street Magician Disappearing Act, Vintage Polaroid Swap, and Midnight Ramen Queue.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.96.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.95.0 =====
+<div class="update-item">
+          <span class="update-version">v0.95.0</span>
+          <span class="update-date">August 13, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - Added 10 new characters in Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet jazz club managers, pub landlords, fragrance designers, yacht brokers, surf instructors, and more.</li>
+            <li>🎲 <strong>New City-Life Events</strong> - Five fresh random events: Airport Upgrade Offer, Train Seat Swap, Local Sports Rivalry, Famous Food Queue, and Street Photographer.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.95.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.93.0 =====
+<div class="update-item">
+          <span class="update-version">v0.93.0</span>
+          <span class="update-date">August 11, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - Added 10 new characters across Tokyo, London, Paris, Berlin, Dubai, Mexico City, Toronto, and Sydney. Meet bonsai artists, opera singers, parfumeurs, street-fashion designers, and more.</li>
+            <li>🎲 <strong>Global City Events</strong> - Five fresh random events: night markets, transit serenades, lost tourists, historic building tours, and free street haircuts.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.93.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.92.0 =====
+<div class="update-item">
+          <span class="update-version">v0.92.0</span>
+          <span class="update-date">August 10, 2026</span>
+          <ul>
+            <li>🏎️ <strong>Vehicle Racing</strong> - New "race" and "race [track]" commands let you enter street, drag, and circuit competitions. Vehicle type, condition, driving skill, and a little luck decide the podium.</li>
+            <li>🏁 <strong>City Tracks</strong> - Race locations in Los Angeles, Miami, Memphis, Atlanta, Detroit, and Tokyo with licensed and underground events.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.92.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.92.0 =====
+<div class="update-item">
+          <span class="update-version">v0.92.0</span>
+          <span class="update-date">August 9, 2026</span>
+          <ul>
+            <li>🏘️ <strong>Expanded Property Market</strong> - Real estate listings now span Nashville, Atlanta, Chicago, New York, Los Angeles, Miami, Houston, Dallas, and Phoenix. Build a cross-country empire.</li>
+            <li>🌅 <strong>Dynamic Arrivals</strong> - Travel descriptions now reflect the time of day for more immersive city entries.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.92.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.91.0 =====
+<div class="update-item">
+          <span class="update-version">v0.91.0</span>
+          <span class="update-date">August 8, 2026</span>
+          <ul>
+            <li>🎯 <strong>New Achievements</strong> - Peak Fitness, Renaissance Person, and Trophy Hunter medals now reward stat mastery and completionists.</li>
+            <li>🎲 <strong>New Random Events</strong> - Impromptu block parties, sudden rainstorms, street chess, hidden bookstore sales, and rooftop movie nights add fresh city flavor.</li>
+            <li>🐛 <strong>Travel Fix</strong> - Removed duplicate police checkpoint encounter when arriving in a city with high heat.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.91.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.90.0 =====
+<div class="update-item">
+          <span class="update-version">v0.90.0</span>
+          <span class="update-date">August 7, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> - 10 new global NPCs in Berlin, Paris, Tokyo, Dubai, Mexico City, Toronto, and Sydney, including ballet instructors, yacht brokers, and comedy bookers.</li>
+            <li>🎲 <strong>New Random Events</strong> - Sunrise yoga, bookstore readings, vintage car parades, community cleanups, and late-night food trucks add more everyday city flavor.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.90.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.89.1 =====
+<div class="update-item">
+          <span class="update-version">v0.89.1</span>
+          <span class="update-date">August 6, 2026</span>
+          <ul>
+            <li>🛠️ <strong>Devvit Review Fix</strong> - Inline webview now opens in Expanded Mode, eliminating the inline scroll trap. Menu post creation uses idempotency keys to prevent duplicate game posts.</li>
+            <li>🔁 <strong>Version Sync</strong> - Bumped all project files to v0.89.1.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.89.0 =====
+<div class="update-item">
+          <span class="update-version">v0.89.0</span>
+          <span class="update-date">August 6, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPCs</strong> - 10 new global NPCs in Dubai, Tokyo, Paris, Berlin, Mexico City, London, Toronto, and Sydney, from spice merchants to grime DJs.</li>
+            <li>🚗 <strong>Travel Atmosphere</strong> - First-time arrival descriptions now cover 13 missing domestic cities, giving every destination a unique welcome.</li>
+            <li>🎲 <strong>New Random Events</strong> - Street buskers, lost tourists, community gardens, free samples, and rooftop invites bring more city-life moments.</li>
+            <li>🏆 <strong>New Travel Achievements</strong> - Global Citizen and Passport Collector medals now track your international city visits automatically.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.89.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.82.0 =====
+<div class="update-item">
+          <span class="update-version">v0.82.0</span>
+          <span class="update-date">July 27, 2026</span>
+          <ul>
+            <li>💬 <strong>Dialogue Depth</strong> - Added apology & rumor intents, NPC awareness of player job/certs/health/stress/record, and conversation continuity.</li>
+            <li>🏆 <strong>New Achievements</strong> - Scholar, Master Worker, Veteran, and Continental medals added.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.82.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.81.0 =====
+<div class="update-item">
+          <span class="update-version">v0.81.0</span>
+          <span class="update-date">July 26, 2026</span>
+          <ul>
+            <li>🌍 <strong>International NPC Expansion</strong> - Added 8 new characters across Toronto, Sydney, Mexico City, Berlin, Dubai, and Paris.</li>
+            <li>🎬 <strong>City Event Expansion</strong> - Added new random events in New York, Atlanta, and Nashville.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.81.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.80.0 =====
+<div class="update-item">
+          <span class="update-version">v0.80.0</span>
+          <ul>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.80.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.76.0 =====
+<div class="update-item">
+          <span class="update-version">v0.76.0</span>
+          <span class="update-date">June 5, 2026</span>
+          <ul>
+            <li>🎓 <strong>Career & Specialization Overhaul</strong> - Added new international schools (London, Tokyo, Paris, Sydney) and high-tier career paths requiring specialized certifications.</li>
+            <li>🌍 <strong>Global Expansion</strong> - Expanded the job market with elite international positions in tech, finance, and culinary arts.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.76.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.73.0 =====
+<div class="update-item">
+          <span class="update-version">v0.73.0</span>
+          <span class="update-date">May 27, 2026</span>
+          <ul>
+            <li>🌍 <strong>Global Expansion</strong> - Added 6 new NPCs across Berlin, Mexico City, and Dubai.</li>
+            <li>🛡️ <strong>New Factions</strong> - Introduced <strong>Berlin Underground</strong> and <strong>Dubai Elite</strong>.</li>
+            <li>💬 <strong>Dialogue Depth</strong> - NPCs now have city-specific greetings and relationship-based responses.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.67.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.65.0 =====
+<div class="update-item">
+          <span class="update-version">v0.65.0</span>
+          <ul class="update-list">
+            <li>🔫 <strong>Crime Expansion</strong> - Added new crime types: <em>Scam</em> (Cybercrime) and <em>Grand Theft Auto</em>.</li>
+            <li>🚨 <strong>Criminal Records</strong> - Arrests are now tracked and displayed in your status profile.</li>
+            <li>📈 <strong>Dynamic Odds</strong> - Crime success rates now scale with Intelligence and Driving skills.</li>
+            <li>🛠️ <strong>Stability</strong> - Version synchronization across all systems.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.64.0 =====
+<div class="update-item">
+          <span class="update-version">v0.64.0</span>
+          <ul class="update-list">
+            <li>📱 <strong>Phone OS v2.0</strong> - Comprehensive communication overhaul with contact lists, search, and drafts.</li>
+            <li>👥 <strong>Auto-Contacts</strong> - Talking to NPCs now automatically saves them to your phone.</li>
+            <li>🎬 <strong>Life Moments</strong> - Expanded dynamic event system with 8+ new location-specific random events.</li>
+            <li>🌍 <strong>Global Flavor</strong> - Unique events added for Manhattan, Shibuya, London, Berlin, Dubai, and more.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.61.0 =====
+<div class="update-item">
+          <span class="update-version">v0.61.0</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added 5 new international NPCs in London, Tokyo, Paris, Toronto, and Sydney.</li>
+            <li>👥 <strong>Social Depth</strong> - Expanded NPC roster to 125 unique characters.</li>
+            <li>🛠️ <strong>Maintenance</strong> - Routine stability checks and version synchronization.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.60.0 =====
+<div class="update-item">
+          <span class="update-version">v0.60.0</span>
+          <ul class="update-list">
+            <li>🛡️ <strong>Critical Stability</strong> - Fixed server-side crashes in Achievement Engine.</li>
+            <li>📊 <strong>Data Integrity</strong> - Defensive type-casting for player stats.</li>
+            <li>💬 <strong>Chat Sync</strong> - Fixed NPC identity and formatting issues.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.58.16 =====
+<div class="update-item">
+          <span class="update-version">v0.58.16</span>
+          <ul class="update-list">
+            <li>📊 <strong>Data Integrity</strong> - Defensive type-casting for player stats.</li>
+            <li>💬 <strong>Chat Sync</strong> - Fixed NPC identity and formatting issues.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.57.1 =====
+<div class="update-item">
+          <span class="update-version">v0.57.1</span>
+          <ul class="update-list">
+            <li>💬 <strong>Chat Stability</strong> - Resolved "blank bubble" bug in conversations.</li>
+            <li>🏷️ <strong>Sender Identity</strong> - NPCs now correctly display their names in chat.</li>
+            <li>📈 <strong>Skill Logic</strong> - Fixed job-to-skill mapping for accurate progression.</li>
+            <li>📝 <strong>Formatting</strong> - Fixed broken newline escapes in system messages.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.57.0 =====
+<div class="update-item">
+          <span class="update-version">v0.57.0</span>
+          <ul class="update-list">
+            <li>📈 <strong>Skill Overhaul</strong> - New granular skill progression system.</li>
+            <li>📊 <strong>Skill Tracking</strong> - Track levels and XP for specialized abilities.</li>
+            <li>🏦 <strong>Bank Fixes</strong> - Resolved critical issues with the new banking system.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.56.0 =====
+<div class="update-item">
+          <span class="update-version">v0.56.0</span>
+          <div class="update-card">
+            <h3>🏦 BANKING SYSTEM</h3>
+            <ul>
+              <li>💰 <strong>Cash & Savings</strong> - Keep your money safe in the bank.</li>
+              <li>📥 <strong>Deposit & Withdraw</strong> - New commands to manage your liquid assets.</li>
+              <li>🏦 <strong>Bank Command</strong> - Check your balances and net worth at any time.</li>
+            </ul>
+          </div>
+        </div>
+
+===== VERSION v0.55.0 =====
+<div class="update-item">
+          <span class="update-version">v0.55.0</span>
+          <div class="update-card">
+            <h3>🛠️ VEHICLE MAINTENANCE & PARTS</h3>
+            <ul>
+              <li>🔧 <strong>Condition & Mileage</strong> - Vehicles now track wear and tear.</li>
+              <li>🛢️ <strong>Maintenance</strong> - New "maintain" and "repair vehicle" commands.</li>
+              <li>🚗 <strong>Wear & Tear</strong> - Long distance travel affects vehicle performance.</li>
+            </ul>
+          </div>
+        </div>
+
+===== VERSION v0.54.0 =====
+<div class="update-item">
+          <span class="update-version">v0.54.0</span>
+          <div class="update-card">
+            <h3>📱 PHONE & EMAIL OVERHAUL</h3>
+            <ul>
+              <li>📧 <strong>New Email System</strong> - Fully functional inbox and compose features.</li>
+              <li>💬 <strong>Dynamic Messaging</strong> - NPCs now send more relevant texts and job offers.</li>
+              <li>📢 <strong>Notifications</strong> - Improved phone notification system.</li>
+            </ul>
+          </div>
+        </div>
+
+===== VERSION v0.53.0 =====
+<div class="update-item">
+          <span class="update-version">v0.53.0</span>
+          <span class="update-date">May 21, 2026</span>
+          <ul class="update-list">
+            <li>🏆 <strong>Achievements</strong> - Full achievement system with 36 milestones.</li>
+            <li>👥 <strong>New NPCs</strong> - Added 5 new international characters to meet.</li>
+            <li>🛠️ <strong>Optimization</strong> - Improved engine performance and bug fixes.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.52.0 =====
+<div class="update-item">
+          <span class="update-version">v0.52.0</span>
+          <span class="update-date">April 15, 2026</span>
+          <ul class="update-list">
+            <li>🔫 <strong>Crime System</strong> - New crimes: pickpocket, shoplift, robbery, and heist.</li>
+            <li>🚨 <strong>Consequences</strong> - Risk of arrest and prison time based on crime type and location.</li>
+            <li>👮 <strong>Reputation</strong> - Criminal activities now affect your social and criminal standing.</li>
+            <li>🔄 <strong>Version Sync</strong> - Project-wide update to v0.52.0.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.51.0 =====
+<div class="update-item">
+          <span class="update-version">v0.51.0</span>
+          <span class="update-date">April 15, 2026</span>
+        </div>
+
+===== VERSION v0.50.0 =====
+<div class="update-item">
+          <span class="update-version">v0.50.0</span>
+          <span class="update-date">April 15, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>16 New International NPCs</strong> across London, Tokyo, Paris, Berlin, Dubai, and more.</li>
+            <li>👔 <strong>Finance Moguls & Tech Founders</strong> in global business hubs.</li>
+            <li>🎨 <strong>Cultural Icons</strong> - Artists, chefs, and DJs added to international cities.</li>
+            <li>📈 <strong>Stable Version</strong> - Critical bug fixes and type stability.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.15.0 =====
+<div class="update-item">
+          <span class="update-version">v0.15.0</span>
+          <span class="update-date">April 15, 2026</span>
+          <h3 class="update-title">World Expansion & Natural Language</h3>
+          <ul class="update-list">
+            <li>🌍 <strong>28 Cities</strong> across 7 regions worldwide</li>
+            <li>🗣️ <strong>Natural Language</strong> - Speak naturally, game understands</li>
+            <li>📱 <strong>Phone System</strong> - Check emails, messages, voicemails</li>
+            <li>🎭 <strong>Crime System</strong> - Risk and consequences</li>
+            <li>🏆 <strong>Achievements</strong> - 30+ milestones to unlock</li>
+            <li>🧭 <strong>Travel System</strong> - Bus, flight, train, drive</li>
+          </ul>
+        </div>
+
+===== VERSION v0.2.0 =====
+<div class="update-item">
+          <span class="update-version">v0.2.0</span>
+          <span class="update-date">April 14, 2026</span>
+          <h3 class="update-title">Property & Storyline Systems</h3>
+          <ul class="update-list">
+            <li>🏠 <strong>Real Estate</strong> - Buy properties with mortgages</li>
+            <li>📈 <strong>Investments</strong> - Stocks, bonds, crypto, business</li>
+            <li>📖 <strong>Storyline Events</strong> - Job interviews, life events</li>
+            <li>🌤️ <strong>Weather Effects</strong> - Impacts work and exploration</li>
+            <li>🚗 <strong>Vehicles</strong> - Buy, sell, garage system</li>
+          </ul>
+        </div>
+
+===== VERSION v0.1.0 =====
+<div class="update-item">
+          <span class="update-version">v0.1.0</span>
+          <span class="update-date">April 12, 2026</span>
+          <h3 class="update-title">Initial Release</h3>
+          <ul class="update-list">
+            <li>🎮 <strong>Core Engine</strong> - Time, economy, social systems</li>
+            <li>👥 <strong>42 NPCs</strong> - Schedules, personalities, relationships</li>
+            <li>💼 <strong>Jobs</strong> - Work, get paid, build career</li>
+            <li>📚 <strong>Skills</strong> - Study to improve abilities</li>
+          </ul>
+        </div>
+
+===== VERSION v0.68.0 =====
+<div class="update-card">
+          <span class="update-version">v0.68.0</span>
+          <span class="update-date">May 30, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added new random events for London, Tokyo, and Dubai.</li>
+            <li>🏡 <strong>Luxury Real Estate</strong> - Added premium property listings in international hubs.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.68.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.70.0 =====
+<div class="update-card">
+          <span class="update-version">v0.70.0</span>
+          <span class="update-date">June 1, 2026</span>
+          <ul class="update-list">
+            <li>⚔️ <strong>Faction Wars</strong> - Added Influence, Support, and Sabotage mechanics.</li>
+            <li>📊 <strong>Political Influence</strong> - Factions now compete for dominance in their HQ cities.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.70.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.69.0 =====
+<div class="update-card">
+          <span class="update-version">v0.69.0</span>
+          <span class="update-date">May 31, 2026</span>
+          <ul class="update-list">
+            <li>🌍 <strong>Global Expansion</strong> - Added new random events for Toronto, Berlin, Mexico City, and Sydney.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.69.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.71.0 =====
+<div class="update-card">
+          <span class="update-version">v0.71.0</span>
+          <span class="update-date">June 2, 2026</span>
+          <ul class="update-list">
+            <li>🎭 <strong>NPC Expansion</strong> - Added new city-specific greetings and dialogue variety.</li>
+            <li>🌍 <strong>Mid-South Events</strong> - New random life moments for Memphis and West Memphis.</li>
+            <li>🔄 <strong>Version Sync</strong> - Unified version to v0.71.0 project-wide.</li>
+          </ul>
+        </div>
+
+===== VERSION v0.72.0 =====
+<div class="update-card">
+          <span class="update-version">v0.72.0</span>
+          <span class="update-date">June 3, 2026</span>
+          <ul class="update-list">
+            <li>👑 <strong>Faction Achievements</strong> - Added new milestones for faction leadership and sabotage.</li>
+            <li>🏰 <strong>Real Estate Tycoon</strong> - New achievement for owning properties in 5+ cities.</li>
+            <li>🎭 <strong>Dynamic Faction Events</strong> - Rival confrontations and mysterious bribes added to the world.</li>
+            <li>🔄 <strong>Version Sync</strong> - Project-wide update to v0.72.0.</li>
+          </ul>
+        </div>

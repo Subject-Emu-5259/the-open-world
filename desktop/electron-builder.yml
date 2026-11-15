@@ -1,0 +1,107 @@
+# The Open World — electron-builder config
+# Build all platforms with: bash scripts/build-release.sh all
+# (or npm run publish:desktop from desktop/).
+appId: com.theopenworld.desktop
+productName: The Open World
+copyright: Copyright © 2026 Avok Interactive
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**
+  - package.json
+
+# ── Bundled game ──────────────────────────────────────────────────────────────
+# The desktop app ships the real PC game client, not a web wrapper: the
+# --pc client build (dist/pc/client, Devvit imports stubbed, platform
+# 'pc') is staged into client-dist/ by scripts/stage-pc.mjs and carried
+# as a resource, alongside the version.json + pc-config.json the stage
+# step stamps into it. The shell serves it on the tow:// scheme (see
+# src/main.ts). No server code runs in the shell.
+extraResources:
+  - from: client-dist
+    to: client-dist
+
+# ── OTA updates (electron-updater, self-hosted generic feed) ─────────────────
+# Route B pattern (see Dispatch HQ's dhq-ota-feed-route-b.md): the
+# generic provider NEVER uploads — electron-builder generates the
+# latest*.yml files locally and the feed is deployed by uploading the
+# release output to the URL below (Wasmer dashboard, same as the
+# Avok Engine OTA). The publish block is the feed: at build time
+# electron-builder embeds it into the packaged app's app-update.yml,
+# and electron-updater reads that file. Do not call setFeedURL.
+# Baked in from build one (0.1.0) so updates work from day one —
+# DHQ 0.4.1 shipped pointing at a dead feed and its first hop had to
+# be a manual re-download.
+publish:
+  provider: generic
+  url: https://avokinteractive.wasmer.app/updates/the-open-world
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+# Universal binary (Apple Silicon + Intel) DMG for distribution, plus the zip
+# (the zip is what the native auto-updater consumes — without it
+# latest-mac.yml cannot be created). `--universal` on the CLI is
+# required for electron-builder to honour the universal arch;
+# build-release.sh passes it.
+#
+# Signing + notarization are env-driven and auto-detected:
+#   - CSC_NAME / CSC_LINK (+ CSC_KEY_PASSWORD): Developer ID cert to sign with.
+#   - APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID: notarize + staple.
+# build-release.sh passes -c.mac.identity=null when no identity exists (ad-hoc
+# build) and -c.notarize=true only when all three Apple creds are present, so
+# the pipeline never hard-fails on an unsigned machine. Unsigned is the
+# assumed default: Mac players right-click -> Open on first launch.
+mac:
+  category: public.app-category.games
+  target:
+    - dmg
+    - zip
+  artifactName: TheOpenWorld-${version}-${arch}.${ext}
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+
+dmg:
+  title: "The Open World ${version}"
+  window:
+    width: 540
+    height: 380
+
+# ── Windows ───────────────────────────────────────────────────────────────────
+# NSIS installer (x64). Building the Windows target from macOS works for
+# unsigned installers. Windows code-signing (Authenticode, SmartScreen)
+# is env-driven like macOS:
+#   - CSC_LINK (+ CSC_KEY_PASSWORD): code-signing cert to sign with
+#   - WIN_CSC_LINK (+ WIN_CSC_KEY_PASSWORD): same, Windows-specific override
+# electron-builder signs the installer automatically when a cert is present.
+# Unsigned is the assumed default: Windows shows a SmartScreen warning.
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: TheOpenWorld-${version}-${arch}-setup.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  shortcutName: The Open World
+
+# ── Linux ─────────────────────────────────────────────────────────────────────
+# AppImage (x64) — a portable, no-install binary for most distros.
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  artifactName: TheOpenWorld-${version}-${arch}.${ext}
+  executableName: the-open-world
+  category: Game
+  synopsis: Text life simulation
+  maintainer: deandrewharris@gmail.com
+
+npmRebuild: false
